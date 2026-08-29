@@ -39,11 +39,11 @@ window.JOURNAL_CONFIG = {
     tag: "ENTRY I • THE EARLY YEARS",
     headline: "He lived in weather,",
     body: "Of all the things he was — builder, teacher, quiet comedian — he was first a man who simply showed up, season after season, to be where the day needed him. These are the years that taught the rest.",
-    anchor: "ANCHORED IN 2001 • 2019",
+    anchor: "ANCHORED IN 2001 • 2026",
     photo: {
-      src: "assets/photos/461726255_10225072540511238_9061600720500740799_n.jpg",
+      src: "assets/photos/IMG_9293.JPG",
       year: "2001",
-      caption: "ON THE TRUNK",
+      caption: "A LIFETIME OF INTEGRITY",
       alt: "Ratu Nautu Latunipulu - The Early Years"
     }
   },
@@ -106,34 +106,44 @@ window.JOURNAL_CONFIG = {
     subtitle: "Memories that didn't ask to be framed, just remembered.",
     items: [
       {
+        src: "assets/photos/IMG_1908.JPG",
+        year: "2024",
+        tilt: "-5deg"
+      },
+      {
+        src: "assets/photos/IMG_2138.jpeg",
+        year: "2023",
+        tilt: "3deg"
+      },
+      {
+        src: "assets/photos/IMG_5429.jpeg",
+        year: "2022",
+        tilt: "-4deg"
+      },
+      {
+        src: "assets/photos/THAT_KINDA_GUY.JPG",
+        year: "2021",
+        tilt: "5deg"
+      },
+      {
         src: "assets/photos/464825450_10225438053368831_2504579000914362514_n.jpg",
         year: "2000",
-        tilt: "-5deg"
+        tilt: "-3deg"
       },
       {
         src: "assets/photos/465424263_10225469984807097_4500748773571450173_n.jpg",
         year: "2012",
-        tilt: "3deg"
+        tilt: "4deg"
       },
       {
         src: "assets/photos/465288379_10225469987007152_6407773295642653158_n.jpg",
         year: "2009",
-        tilt: "-4deg"
+        tilt: "-2deg"
       },
       {
         src: "assets/photos/465173363_10225469982167031_3135516522095799177_n.jpg",
         year: "2005",
         tilt: "6deg"
-      },
-      {
-        src: "assets/photos/465422921_10225469982327035_8577979762292632392_n.jpg",
-        year: "2007",
-        tilt: "-3deg"
-      },
-      {
-        src: "assets/photos/465561133_10225469980846998_5089765502435108626_n.jpg",
-        year: "2014",
-        tilt: "4deg"
       }
     ]
   },
