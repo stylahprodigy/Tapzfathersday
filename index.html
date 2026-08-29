@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <!-- Privacy & Static Hosting Meta -->
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="description" content="A living keepsake journal honoring Ratu Nautu Latunipulu.">
+  
+  <title>The Journal of Him — Ratu Nautu Latunipulu</title>
+
+  <!-- Google Fonts: Editorial High-Contrast Serif, Cormorant, Cursive & Modern Clean UI -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=Dancing+Script:wght@600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,600;1,6..72,400;1,6..72,600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="editorial-body">
+
+  <!-- Ambient Golden Island Dust Canvas -->
+  <canvas id="ambient-canvas"></canvas>
+
+  <!-- Left-Rail Timeline Progress Rail -->
+  <nav class="timeline-rail" id="timeline-rail" aria-label="Timeline Navigation">
+    <div class="rail-track">
+      <div class="rail-progress-bar" id="rail-progress-bar"></div>
+      <div class="rail-active-bead" id="rail-active-bead"></div>
+    </div>
+    <div class="rail-nodes">
+      <button class="rail-node active" data-target="hero-section" title="The Cover">
+        <span class="node-dot"></span>
+        <span class="node-label">Cover</span>
+      </button>
+      <button class="rail-node" data-target="entry-1" title="Entry I: The Early Years">
+        <span class="node-dot"></span>
+        <span class="node-label">Entry I</span>
+      </button>
+      <button class="rail-node" data-target="entry-2" title="Entry II: The Dedication">
+        <span class="node-dot"></span>
+        <span class="node-label">Entry II</span>
+      </button>
+      <button class="rail-node" data-target="entry-3" title="Entry III: A Reel of the Years">
+        <span class="node-dot"></span>
+        <span class="node-label">Entry III</span>
+      </button>
+      <button class="rail-node" data-target="entry-4" title="Entry IV: Loose Polaroids">
+        <span class="node-dot"></span>
+        <span class="node-label">Entry IV</span>
+      </button>
+      <button class="rail-node" data-target="entry-5" title="Entry V: Wisdom & Toast">
+        <span class="node-dot"></span>
+        <span class="node-label">Entry V</span>
+      </button>
+      <button class="rail-node" data-target="community-wall-section" title="Wall of Honor">
+        <span class="node-dot"></span>
+        <span class="node-label">Community</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Top Pinned Controls Bar -->
+  <header class="top-nav">
+    <div class="brand" id="brand-crest-btn" title="Dad's Keepsake">
+      <span class="brand-crest-icon">👑</span>
+      <span class="brand-text" id="nav-brand-title">Ratu Nautu Latunipulu</span>
+    </div>
+
+    <div class="nav-center-cluster">
+      <button class="nav-view-tab active" id="nav-journal-btn">
+        <span class="btn-icon">📖</span>
+        <span>The Journal</span>
+      </button>
+
+      <button class="nav-view-tab" id="nav-community-btn">
+        <span class="btn-icon">🌴</span>
+        <span>Wall of Honor</span>
+      </button>
+
+      <button class="nav-cta-btn" id="nav-add-photo-btn">
+        <span class="btn-icon">＋</span>
+        <span>Add Your Father</span>
+      </button>
+    </div>
+
+    <div class="nav-actions">
+      <!-- Music Player Bar -->
+      <div class="audio-player-cluster" id="audio-player-cluster">
+        <button class="nav-btn-mini" id="audio-prev-btn" title="Previous Song" aria-label="Previous Song">⏮</button>
+        <button class="nav-btn" id="audio-toggle-btn" title="Play / Pause Song" aria-label="Ambience Music">
+          <span class="btn-icon" id="audio-icon">🎵</span>
+          <span class="btn-label" id="audio-label">Music: Off</span>
+        </button>
+        <button class="nav-btn-mini" id="audio-next-btn" title="Next Song" aria-label="Next Song">⏭</button>
+        
+        <!-- Volume Control Slider -->
+        <div class="audio-volume-control" title="Music Volume">
+          <span class="volume-icon" id="volume-icon">🔉</span>
+          <input type="range" id="audio-volume-slider" min="0" max="100" value="35" class="volume-slider" aria-label="Volume Slider">
+          <span class="volume-label" id="volume-label">35%</span>
+        </div>
+      </div>
+
+      <!-- Guestbook Ledger Button (Admin Only) -->
+      <button class="nav-btn" id="guestbook-open-btn" style="display: none;" title="View Visitors List">
+        <span class="btn-icon">📋</span>
+        <span class="btn-label">Visitors</span>
+      </button>
+
+      <!-- Fullscreen Toggle -->
+      <button class="nav-btn" id="fullscreen-btn" title="Toggle Fullscreen">
+        <span class="btn-icon">⛶</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= SCROLLING JOURNAL CONTAINER ================= -->
+  <main class="journal-scroll-container" id="journal-scroll-container">
+
+    <!-- ================= SECTION 0: HERO CINEMATIC COVER ================= -->
+    <section class="journal-section hero-cover-section island-bg-twilight" id="hero-section" data-section-idx="0">
+      <div class="tongan-tapa-border top"></div>
+      <div class="hero-cover-content">
+        <div class="hero-badge-tag" id="hero-keepsake-tag">A FATHER'S DAY KEEPSAKE</div>
+        
+        <h1 class="hero-main-title">
+          The Journal <br>
+          <span class="title-cursive-accent" id="hero-cursive-name">of Him</span>
+        </h1>
+        
+        <p class="hero-narrative-sub" id="hero-sub-text">
+          A living archive of the man who never asked to be remembered — and impossible to forget. What follows is a journey, page by page.
+        </p>
+
+        <button class="hero-open-btn" id="hero-open-btn">
+          <span class="btn-book-icon">📖</span>
+          <span class="btn-open-text">OPEN THE JOURNAL</span>
+          <div class="btn-gold-underline"></div>
+        </button>
+
+        <div class="hero-scroll-cue">
+          <span class="cue-mouse"></span>
+          <span class="cue-label">SCROLL TO READ</span>
+        </div>
+      </div>
+      <div class="tongan-tapa-border bottom"></div>
+    </section>
+
+    <!-- ================= ENTRY I: THE EARLY YEARS ================= -->
+    <section class="journal-section entry-section island-bg-cream" id="entry-1" data-section-idx="1">
+      <div class="section-watermark-tapa"></div>
+      <div class="entry-grid-container">
+        
+        <!-- Left Editorial Text -->
+        <div class="entry-text-col">
+          <div class="entry-header-tag" id="entry1-tag">ENTRY I • THE EARLY YEARS</div>
+          <h2 class="entry-display-headline" id="entry1-headline">He lived in <br>weather,</h2>
+          <div class="entry-gold-divider"></div>
+          <p class="entry-narrative-body" id="entry1-body">
+            Of all the things he was — builder, teacher, quiet comedian — he was first a man who simply showed up, season after season, to be where the day needed him. These are the years that taught the rest.
+          </p>
+          <div class="entry-anchor-date" id="entry1-anchor">ANCHORED IN 2001 • 2019</div>
+        </div>
+
+        <!-- Right Hero Photo -->
+        <div class="entry-photo-col">
+          <div class="editorial-photo-mount">
+            <div class="editorial-frame photo-zoomable" id="entry1-photo-frame">
+              <img src="assets/photos/461726255_10225072540511238_9061600720500740799_n.jpg" alt="Ratu Nautu Latunipulu" class="editorial-img" id="entry1-img">
+              <div class="photo-bottom-stamp" id="entry1-photo-stamp">2001 — ON THE TRUNK</div>
+            </div>
+            <div class="island-palm-accent"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= ENTRY II: DEDICATION & THE PILLAR ================= -->
+    <section class="journal-section entry-section island-bg-sand" id="entry-2" data-section-idx="2">
+      <div class="tongan-kupesi-fata-pattern"></div>
+      <div class="dedication-container">
+        
+        <div class="tongan-crest-badge">
+          <span class="crest-symbol">👑</span>
+          <span class="crest-motto" id="dedication-tonga-motto">KO E FONUA MO E 'OFA</span>
+        </div>
+
+        <div class="entry-header-tag">ENTRY II • THE PILLAR & GUIDE</div>
+        <h2 class="entry-display-headline serif-italic">The Hands That Held Us</h2>
+        <div class="entry-gold-divider centered"></div>
+
+        <div class="dedication-parchment-card">
+          <div class="letter-salutation" id="dedication-salutation">Dear Dad,</div>
+          <div class="letter-paragraphs" id="dedication-paragraphs">
+            <p>Thank you for being our constant anchor, our loudest supporter, and the greatest example of what it means to lead with love, integrity, and strength.</p>
+            <p>Every sacrifice you made, every lesson you taught, and every laugh we shared has shaped who we are today.</p>
+            <p>This living archive is our tribute to your life, your heritage, and the priceless moments we carry in our hearts forever.</p>
+          </div>
+
+          <div class="letter-signature-area">
+            <div class="sig-script" id="dedication-signature">With endless love & gratitude,</div>
+            <div class="sig-family" id="dedication-family">— Your Family</div>
+            <div class="wax-seal-gold">
+              <span>FAMILY<br>FIRST</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= ENTRY III: THE TIMELINE ("a reel of the years") ================= -->
+    <section class="journal-section entry-section island-bg-dusk" id="entry-3" data-section-idx="3">
+      <div class="section-title-wrap">
+        <div class="entry-header-tag" id="entry3-tag">ENTRY III • THE TIMELINE</div>
+        <h2 class="entry-display-headline cursive-accent-headline">a reel of the years</h2>
+        <div class="entry-gold-divider centered"></div>
+      </div>
+
+      <div class="timeline-reels-container" id="timeline-reels-container">
+        
+        <!-- Reel Item 1 (Left Image, Right Text) -->
+        <div class="film-reel-row layout-left">
+          <div class="film-strip-frame photo-zoomable" data-src="assets/photos/465111373_10225469986967151_7970654995887563673_n.jpg" data-title="Two of Us">
+            <div class="sprockets top"></div>
+            <div class="film-image-target">
+              <img src="assets/photos/465111373_10225469986967151_7970654995887563673_n.jpg" alt="Two of Us" class="film-img">
+            </div>
+            <div class="sprockets bottom"></div>
+          </div>
+          <div class="film-reel-meta">
+            <span class="film-year-badge">2009</span>
+            <h3 class="film-title">Two of Us</h3>
+            <p class="film-caption">A photo taken too close, too bright, too fast — and therefore exactly right. This was how he loved: near enough to blur the edges, bright enough to make us squint. We kept it because it kept us.</p>
+            <div class="film-meta-divider"></div>
+          </div>
+        </div>
+
+        <!-- Reel Item 2 (Right Image, Left Text) -->
+        <div class="film-reel-row layout-right">
+          <div class="film-reel-meta">
+            <span class="film-year-badge">2006</span>
+            <h3 class="film-title">Held, in the Light</h3>
+            <p class="film-caption">Every good photograph of him is overexposed, as if the camera refused to hold a man that bright. She leaned in, the light came through the window, and the whole afternoon became a kind of grace.</p>
+            <div class="film-meta-divider"></div>
+          </div>
+          <div class="film-strip-frame photo-zoomable" data-src="assets/photos/465172942_10225469988447188_1277699363661289478_n.jpg" data-title="Held, in the Light">
+            <div class="sprockets top"></div>
+            <div class="film-image-target">
+              <img src="assets/photos/465172942_10225469988447188_1277699363661289478_n.jpg" alt="Held, in the Light" class="film-img">
+            </div>
+            <div class="sprockets bottom"></div>
+          </div>
+        </div>
+
+        <!-- Reel Item 3 (Left Image, Right Text) -->
+        <div class="film-reel-row layout-left">
+          <div class="film-strip-frame photo-zoomable" data-src="assets/photos/465367677_10225469988487189_8635519669333974068_n.jpg" data-title="The Glow Between Them">
+            <div class="sprockets top"></div>
+            <div class="film-image-target">
+              <img src="assets/photos/465367677_10225469988487189_8635519669333974068_n.jpg" alt="The Glow Between Them" class="film-img">
+            </div>
+            <div class="sprockets bottom"></div>
+          </div>
+          <div class="film-reel-meta">
+            <span class="film-year-badge">2007</span>
+            <h3 class="film-title">The Glow Between Them</h3>
+            <p class="film-caption">Two people who had learned, over years, to live in each other's light. The flare in the lens was only the sun doing what their faces had already done — refusing to let us tell where one ended and the other began.</p>
+            <div class="film-meta-divider"></div>
+          </div>
+        </div>
+
+        <!-- Reel Item 4 (Right Image, Left Text) -->
+        <div class="film-reel-row layout-right">
+          <div class="film-reel-meta">
+            <span class="film-year-badge">2014</span>
+            <h3 class="film-title">What He Grew</h3>
+            <p class="film-caption">Not crops, not wealth — people. A girl who learned to run in his shadow, a child who learned to sit on his shoulders. The tattoo told of where he'd been; the children told of where he stayed.</p>
+            <div class="film-meta-divider"></div>
+          </div>
+          <div class="film-strip-frame photo-zoomable" data-src="assets/photos/465114369_10225469983567066_8602633835982269215_n.jpg" data-title="What He Grew">
+            <div class="sprockets top"></div>
+            <div class="film-image-target">
+              <img src="assets/photos/465114369_10225469983567066_8602633835982269215_n.jpg" alt="What He Grew" class="film-img">
+            </div>
+            <div class="sprockets bottom"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= ENTRY IV: POLAROIDS ("a few polaroids, kept loose") ================= -->
+    <section class="journal-section entry-section island-bg-botanical" id="entry-4" data-section-idx="4">
+      <div class="section-title-wrap">
+        <div class="entry-header-tag" id="entry4-tag">ENTRY IV • POLAROIDS</div>
+        <h2 class="entry-display-headline polaroid-headline">a few <span class="gold-italic">polaroids</span>, kept loose</h2>
+        <p class="section-sub-desc" id="entry4-sub">Memories that didn't ask to be framed, just remembered.</p>
+        <div class="entry-gold-divider centered"></div>
+      </div>
+
+      <!-- Organic Floating Polaroid Constellation -->
+      <div class="polaroid-scatter-constellation" id="polaroid-scatter-constellation">
+        
+        <div class="scatter-polaroid-item" style="transform: rotate(-5deg);" data-src="assets/photos/464825450_10225438053368831_2504579000914362514_n.jpg" data-title="The Pillar - 2000">
+          <div class="scotch-tape"></div>
+          <div class="polaroid-photo-box">
+            <img src="assets/photos/464825450_10225438053368831_2504579000914362514_n.jpg" alt="Memory" loading="lazy">
+          </div>
+          <div class="polaroid-year-stamp">2000</div>
+        </div>
+
+        <div class="scatter-polaroid-item" style="transform: rotate(3deg);" data-src="assets/photos/465424263_10225469984807097_4500748773571450173_n.jpg" data-title="Family Moments - 2012">
+          <div class="scotch-tape"></div>
+          <div class="polaroid-photo-box">
+            <img src="assets/photos/465424263_10225469984807097_4500748773571450173_n.jpg" alt="Memory" loading="lazy">
+          </div>
+          <div class="polaroid-year-stamp">2012</div>
+        </div>
+
+        <div class="scatter-polaroid-item" style="transform: rotate(-4deg);" data-src="assets/photos/465288379_10225469987007152_6407773295642653158_n.jpg" data-title="Quiet Strength - 2009">
+          <div class="scotch-tape"></div>
+          <div class="polaroid-photo-box">
+            <img src="assets/photos/465288379_10225469987007152_6407773295642653158_n.jpg" alt="Memory" loading="lazy">
+          </div>
+          <div class="polaroid-year-stamp">2009</div>
+        </div>
+
+        <div class="scatter-polaroid-item" style="transform: rotate(6deg);" data-src="assets/photos/465173363_10225469982167031_3135516522095799177_n.jpg" data-title="Celebrations - 2005">
+          <div class="scotch-tape"></div>
+          <div class="polaroid-photo-box">
+            <img src="assets/photos/465173363_10225469982167031_3135516522095799177_n.jpg" alt="Memory" loading="lazy">
+          </div>
+          <div class="polaroid-year-stamp">2005</div>
+        </div>
+
+        <div class="scatter-polaroid-item" style="transform: rotate(-3deg);" data-src="assets/photos/465422921_10225469982327035_8577979762292632392_n.jpg" data-title="Golden Smile - 2007">
+          <div class="scotch-tape"></div>
+          <div class="polaroid-photo-box">
+            <img src="assets/photos/465422921_10225469982327035_8577979762292632392_n.jpg" alt="Memory" loading="lazy">
+          </div>
+          <div class="polaroid-year-stamp">2007</div>
+        </div>
+
+        <div class="scatter-polaroid-item" style="transform: rotate(4deg);" data-src="assets/photos/465561133_10225469980846998_5089765502435108626_n.jpg" data-title="With Our Best - 2014">
+          <div class="scotch-tape"></div>
+          <div class="polaroid-photo-box">
+            <img src="assets/photos/465561133_10225469980846998_5089765502435108626_n.jpg" alt="Memory" loading="lazy">
+          </div>
+          <div class="polaroid-year-stamp">2014</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= ENTRY V: WORDS OF WISDOM & TOAST ================= -->
+    <section class="journal-section entry-section island-bg-ocean" id="entry-5" data-section-idx="5">
+      <div class="tongan-kupesi-ocean-overlay"></div>
+      
+      <div class="wisdom-container">
+        <div class="entry-header-tag">ENTRY V • WORDS OF WISDOM</div>
+        <h2 class="entry-display-headline">Wisdom Carved in Calm Waters</h2>
+        <div class="entry-gold-divider centered"></div>
+
+        <div class="quotes-editorial-grid" id="quotes-editorial-grid">
+          <div class="wisdom-quote-card">
+            <div class="quote-text">“Work hard in silence, let your character and integrity do the talking.”</div>
+            <div class="quote-meta">— DAILY LIFE LESSON</div>
+          </div>
+          <div class="wisdom-quote-card">
+            <div class="quote-text">“No matter how stormy it gets, steady hands always find calm waters.”</div>
+            <div class="quote-meta">— ON OVERCOMING CHALLENGES</div>
+          </div>
+          <div class="wisdom-quote-card">
+            <div class="quote-text">“Family isn't just an important thing. It's everything.”</div>
+            <div class="quote-meta">— CORE VALUE</div>
+          </div>
+        </div>
+
+        <!-- Epilogue Toast Box -->
+        <div class="epilogue-toast-box">
+          <div class="toast-badge">HAPPY FATHER'S DAY</div>
+          <h3 class="toast-title">A Toast to You, Dad!</h3>
+          <p class="toast-message">May the years ahead bring you robust health, great joy, endless laughter, and many new adventures. We love you more than words can express.</p>
+          <div class="toast-signoff">Here's to the legend himself! 🥂</div>
+          <button class="toast-celebrate-btn" id="confetti-launch-btn">🎉 Celebrate with Confetti</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SECTION VI: COMMUNITY WALL OF HONOR ================= -->
+    <section class="journal-section community-wall-section island-bg-lagoon" id="community-wall-section" data-section-idx="6">
+      <div class="community-wall-header">
+        <div class="community-wall-badge">COMMUNITY FATHERS MONTAGE & TRIBUTE</div>
+        <h2 class="community-wall-title">Fathers of Our Community — Wall of Honor</h2>
+        <p class="community-wall-sub">Upload a photo of your father to join the community wall and celebrate all great fathers!</p>
+        
+        <div class="community-wall-toolbar">
+          <button class="wall-btn highlight" id="open-upload-modal-btn">
+            <span>👨‍👦</span>
+            <span>Upload Your Father to Join</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Polaroid Scatter Grid for Community -->
+      <div class="community-collage-board" id="community-collage-board">
+        <!-- Rendered dynamically by app.js: Dad's single tribute + user uploads + interactive empty reserved slots -->
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="journal-footer">
+      <div class="tongan-tapa-footer-line"></div>
+      <div class="footer-text">
+        <span>Created with love for <strong>Ratu Nautu Latunipulu</strong> & Fathers Everywhere</span>
+        <span class="footer-year">2026 Edition • Cloudflare & GitHub Static Archive</span>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- ================= MEDIA LIGHTBOX MODAL ================= -->
+  <div class="media-lightbox" id="media-lightbox" role="dialog" aria-hidden="true">
+    <div class="lightbox-backdrop" id="lightbox-close-backdrop"></div>
+    <div class="lightbox-dialog">
+      <button class="lightbox-close" id="lightbox-close-btn" aria-label="Close Lightbox">✕</button>
+      <div class="lightbox-media-target" id="lightbox-media-target"></div>
+      <div class="lightbox-details">
+        <h3 class="lightbox-title" id="lightbox-title"></h3>
+        <p class="lightbox-caption" id="lightbox-caption"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PHOTO UPLOAD MODAL ================= -->
+  <div class="upload-modal" id="upload-photo-modal" role="dialog" aria-hidden="true">
+    <div class="upload-backdrop" id="upload-close-backdrop"></div>
+    <div class="upload-dialog">
+      <button class="upload-close" id="upload-close-btn" aria-label="Close Modal">✕</button>
+      
+      <div class="upload-header">
+        <span class="upload-badge">COMMUNITY TRIBUTE</span>
+        <h2>Add a Father to the Wall of Honor</h2>
+        <p>Honor your father, uncle, or mentor by adding their memory to the community keepsake.</p>
+      </div>
+
+      <form id="photo-upload-form" class="upload-form">
+        <div class="upload-dropzone" id="upload-dropzone">
+          <input type="file" id="photo-file-input" accept="image/*" style="display: none;">
+          <div class="dropzone-prompt" id="dropzone-prompt">
+            <span class="drop-icon">📸</span>
+            <div class="drop-title">Drag & Drop Father's Photo Here</div>
+            <div class="drop-sub">or click to browse from your device</div>
+          </div>
+          <div class="dropzone-preview" id="dropzone-preview" style="display: none;">
+            <img id="preview-img" alt="Preview">
+            <button type="button" class="remove-preview-btn" id="remove-preview-btn">✕ Change Photo</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="father-name-input">Father's Full Name *</label>
+          <input type="text" id="father-name-input" placeholder="e.g. Sione Latunipulu" required>
+        </div>
+
+        <div class="form-group">
+          <label for="uploader-name-input">Your Name / Family Name *</label>
+          <input type="text" id="uploader-name-input" placeholder="e.g. Latunipulu Family" required>
+        </div>
+
+        <div class="form-group">
+          <label for="uploader-caption-input">Special Message or Caption</label>
+          <input type="text" id="uploader-caption-input" placeholder="e.g. A lifetime of quiet strength and love">
+        </div>
+
+        <div class="upload-error-msg" id="upload-error-msg">Please select a photo and enter both names.</div>
+
+        <button type="submit" class="submit-upload-btn" id="submit-upload-btn">
+          <span>✨ Add Photo to Wall of Honor</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= PASSCODE & VISITOR GATEKEEPER ================= -->
+  <div class="passcode-gate" id="passcode-gate">
+    <div class="gate-overlay"></div>
+    <div class="gate-card-wrapper">
+      
+      <!-- STEP 1: Passcode Gate -->
+      <div class="gate-card" id="gate-passcode-card">
+        <div class="gate-crest">👑</div>
+        <h2 class="gate-title">Father's Day Keepsake</h2>
+        <p class="gate-sub">Enter the family passcode to open the living archive.</p>
+
+        <form id="passcode-form" class="gate-form">
+          <div class="input-wrap">
+            <input type="password" id="passcode-input" placeholder="Enter Passcode" autocomplete="off" autofocus>
+          </div>
+          <div class="gate-error" id="passcode-error-msg">Incorrect passcode. Please try again.</div>
+          <button type="submit" class="gate-btn">Unlock Journal</button>
+        </form>
+      </div>
+
+      <!-- STEP 2: Visitor Registration Form -->
+      <div class="gate-card" id="gate-visitor-card" style="display: none;">
+        <div class="gate-crest">🌴</div>
+        <h2 class="gate-title">Welcome to the Celebration!</h2>
+        <p class="gate-sub">Please sign the family guestbook before entering.</p>
+
+        <form id="visitor-form" class="gate-form">
+          <div class="input-wrap">
+            <input type="text" id="visitor-name-input" placeholder="Your Name / Family Name *" required>
+          </div>
+          <div class="input-wrap">
+            <input type="text" id="visitor-note-input" placeholder="A brief wish or note for Dad (optional)">
+          </div>
+          <div class="gate-error" id="visitor-error-msg">Please enter your name to enter.</div>
+          <button type="submit" class="gate-btn">Sign & Enter Journal</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= GUESTBOOK LEDGER MODAL (ADMIN ONLY) ================= -->
+  <div class="guestbook-modal" id="guestbook-modal" role="dialog" aria-hidden="true">
+    <div class="guestbook-backdrop" id="guestbook-close-backdrop"></div>
+    <div class="guestbook-dialog">
+      <div class="guestbook-header">
+        <div class="guestbook-title-wrap">
+          <span class="guestbook-badge">ADMINISTRATION VAULT</span>
+          <h2>Visitor Guestbook & Activity</h2>
+        </div>
+        <button class="guestbook-close" id="guestbook-close-btn" aria-label="Close">✕</button>
+      </div>
+
+      <div class="guestbook-toolbar">
+        <span class="visitor-count-badge" id="visitor-count-badge">0 Visitors Recorded</span>
+        <button class="guestbook-refresh-btn" id="guestbook-refresh-btn">🔄 Refresh</button>
+      </div>
+
+      <div class="guestbook-list" id="guestbook-list">
+        <div class="guestbook-empty">No visitors recorded yet.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="security-toast" id="security-toast"></div>
+
+  <!-- Scripts -->
+  <script src="config.js"></script>
+  <script src="security.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
