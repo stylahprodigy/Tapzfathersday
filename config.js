@@ -95,6 +95,13 @@ window.JOURNAL_CONFIG = {
         caption: "Not crops, not wealth — people. A family who learned to walk in his shadow and stand strong in his legacy. The children tell of where he stayed.",
         src: "assets/photos/465114369_10225469983567066_8602633835982269215_n.jpg",
         align: "right"
+      },
+      {
+        year: "2025",
+        title: "A Tapestry of Family",
+        caption: "Surrounded by those he loves and those who adore him. Every milestone is a testament to the home and values he built with unwavering devotion.",
+        src: "assets/photos/IMG_7340.JPG",
+        align: "left"
       }
     ]
   },
@@ -123,6 +130,10 @@ window.JOURNAL_CONFIG = {
       { src: "assets/photos/IMG_3133.JPEG", year: "2025", title: "Special Gathering", tilt: "2deg" },
       { src: "assets/photos/IMG_3153.JPG", year: "2024", title: "Sunlit Smiles", tilt: "-4deg" },
       { src: "assets/photos/IMG_5429.jpeg", year: "2022", title: "Always Together", tilt: "3deg" },
+      { src: "assets/photos/IMG_7687.JPG", year: "2025", title: "Island Warmth", tilt: "-3deg" },
+      { src: "assets/photos/IMG_7688.JPG", year: "2025", title: "Heartfelt Bonds", tilt: "4deg" },
+      { src: "assets/photos/IMG_7689.JPG", year: "2025", title: "Golden Moments", tilt: "-2deg" },
+      { src: "assets/photos/fb3cadf438f1cf7144dfb17273b56fc0.JPG", year: "2018", title: "Timeless Spirit", tilt: "3deg" },
       { src: "assets/photos/THAT_KINDA_GUY.JPG", year: "2021", title: "That Kinda Guy", tilt: "-2deg" }
     ]
   },
@@ -151,5 +162,12 @@ window.JOURNAL_CONFIG = {
       message: "May the years ahead bring you robust health, great joy, endless laughter, and many new adventures. We love you more than words can express.",
       toast: "Here's to the legend himself! 🥂"
     }
+  },
+
+  // DAD'S OFFICIAL EDIT VIDEO CONFIGURATION
+  VIDEO_EDIT: {
+    src: "assets/videos/thirst trap edit of my dad.mp4",
+    title: "🔥 Ratu Nautu Latunipulu — The Official Edit",
+    caption: "Proceed with caution: High aura ahead."
   }
 };

@@ -1942,3 +1942,105 @@ body.editorial-body {
     display: none; /* Conserve space */
   }
 }
+
+/* ==========================================================================
+   THIRST TRAP VIDEO EDIT & EASTER EGG STYLES
+   ========================================================================== */
+.toast-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+  margin-top: 22px;
+}
+
+.thirst-trap-btn {
+  background: linear-gradient(135deg, var(--tongan-red), var(--ochre-tonga), var(--gold-dark)) !important;
+  color: #ffffff !important;
+  border: 1px solid var(--gold-vivid) !important;
+  box-shadow: 0 8px 24px rgba(184, 93, 25, 0.4), 0 0 15px rgba(243, 207, 122, 0.3) !important;
+  animation: pulseThirstGlow 2.5s infinite ease-in-out;
+}
+
+.thirst-trap-btn:hover {
+  transform: translateY(-3px) scale(1.03) !important;
+  box-shadow: 0 12px 30px rgba(184, 93, 25, 0.65), 0 0 25px rgba(243, 207, 122, 0.6) !important;
+}
+
+@keyframes pulseThirstGlow {
+  0%, 100% { box-shadow: 0 8px 24px rgba(184, 93, 25, 0.4), 0 0 15px rgba(243, 207, 122, 0.3); }
+  50% { box-shadow: 0 8px 28px rgba(223, 183, 108, 0.65), 0 0 22px rgba(223, 183, 108, 0.5); }
+}
+
+.thirst-trap-polaroid {
+  border: 2px solid var(--gold-vivid) !important;
+  box-shadow: 0 0 22px rgba(243, 207, 122, 0.45), var(--shadow-polaroid) !important;
+  position: relative;
+}
+
+.thirst-trap-badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: linear-gradient(135deg, #b81919, #e65c00);
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+  z-index: 10;
+  border: 1px solid #ffcc00;
+}
+
+.polaroid-play-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 52px;
+  height: 52px;
+  background: rgba(13, 10, 8, 0.75);
+  border: 2px solid var(--gold-vivid);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold-vivid);
+  font-size: 1.25rem;
+  padding-left: 3px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+  transition: var(--transition-smooth);
+}
+
+.scatter-polaroid-item:hover .polaroid-play-overlay {
+  transform: translate(-50%, -50%) scale(1.18);
+  background: var(--ochre-tonga);
+  color: #ffffff;
+  border-color: #ffffff;
+}
+
+.video-player-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 4px;
+}
+
+.lightbox-video-player {
+  width: 100%;
+  max-width: 650px;
+  max-height: 72vh;
+  border-radius: 10px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 30px rgba(243, 207, 122, 0.4);
+  border: 1px solid var(--gold-vivid);
+  background: #000000;
+  display: block;
+  margin: 0 auto;
+  transform: translateZ(0);
+  will-change: transform;
+  outline: none;
+}
+

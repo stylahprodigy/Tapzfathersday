@@ -403,7 +403,10 @@
           <h3 class="toast-title">A Toast to You, Dad!</h3>
           <p class="toast-message">May the years ahead bring you robust health, great joy, endless laughter, and many new adventures. We love you more than words can express.</p>
           <div class="toast-signoff">Here's to the legend himself! 🥂</div>
-          <button class="toast-celebrate-btn" id="confetti-launch-btn">🎉 Celebrate with Confetti</button>
+          <div class="toast-actions-row">
+            <button type="button" class="toast-celebrate-btn" id="confetti-launch-btn">🎉 Celebrate with Confetti</button>
+            <button type="button" class="toast-celebrate-btn thirst-trap-btn" id="thirst-trap-launch-btn" onclick="window.launchDadVideoEdit && window.launchDadVideoEdit(event)">🔥 Watch Dad's Edit 🤫</button>
+          </div>
         </div>
       </div>
     </section>
@@ -571,8 +574,8 @@
   <div class="security-toast" id="security-toast"></div>
 
   <!-- Scripts -->
-  <script src="config.js"></script>
-  <script src="security.js"></script>
-  <script src="app.js"></script>
+  <script src="config.js?v=2.2"></script>
+  <script src="security.js?v=2.2"></script>
+  <script src="app.js?v=2.2"></script>
 </body>
 </html>

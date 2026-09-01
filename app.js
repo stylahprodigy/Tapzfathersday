@@ -167,16 +167,23 @@
         polaroidContainer.innerHTML = '';
         config.ENTRY_4.items.forEach((item, idx) => {
           const card = document.createElement('div');
-          card.className = 'scatter-polaroid-item photo-zoomable';
+          const isVideo = item.isVideo || item.isThirstTrap || (item.src && (item.src.endsWith('.mov') || item.src.endsWith('.mp4')));
+          card.className = `scatter-polaroid-item photo-zoomable ${isVideo ? 'thirst-trap-polaroid' : ''}`;
           const tilt = item.tilt || `${((idx % 5) - 2) * 2.5}deg`;
           card.style.transform = `rotate(${tilt})`;
           card.setAttribute('data-src', item.src);
           card.setAttribute('data-title', item.title || 'Family Memory');
+          if (item.caption) card.setAttribute('data-caption', item.caption);
+          if (isVideo) card.setAttribute('data-video', 'true');
+
+          const imgSrc = item.poster || (isVideo ? 'assets/photos/THAT_KINDA_GUY.JPG' : item.src);
 
           card.innerHTML = `
             <div class="scotch-tape"></div>
+            ${isVideo ? '<div class="thirst-trap-badge">🔥 THE EDIT</div>' : ''}
             <div class="polaroid-photo-box">
-              <img src="${item.src}" alt="${item.title || 'Memory'}" loading="lazy">
+              <img src="${imgSrc}" alt="${item.title || 'Memory'}" loading="lazy">
+              ${isVideo ? '<div class="polaroid-play-overlay">▶</div>' : ''}
             </div>
             <div class="polaroid-year-stamp">${item.year || ''} • ${item.title || ''}</div>
           `;
@@ -441,41 +448,150 @@
   }
 
   /* =========================================================================
-     4. LIGHTBOX ZOOM ENGINE
+     4. LIGHTBOX ZOOM ENGINE & THIRST TRAP VIDEO MEDIA HUB
      ========================================================================= */
+  let wasAudioPlayingBeforeVideo = false;
+
+  function launchDadVideoEdit(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    if (e && e.stopPropagation) e.stopPropagation();
+    launchCelebrationConfetti();
+    const cfg = window.JOURNAL_CONFIG || {};
+    const videoSrc = (cfg.VIDEO_EDIT && cfg.VIDEO_EDIT.src) || 'assets/videos/thirst trap edit of my dad.mp4';
+    const videoTitle = (cfg.VIDEO_EDIT && cfg.VIDEO_EDIT.title) || '🔥 Ratu Nautu Latunipulu — The Official Edit';
+    const videoCaption = (cfg.VIDEO_EDIT && cfg.VIDEO_EDIT.caption) || 'Proceed with caution: High aura ahead.';
+    openLightbox(videoSrc, videoTitle, videoCaption, true);
+  }
+
+  window.launchDadVideoEdit = launchDadVideoEdit;
+
   function initLightboxTriggers() {
-    // Global Event Delegation for all zoomable photos & polaroids
+    // Global Event Delegation for all zoomable photos, polaroids, & video buttons
     document.addEventListener('click', (e) => {
+      // 1. Check if thirst trap button or child clicked
+      const editBtn = e.target.closest('#thirst-trap-launch-btn, .thirst-trap-btn');
+      if (editBtn) {
+        launchDadVideoEdit(e);
+        return;
+      }
+
+      // 2. Check if close button or backdrop clicked
+      const closeTarget = e.target.closest('#lightbox-close-btn, #lightbox-close-backdrop');
+      if (closeTarget) {
+        e.preventDefault();
+        closeLightbox();
+        return;
+      }
+
+      // 3. Zoomable photos & polaroids
       const zoomItem = e.target.closest('.photo-zoomable, .scatter-polaroid-item');
       if (zoomItem) {
         const img = zoomItem.querySelector('img');
         const src = zoomItem.getAttribute('data-src') || (img ? img.src : '');
         const title = zoomItem.getAttribute('data-title') || (img ? img.alt : '');
         const caption = zoomItem.getAttribute('data-caption') || 'Kept loose, cherished forever.';
+        const isVideo = zoomItem.getAttribute('data-video') === 'true' || (src && (src.endsWith('.mov') || src.endsWith('.mp4')));
         if (src) {
-          openLightbox(src, title, caption);
+          openLightbox(src, title, caption, isVideo);
         }
       }
     });
 
-    if (lightboxCloseBtn) lightboxCloseBtn.addEventListener('click', closeLightbox);
-    if (lightboxCloseBackdrop) lightboxCloseBackdrop.addEventListener('click', closeLightbox);
+    // Secret Crest 3-tap Easter Egg
+    const brandCrest = document.getElementById('brand-crest-btn');
+    let crestClickCount = 0;
+    let crestClickTimer = null;
+    if (brandCrest) {
+      brandCrest.addEventListener('click', () => {
+        crestClickCount++;
+        clearTimeout(crestClickTimer);
+        crestClickTimer = setTimeout(() => { crestClickCount = 0; }, 1200);
+        if (crestClickCount >= 3) {
+          crestClickCount = 0;
+          showToast('🔥 SECRET EDIT UNLOCKED!');
+          launchDadVideoEdit();
+        }
+      });
+    }
   }
 
-  function openLightbox(src, title, caption) {
-    if (!mediaLightbox || !src) return;
-    lightboxMediaTarget.innerHTML = `<img src="${src}" alt="${title || ''}">`;
-    lightboxTitle.textContent = title || '';
-    lightboxCaption.textContent = caption || '';
-    mediaLightbox.classList.add('active');
+  function openLightbox(src, title, caption, isVideo = false) {
+    const lightbox = document.getElementById('media-lightbox');
+    const target = document.getElementById('lightbox-media-target');
+    const titleEl = document.getElementById('lightbox-title');
+    const captionEl = document.getElementById('lightbox-caption');
+    if (!lightbox || !target || !src) return;
+    
+    if (isVideo || src.endsWith('.mov') || src.endsWith('.mp4') || src.includes('.mp4')) {
+      wasAudioPlayingBeforeVideo = isAudioPlaying;
+      if (isAudioPlaying && audioPlayer) {
+        audioPlayer.pause();
+        isAudioPlaying = false;
+        updateAudioUI(false, '');
+      }
+
+      // Pause ambient dust canvas to free up 100% GPU for smooth video hardware acceleration
+      isCanvasPaused = true;
+
+      const safeSrc = encodeURI(src);
+      target.innerHTML = `
+        <div class="video-player-container">
+          <video id="active-lightbox-video" src="${safeSrc}" controls playsinline preload="auto" class="lightbox-video-player" style="max-height:75vh; width:100%; max-width:650px;"></video>
+        </div>
+      `;
+
+      setTimeout(() => {
+        const activeVideo = document.getElementById('active-lightbox-video');
+        if (activeVideo) {
+          activeVideo.play().catch(err => {
+            console.log("Autoplay unmuted blocked by browser:", err);
+          });
+        }
+      }, 60);
+    } else {
+      target.innerHTML = `<img src="${src}" alt="${title || ''}" loading="eager">`;
+    }
+
+    if (titleEl) titleEl.textContent = title || '';
+    if (captionEl) captionEl.textContent = caption || '';
+    lightbox.classList.add('active');
+    lightbox.style.display = 'flex';
   }
+
+  window.openLightbox = openLightbox;
 
   function closeLightbox() {
-    if (mediaLightbox) mediaLightbox.classList.remove('active');
+    const lightbox = document.getElementById('media-lightbox');
+    const target = document.getElementById('lightbox-media-target');
+    if (!lightbox) return;
+    lightbox.classList.remove('active');
+    lightbox.style.display = 'none';
+
+    const activeVideo = document.getElementById('active-lightbox-video');
+    if (activeVideo) {
+      activeVideo.pause();
+      activeVideo.src = '';
+      activeVideo.remove();
+    }
+    if (target) target.innerHTML = '';
+
+    // Resume ambient dust canvas
+    isCanvasPaused = false;
+
+    if (wasAudioPlayingBeforeVideo && audioPlayer) {
+      audioPlayer.play().then(() => {
+        isAudioPlaying = true;
+        const track = playlist[currentSongIndex];
+        updateAudioUI(true, track ? track.title : '');
+      }).catch(() => {});
+      wasAudioPlayingBeforeVideo = false;
+    }
   }
 
+  window.closeLightbox = closeLightbox;
+
   /* =========================================================================
-     5. COMMUNITY PHOTO WALL & UPLOAD ENGINE
+     5. COMMUNITY PHOTO WALL & UPLOAD ENGINE (SYNCED WITH LIVE BACKEND & OFFLINE CACHE)
      ========================================================================= */
   function initUploadEngine() {
     if (navAddPhotoBtn) navAddPhotoBtn.addEventListener('click', openUploadModal);
@@ -559,7 +675,7 @@
     if (uploadPhotoModal) uploadPhotoModal.classList.remove('active');
   }
 
-  function submitCommunityPhoto() {
+  async function submitCommunityPhoto() {
     const fatherName = fatherNameInput.value.trim();
     const uploaderName = uploaderNameInput.value.trim();
     const caption = uploaderCaptionInput.value.trim();
@@ -569,7 +685,7 @@
       return;
     }
 
-    const newPhoto = {
+    const localPhoto = {
       url: currentUploadedPhotoData,
       title: `Father: ${fatherName}`,
       caption: caption || 'Honoring our beloved father',
@@ -577,10 +693,32 @@
       date: new Date().toLocaleDateString()
     };
 
-    // Save to localStorage for instant static client persistence
+    // 1. Try sending to live server backend API
+    try {
+      const resp = await fetch('/api/upload_photo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          uploader: uploaderName,
+          father_name: fatherName,
+          caption: caption,
+          image: currentUploadedPhotoData
+        })
+      });
+      if (resp.ok) {
+        const result = await resp.json();
+        if (result.success && result.photo) {
+          localPhoto.url = result.photo.url;
+        }
+      }
+    } catch (err) {
+      // Backend not reached (e.g. offline or static host); fallback to local persistence
+    }
+
+    // 2. Save locally for instant persistence
     try {
       const stored = JSON.parse(localStorage.getItem(COMMUNITY_STORAGE_KEY) || '[]');
-      stored.unshift(newPhoto);
+      stored.unshift(localPhoto);
       localStorage.setItem(COMMUNITY_STORAGE_KEY, JSON.stringify(stored));
     } catch (e) {}
 
@@ -589,12 +727,12 @@
     showToast(`Photo for ${fatherName} added to Wall of Honor!`);
     
     // Smooth scroll down to the community wall
-    document.getElementById('community-wall-section').scrollIntoView({ behavior: 'smooth' });
+    const wallSec = document.getElementById('community-wall-section');
+    if (wallSec) wallSec.scrollIntoView({ behavior: 'smooth' });
   }
 
-  function initCommunityWall() {
+  async function initCommunityWall() {
     if (!communityCollageBoard) return;
-    communityCollageBoard.innerHTML = '';
 
     // 1. Primary Feature for Dad
     const dadPrimaryCard = {
@@ -605,13 +743,40 @@
       tilt: "-2deg"
     };
 
-    // 2. Fetch locally stored community photos
-    let communityPhotos = [];
+    let serverPhotos = [];
     try {
-      communityPhotos = JSON.parse(localStorage.getItem(COMMUNITY_STORAGE_KEY) || '[]');
+      const res = await fetch('/api/community_photos');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && Array.isArray(data.photos)) {
+          serverPhotos = data.photos.map(p => ({
+            url: p.url,
+            title: p.father_name ? `Father: ${p.father_name}` : `Father tribute`,
+            caption: p.caption || "Special Memory",
+            uploader: p.uploader || "Family Member"
+          }));
+        }
+      }
+    } catch (e) {
+      // Server not reachable
+    }
+
+    let localPhotos = [];
+    try {
+      localPhotos = JSON.parse(localStorage.getItem(COMMUNITY_STORAGE_KEY) || '[]');
     } catch (e) {}
 
-    const allPhotos = [dadPrimaryCard, ...communityPhotos];
+    // Combine unique photos (avoid duplicates)
+    const combinedMap = new Map();
+    [...serverPhotos, ...localPhotos].forEach(p => {
+      if (p.url && !combinedMap.has(p.url)) {
+        combinedMap.set(p.url, p);
+      }
+    });
+
+    const allPhotos = [dadPrimaryCard, ...Array.from(combinedMap.values())];
+
+    communityCollageBoard.innerHTML = '';
 
     // Render photo cards
     allPhotos.forEach((item, idx) => {
@@ -636,8 +801,8 @@
       communityCollageBoard.appendChild(card);
     });
 
-    // 3. Render 5 interactive empty upload spaces
-    for (let s = 0; s < 5; s++) {
+    // 3. Render 4 interactive empty upload spaces
+    for (let s = 0; s < 4; s++) {
       const emptySlot = document.createElement('div');
       emptySlot.className = 'polaroid-scatter-card empty-slot-card';
       const tilt = `${((s % 5) - 2) * 2}deg`;
@@ -720,7 +885,7 @@
     });
 
     const particles = [];
-    const particleCount = 45;
+    const particleCount = 40;
 
     for (let i = 0; i < particleCount; i++) {
       particles.push({
@@ -734,23 +899,25 @@
     }
 
     function renderParticles() {
-      ctx.clearRect(0, 0, w, h);
-      ctx.fillStyle = '#dfb76c';
+      if (!isCanvasPaused) {
+        ctx.clearRect(0, 0, w, h);
+        ctx.fillStyle = '#dfb76c';
 
-      particles.forEach((p) => {
-        ctx.globalAlpha = p.alpha;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
+        particles.forEach((p) => {
+          ctx.globalAlpha = p.alpha;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
 
-        p.y -= p.speedY;
-        p.x += p.speedX;
+          p.y -= p.speedY;
+          p.x += p.speedX;
 
-        if (p.y < 0) {
-          p.y = h;
-          p.x = Math.random() * w;
-        }
-      });
+          if (p.y < 0) {
+            p.y = h;
+            p.x = Math.random() * w;
+          }
+        });
+      }
 
       requestAnimationFrame(renderParticles);
     }
