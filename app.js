@@ -111,6 +111,80 @@
     if (config.DAD_NAME) {
       document.getElementById('nav-brand-title').textContent = config.DAD_NAME;
     }
+
+    // 1. Render Entry I Hero Photo
+    if (config.ENTRY_1 && config.ENTRY_1.photo) {
+      const entry1Img = document.getElementById('entry1-img');
+      const entry1Frame = document.getElementById('entry1-photo-frame');
+      const entry1Stamp = document.getElementById('entry1-photo-stamp');
+      if (entry1Img) entry1Img.src = config.ENTRY_1.photo.src;
+      if (entry1Frame) {
+        entry1Frame.setAttribute('data-src', config.ENTRY_1.photo.src);
+        entry1Frame.setAttribute('data-title', config.ENTRY_1.photo.caption || 'The Early Years');
+      }
+      if (entry1Stamp) entry1Stamp.textContent = `${config.ENTRY_1.photo.year || '2001'} — ${config.ENTRY_1.photo.caption || 'HERITAGE'}`;
+    }
+
+    // 2. Dynamic Timeline Reels (Entry III)
+    if (config.ENTRY_3 && Array.isArray(config.ENTRY_3.reels)) {
+      const reelContainer = document.getElementById('timeline-reels-container');
+      if (reelContainer) {
+        reelContainer.innerHTML = '';
+        config.ENTRY_3.reels.forEach((reel, idx) => {
+          const isLeft = (idx % 2 === 0);
+          const row = document.createElement('div');
+          row.className = `film-reel-row ${isLeft ? 'layout-left' : 'layout-right'}`;
+
+          const frameHtml = `
+            <div class="film-strip-frame photo-zoomable" data-src="${reel.src}" data-title="${reel.title}">
+              <div class="sprockets top"></div>
+              <div class="film-image-target">
+                <img src="${reel.src}" alt="${reel.title}" class="film-img" loading="lazy">
+              </div>
+              <div class="sprockets bottom"></div>
+            </div>
+          `;
+
+          const metaHtml = `
+            <div class="film-reel-meta">
+              <span class="film-year-badge">${reel.year}</span>
+              <h3 class="film-title">${reel.title}</h3>
+              <p class="film-caption">${reel.caption}</p>
+              <div class="film-meta-divider"></div>
+            </div>
+          `;
+
+          row.innerHTML = isLeft ? (frameHtml + metaHtml) : (metaHtml + frameHtml);
+          reelContainer.appendChild(row);
+        });
+      }
+    }
+
+    // 3. Dynamic Polaroids Constellation (Entry IV)
+    if (config.ENTRY_4 && Array.isArray(config.ENTRY_4.items)) {
+      const polaroidContainer = document.getElementById('polaroid-scatter-constellation');
+      if (polaroidContainer) {
+        polaroidContainer.innerHTML = '';
+        config.ENTRY_4.items.forEach((item, idx) => {
+          const card = document.createElement('div');
+          card.className = 'scatter-polaroid-item photo-zoomable';
+          const tilt = item.tilt || `${((idx % 5) - 2) * 2.5}deg`;
+          card.style.transform = `rotate(${tilt})`;
+          card.setAttribute('data-src', item.src);
+          card.setAttribute('data-title', item.title || 'Family Memory');
+
+          card.innerHTML = `
+            <div class="scotch-tape"></div>
+            <div class="polaroid-photo-box">
+              <img src="${item.src}" alt="${item.title || 'Memory'}" loading="lazy">
+            </div>
+            <div class="polaroid-year-stamp">${item.year || ''} • ${item.title || ''}</div>
+          `;
+
+          polaroidContainer.appendChild(card);
+        });
+      }
+    }
   }
 
   function checkGatekeeperStatus() {
@@ -370,23 +444,18 @@
      4. LIGHTBOX ZOOM ENGINE
      ========================================================================= */
   function initLightboxTriggers() {
-    // Zoomable items
-    document.querySelectorAll('.photo-zoomable').forEach((item) => {
-      item.addEventListener('click', () => {
-        const img = item.querySelector('img');
-        const src = item.getAttribute('data-src') || (img ? img.src : '');
-        const title = item.getAttribute('data-title') || (img ? img.alt : '');
-        const caption = item.getAttribute('data-caption') || '';
-        openLightbox(src, title, caption);
-      });
-    });
-
-    document.querySelectorAll('.scatter-polaroid-item').forEach((item) => {
-      item.addEventListener('click', () => {
-        const src = item.getAttribute('data-src');
-        const title = item.getAttribute('data-title');
-        openLightbox(src, title, "Kept loose, cherished forever.");
-      });
+    // Global Event Delegation for all zoomable photos & polaroids
+    document.addEventListener('click', (e) => {
+      const zoomItem = e.target.closest('.photo-zoomable, .scatter-polaroid-item');
+      if (zoomItem) {
+        const img = zoomItem.querySelector('img');
+        const src = zoomItem.getAttribute('data-src') || (img ? img.src : '');
+        const title = zoomItem.getAttribute('data-title') || (img ? img.alt : '');
+        const caption = zoomItem.getAttribute('data-caption') || 'Kept loose, cherished forever.';
+        if (src) {
+          openLightbox(src, title, caption);
+        }
+      }
     });
 
     if (lightboxCloseBtn) lightboxCloseBtn.addEventListener('click', closeLightbox);

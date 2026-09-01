@@ -17,7 +17,7 @@ window.JOURNAL_CONFIG = {
   HERO_ACTION: "OPEN THE JOURNAL",
   YEAR: "2026",
   
-  // Audio Ambience & Songs Playlist (Static for GitHub & Cloudflare Pages)
+  // Audio Ambience & Songs Playlist
   AUDIO: {
     enabled: true,
     volume: 0.35,
@@ -69,30 +69,30 @@ window.JOURNAL_CONFIG = {
     headline: "a reel of the years",
     reels: [
       {
-        year: "2009",
-        title: "Two of Us",
-        caption: "A photo taken too close, too bright, too fast — and therefore exactly right. This was how he loved: near enough to blur the edges, bright enough to make us squint. We kept it because it kept us.",
-        src: "assets/photos/465111373_10225469986967151_7970654995887563673_n.jpg",
+        year: "2005",
+        title: "In the Sunshine",
+        caption: "A photo taken in the warmth of the island afternoon. He smiled with that calm quiet certainty that made everyone around him feel safe and cherished.",
+        src: "assets/photos/465422921_10225469982327035_8577979762292632392_n.jpg",
         align: "left"
       },
       {
-        year: "2006",
-        title: "Held, in the Light",
-        caption: "Every good photograph of him is overexposed, as if the camera refused to hold a man that bright. She leaned in, the light came through the window, and the whole afternoon became a kind of grace.",
-        src: "assets/photos/465172942_10225469988447188_1277699363661289478_n.jpg",
+        year: "2007",
+        title: "Shared Laughs & Grace",
+        caption: "Every good photograph of him carries that gentle light. She leaned in, the light came through the window, and the whole afternoon became a kind of grace.",
+        src: "assets/photos/465561133_10225469980846998_5089765502435108626_n.jpg",
         align: "right"
       },
       {
-        year: "2007",
+        year: "2009",
         title: "The Glow Between Them",
-        caption: "Two people who had learned, over years, to live in each other's light. The flare in the lens was only the sun doing what their faces had already done — refusing to let us tell where one ended and the other began.",
+        caption: "Two people who had learned, over years, to live in each other's light. The flare in the lens was only the sun doing what their faces had already done.",
         src: "assets/photos/465367677_10225469988487189_8635519669333974068_n.jpg",
         align: "left"
       },
       {
         year: "2014",
         title: "What He Grew",
-        caption: "Not crops, not wealth — people. A girl who learned to run in his shadow, a child who learned to sit on his shoulders. The tattoo told of where he'd been; the children told of where he stayed.",
+        caption: "Not crops, not wealth — people. A family who learned to walk in his shadow and stand strong in his legacy. The children tell of where he stayed.",
         src: "assets/photos/465114369_10225469983567066_8602633835982269215_n.jpg",
         align: "right"
       }
@@ -105,46 +105,25 @@ window.JOURNAL_CONFIG = {
     headline: "a few <em>polaroids</em>, kept loose",
     subtitle: "Memories that didn't ask to be framed, just remembered.",
     items: [
-      {
-        src: "assets/photos/IMG_1908.JPG",
-        year: "2024",
-        tilt: "-5deg"
-      },
-      {
-        src: "assets/photos/IMG_2138.jpeg",
-        year: "2023",
-        tilt: "3deg"
-      },
-      {
-        src: "assets/photos/IMG_5429.jpeg",
-        year: "2022",
-        tilt: "-4deg"
-      },
-      {
-        src: "assets/photos/THAT_KINDA_GUY.JPG",
-        year: "2021",
-        tilt: "5deg"
-      },
-      {
-        src: "assets/photos/464825450_10225438053368831_2504579000914362514_n.jpg",
-        year: "2000",
-        tilt: "-3deg"
-      },
-      {
-        src: "assets/photos/465424263_10225469984807097_4500748773571450173_n.jpg",
-        year: "2012",
-        tilt: "4deg"
-      },
-      {
-        src: "assets/photos/465288379_10225469987007152_6407773295642653158_n.jpg",
-        year: "2009",
-        tilt: "-2deg"
-      },
-      {
-        src: "assets/photos/465173363_10225469982167031_3135516522095799177_n.jpg",
-        year: "2005",
-        tilt: "6deg"
-      }
+      { src: "assets/photos/087B36B5-CD79-4039-AAF8-20489B585371.JPEG", year: "2025", title: "Family Celebration", tilt: "-4deg" },
+      { src: "assets/photos/3C29833E-4E54-4C69-8893-3B2717615E94.JPG", year: "2024", title: "Quiet Reflection", tilt: "3deg" },
+      { src: "assets/photos/461726255_10225072540511238_9061600720500740799_n.jpg", year: "2024", title: "Warm Smile", tilt: "-3deg" },
+      { src: "assets/photos/464825450_10225438053368831_2504579000914362514_n.jpg", year: "2000", title: "The Pillar", tilt: "5deg" },
+      { src: "assets/photos/465173363_10225469982167031_3135516522095799177_n.jpg", year: "2005", title: "Island Days", tilt: "-2deg" },
+      { src: "assets/photos/465288379_10225469987007152_6407773295642653158_n.jpg", year: "2009", title: "Golden Afternoon", tilt: "4deg" },
+      { src: "assets/photos/465424263_10225469984807097_4500748773571450173_n.jpg", year: "2012", title: "Family Moments", tilt: "-5deg" },
+      { src: "assets/photos/54380C1A-045B-4651-9575-DE4F7B44CF30.JPEG", year: "2026", title: "Unforgettable Smile", tilt: "2deg" },
+      { src: "assets/photos/56577D91-B720-4B0D-A6ED-92F5CC84309D.JPG", year: "2023", title: "Generations", tilt: "-3deg" },
+      { src: "assets/photos/851F6047-DD43-4F68-86FD-72D0294A85D7.JPG", year: "2025", title: "Joyful Reunion", tilt: "4deg" },
+      { src: "assets/photos/921AD708-742A-4A4E-A32E-CA81093D90DE.JPEG", year: "2024", title: "Warm Embrace", tilt: "-4deg" },
+      { src: "assets/photos/AEC801CA-EFF9-4645-892E-586BEF9E4632.JPG", year: "2023", title: "Precious Memory", tilt: "3deg" },
+      { src: "assets/photos/BBBECE25-968A-4821-8063-FA7A2776C0E1.JPEG", year: "2026", title: "Father's Legacy", tilt: "-2deg" },
+      { src: "assets/photos/IMG_1908.JPG", year: "2024", title: "Cherished Moments", tilt: "5deg" },
+      { src: "assets/photos/IMG_2138.jpeg", year: "2023", title: "Laughter & Joy", tilt: "-3deg" },
+      { src: "assets/photos/IMG_3133.JPEG", year: "2025", title: "Special Gathering", tilt: "2deg" },
+      { src: "assets/photos/IMG_3153.JPG", year: "2024", title: "Sunlit Smiles", tilt: "-4deg" },
+      { src: "assets/photos/IMG_5429.jpeg", year: "2022", title: "Always Together", tilt: "3deg" },
+      { src: "assets/photos/THAT_KINDA_GUY.JPG", year: "2021", title: "That Kinda Guy", tilt: "-2deg" }
     ]
   },
 
