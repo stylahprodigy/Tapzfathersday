@@ -1,4 +1,0 @@
-# Drop your videos here:
-# - video1.mp4
-# - video2.mp4
-# (You can also name them whatever you like and update config.js)
