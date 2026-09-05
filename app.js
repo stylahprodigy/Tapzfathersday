@@ -17,6 +17,12 @@
   // Config reference
   const config = window.JOURNAL_CONFIG || {};
 
+  // Helper to resolve live Worker backend endpoint
+  function getApiUrl(endpoint) {
+    const base = (config && config.API_BASE_URL) ? config.API_BASE_URL.replace(/\/$/, '') : '';
+    return `${base}${endpoint}`;
+  }
+
   // DOM Elements - Timeline & Navigation
   const timelineRail = document.getElementById('timeline-rail');
   const railTrack = document.getElementById('rail-track');
@@ -180,7 +186,7 @@
           } else {
             showToast(`Welcome, ${res.name}!`);
             // Attempt logging to backend
-            fetch('/api/record_visitor', {
+            fetch(getApiUrl('/api/record_visitor'), {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ name: res.name, note: rawNote })
@@ -809,11 +815,71 @@
         }
       });
     }
+    // Touch Swipe Navigation for Mobile Intro Showcase
+    const stage = document.getElementById('gift-showcase-stage');
+    if (stage) {
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let touchEndX = 0;
+      let touchEndY = 0;
+
+      stage.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches.length === 1) {
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+          touchEndX = touchStartX;
+          touchEndY = touchStartY;
+        }
+      }, { passive: true });
+
+      stage.addEventListener('touchmove', (e) => {
+        if (e.touches && e.touches.length === 1) {
+          touchEndX = e.touches[0].clientX;
+          touchEndY = e.touches[0].clientY;
+        }
+      }, { passive: true });
+
+      stage.addEventListener('touchend', () => {
+        const deltaX = touchEndX - touchStartX;
+        const deltaY = touchEndY - touchStartY;
+        // Check horizontal swipe threshold (at least 45px, more horizontal than vertical)
+        if (Math.abs(deltaX) > 45 && Math.abs(deltaX) > Math.abs(deltaY) * 1.2) {
+          if (deltaX < 0) {
+            // Swiped LEFT -> Next slide
+            goToSlide(currentStorySlideIdx + 1);
+          } else {
+            // Swiped RIGHT -> Prev slide
+            goToSlide(currentStorySlideIdx - 1);
+          }
+        }
+      }, { passive: true });
+    }
   }
 
   /* =========================================================================
      3. LEFT-RAIL TIMELINE TRACKING WITH GLIDING BEAD (FIXED ALIGNMENT)
      ========================================================================= */
+  let lastScrollY = window.scrollY;
+  const topNavEl = document.querySelector('.top-nav');
+
+  function handleNavbarScrollCollapse() {
+    if (!topNavEl) return;
+    const currentY = window.scrollY;
+    const delta = currentY - lastScrollY;
+
+    if (currentY <= 40) {
+      topNavEl.classList.remove('nav-tabs-collapsed');
+    } else if (delta > 8 && currentY > 80) {
+      // Scrolled down -> collapse tabs so top bar stays minimal
+      topNavEl.classList.add('nav-tabs-collapsed');
+    } else if (delta < -6) {
+      // Scrolled up even a little bit -> show tabs immediately
+      topNavEl.classList.remove('nav-tabs-collapsed');
+    }
+
+    lastScrollY = currentY;
+  }
+
   function initScrollTracking() {
     window.addEventListener('scroll', updateTimelineProgress, { passive: true });
     window.addEventListener('resize', updateTimelineProgress, { passive: true });
@@ -871,6 +937,7 @@
   }
 
   function updateTimelineProgress() {
+    handleNavbarScrollCollapse();
     const scrollPos = window.scrollY;
     const windowHeight = window.innerHeight;
     const docHeight = document.documentElement.scrollHeight - windowHeight;
@@ -1276,6 +1343,32 @@
     }
   }
 
+  function compressImage(base64Str, maxDimension, quality, callback) {
+    const img = new Image();
+    img.onload = () => {
+      let width = img.width;
+      let height = img.height;
+      if (width > maxDimension || height > maxDimension) {
+        if (width > height) {
+          height = Math.round((height * maxDimension) / width);
+          width = maxDimension;
+        } else {
+          width = Math.round((width * maxDimension) / height);
+          height = maxDimension;
+        }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+      const compressed = canvas.toDataURL('image/jpeg', quality);
+      callback(compressed);
+    };
+    img.onerror = () => callback(base64Str);
+    img.src = base64Str;
+  }
+
   function handleSelectedFile(file) {
     if (!file.type.startsWith('image/')) {
       alert('Please select an image file (JPG, PNG, WebP).');
@@ -1283,10 +1376,12 @@
     }
     const reader = new FileReader();
     reader.onload = (event) => {
-      currentUploadedPhotoData = event.target.result;
-      previewImg.src = currentUploadedPhotoData;
-      dropzonePrompt.style.display = 'none';
-      dropzonePreview.style.display = 'block';
+      compressImage(event.target.result, 1200, 0.85, (compressedData) => {
+        currentUploadedPhotoData = compressedData;
+        previewImg.src = currentUploadedPhotoData;
+        dropzonePrompt.style.display = 'none';
+        dropzonePreview.style.display = 'block';
+      });
     };
     reader.readAsDataURL(file);
   }
@@ -1332,7 +1427,7 @@
 
     // Try posting to backend
     try {
-      const resp = await fetch('/api/upload_photo', {
+      const resp = await fetch(getApiUrl('/api/upload_photo'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -1385,7 +1480,7 @@
 
     let serverPhotos = [];
     try {
-      const res = await fetch('/api/community_photos');
+      const res = await fetch(getApiUrl('/api/community_photos'));
       if (res.ok) {
         const data = await res.json();
         if (data.success && Array.isArray(data.photos)) {
@@ -1503,7 +1598,7 @@
 
     // 1. Delete on server backend
     try {
-      await fetch('/api/delete_photo', {
+      await fetch(getApiUrl('/api/delete_photo'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: item.id })
@@ -1572,7 +1667,7 @@
 
     // 1. Try server
     try {
-      const resp = await fetch('/api/visitors');
+      const resp = await fetch(getApiUrl('/api/visitors'));
       if (resp.ok) {
         const data = await resp.json();
         if (data.success && Array.isArray(data.visitors)) {

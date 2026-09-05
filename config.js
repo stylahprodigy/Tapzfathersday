@@ -6,6 +6,9 @@
  */
 
 window.JOURNAL_CONFIG = {
+  // Live Cloudflare Worker + KV Backend (Instant Cross-Device Sync)
+  API_BASE_URL: "https://tapzfathersday.anonymousofmrgs.workers.dev",
+
   // Gatekeeper: Passcode removed as requested; visitors are remembered by name.
   PASSCODE: "", 
 
