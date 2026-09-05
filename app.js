@@ -1,13 +1,14 @@
 /**
  * =========================================================================
- * THE JOURNAL OF HIM — CORE JAVASCRIPT ENGINE
+ * THE JOURNAL OF HIM — CORE JAVASCRIPT ENGINE (2026 EDITION)
  * =========================================================================
- * - Left-Rail Timeline Tracking with Gliding Active Bead
- * - Smooth Section Transitions & Scroll Waypoints
- * - Standalone Audio Player Engine (Static Cloudflare Pages & GitHub Ready)
- * - Lightbox Zoom for Super 8 Frames & Loose Polaroids
- * - Community Photo Wall with Client-Side Persistence
- * - Confetti Celebration Engine
+ * - Celestial Storytelling Gifts Showcase with 3D Clouds & Stars
+ * - Visitor-Only Identity Gatekeeper (Persistent localStorage + Admin134434)
+ * - Fixed Left-Rail Timeline Tracking with Gliding Active Bead
+ * - Fullscreen HTML5 Canvas Confetti Burst Engine
+ * - Smooth Video Lightbox & Dad's Official Prime Years Edit
+ * - Infinite Community Wall (up to 100) with Admin Photo Deletion
+ * - Standalone Audio Player Engine with Smooth Controls
  */
 
 (function () {
@@ -16,21 +17,40 @@
   // Config reference
   const config = window.JOURNAL_CONFIG || {};
 
-  // DOM Elements
+  // DOM Elements - Timeline & Navigation
   const timelineRail = document.getElementById('timeline-rail');
+  const railTrack = document.getElementById('rail-track');
   const railProgressBar = document.getElementById('rail-progress-bar');
   const railActiveBead = document.getElementById('rail-active-bead');
   const railNodes = document.querySelectorAll('.rail-node');
   const sections = document.querySelectorAll('.journal-section');
 
-  // Hero Open Button
+  // Hero & Top Navigation Controls
   const heroOpenBtn = document.getElementById('hero-open-btn');
   const navJournalBtn = document.getElementById('nav-journal-btn');
   const navCommunityBtn = document.getElementById('nav-community-btn');
   const navAddPhotoBtn = document.getElementById('nav-add-photo-btn');
   const brandCrestBtn = document.getElementById('brand-crest-btn');
+  const fullscreenBtn = document.getElementById('fullscreen-btn');
 
-  // Audio elements
+  // Visitor Identity Elements
+  const navVisitorPill = document.getElementById('nav-visitor-pill');
+  const navVisitorDisplayName = document.getElementById('nav-visitor-display-name');
+  const navChangeNameBtn = document.getElementById('nav-change-name-btn');
+  const changeNameModal = document.getElementById('change-name-modal');
+  const changeNameForm = document.getElementById('change-name-form');
+  const changeNameInput = document.getElementById('change-name-input');
+  const changeNameCloseBtn = document.getElementById('change-name-close-btn');
+  const changeNameBackdrop = document.getElementById('change-name-backdrop');
+
+  // Storytelling Showcase Elements
+  const giftSlides = document.querySelectorAll('.gift-slide');
+  const storyDots = document.querySelectorAll('.story-dot');
+  const storyPrevBtn = document.getElementById('story-prev-btn');
+  const storyNextBtn = document.getElementById('story-next-btn');
+  const cloudBurstForward = document.getElementById('cloud-burst-forward');
+
+  // Audio Elements
   const audioToggleBtn = document.getElementById('audio-toggle-btn');
   const audioIcon = document.getElementById('audio-icon');
   const audioLabel = document.getElementById('audio-label');
@@ -39,7 +59,7 @@
   const audioVolumeSlider = document.getElementById('audio-volume-slider');
   const volumeLabel = document.getElementById('volume-label');
 
-  // Lightbox elements
+  // Lightbox Elements
   const mediaLightbox = document.getElementById('media-lightbox');
   const lightboxMediaTarget = document.getElementById('lightbox-media-target');
   const lightboxTitle = document.getElementById('lightbox-title');
@@ -47,7 +67,7 @@
   const lightboxCloseBtn = document.getElementById('lightbox-close-btn');
   const lightboxCloseBackdrop = document.getElementById('lightbox-close-backdrop');
 
-  // Upload modal elements
+  // Photo Upload Modal Elements
   const uploadPhotoModal = document.getElementById('upload-photo-modal');
   const openUploadModalBtn = document.getElementById('open-upload-modal-btn');
   const uploadCloseBtn = document.getElementById('upload-close-btn');
@@ -65,67 +85,209 @@
   const uploadErrorMsg = document.getElementById('upload-error-msg');
   const communityCollageBoard = document.getElementById('community-collage-board');
 
-  // Gatekeeper elements
+  // Visitor Gatekeeper Elements (Passcode Removed)
   const passcodeGate = document.getElementById('passcode-gate');
-  const gatePasscodeCard = document.getElementById('gate-passcode-card');
-  const gateVisitorCard = document.getElementById('gate-visitor-card');
-  const passcodeForm = document.getElementById('passcode-form');
-  const passcodeInput = document.getElementById('passcode-input');
-  const passcodeErrorMsg = document.getElementById('passcode-error-msg');
   const visitorForm = document.getElementById('visitor-form');
   const visitorNameInput = document.getElementById('visitor-name-input');
   const visitorNoteInput = document.getElementById('visitor-note-input');
   const visitorErrorMsg = document.getElementById('visitor-error-msg');
 
+  // Admin Ledger Elements
+  const guestbookOpenBtn = document.getElementById('guestbook-open-btn');
+  const guestbookModal = document.getElementById('guestbook-modal');
+  const guestbookCloseBtn = document.getElementById('guestbook-close-btn');
+  const guestbookCloseBackdrop = document.getElementById('guestbook-close-backdrop');
+  const guestbookList = document.getElementById('guestbook-list');
+  const visitorCountBadge = document.getElementById('visitor-count-badge');
+  const guestbookRefreshBtn = document.getElementById('guestbook-refresh-btn');
+
   // Toast & Confetti
   const securityToast = document.getElementById('security-toast');
   const confettiLaunchBtn = document.getElementById('confetti-launch-btn');
-  const fullscreenBtn = document.getElementById('fullscreen-btn');
+  const thirstTrapLaunchBtn = document.getElementById('thirst-trap-launch-btn');
 
-  // State
+  // Application State
+  let currentStorySlideIdx = 0;
   let audioPlayer = null;
   let isAudioPlaying = false;
+  let isCanvasPaused = false;
+  let wasAudioPlayingBeforeVideo = false;
   let currentSongIndex = 0;
   let playlist = [];
   let currentUploadedPhotoData = null;
 
-  const COMMUNITY_STORAGE_KEY = 'tapz_community_photos_v2';
-  const PASSCODE_STORAGE_KEY = 'tapz_unlocked_v2';
+  const COMMUNITY_STORAGE_KEY = 'tapz_community_photos_v3';
 
   /* =========================================================================
-     1. INITIALIZATION & PASSCODE GATEKEEPER
+     1. INITIALIZATION & GATEKEEPER CHECK
      ========================================================================= */
   function init() {
+    initGatekeeper();
     initContentFromConfig();
+    initStoryShowcase();
     initAudioPlaylist();
     initScrollTracking();
     initLightboxTriggers();
     initUploadEngine();
     initCommunityWall();
-    initConfetti();
+    initConfettiEngine();
     initCanvasParticles();
-    checkGatekeeperStatus();
+    initAdminGuestbook();
   }
 
-  function initContentFromConfig() {
-    if (config.DAD_NAME) {
-      document.getElementById('nav-brand-title').textContent = config.DAD_NAME;
+  /* -------------------------------------------------------------------------
+     Visitor Identity Gatekeeper (Remembers visitor name; Admin134434 support)
+     ------------------------------------------------------------------------- */
+  function initGatekeeper() {
+    const savedVisitor = (localStorage.getItem('dad_visitor_name') || '').trim();
+
+    if (savedVisitor) {
+      // Visitor already known; dismiss modal immediately
+      if (passcodeGate) passcodeGate.classList.remove('active');
+      applyVisitorIdentity(savedVisitor);
+      // Auto-play gifts for returning visitor in theater dark mode
+      document.body.classList.add('theater-intro-active');
+      setTimeout(() => {
+        if (typeof startStoryAutoPlay === 'function') startStoryAutoPlay();
+      }, 600);
+    } else {
+      // First-time visit: show "Who is visiting?" modal
+      if (passcodeGate) passcodeGate.classList.add('active');
+      if (visitorNameInput) visitorNameInput.focus();
     }
 
-    // 1. Render Entry I Hero Photo
-    if (config.ENTRY_1 && config.ENTRY_1.photo) {
+    if (visitorForm) {
+      visitorForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const rawName = visitorNameInput.value.trim();
+        const rawNote = (visitorNoteInput ? visitorNoteInput.value.trim() : '');
+
+        if (!rawName) {
+          if (visitorErrorMsg) visitorErrorMsg.style.display = 'block';
+          return;
+        }
+
+        const res = window.SecurityGatekeeper 
+          ? window.SecurityGatekeeper.registerVisitor(rawName, rawNote)
+          : { success: true, isAdmin: (rawName.toLowerCase() === 'admin134434'), name: rawName };
+
+        if (res.success) {
+          if (passcodeGate) passcodeGate.classList.remove('active');
+          applyVisitorIdentity(res.name);
+
+          if (res.isAdmin) {
+            showToast('👑 Admin Mode Activated (Admin134434)');
+          } else {
+            showToast(`Welcome, ${res.name}!`);
+            // Attempt logging to backend
+            fetch('/api/record_visitor', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ name: res.name, note: rawNote })
+            }).catch(() => {});
+          }
+
+          // Dark theater mode auto-starts with the intro showcase!
+          document.body.classList.add('theater-intro-active');
+
+          // Unlock audio at 20% volume on direct user interaction
+          unlockAndPlayAudioAt20Percent();
+
+          // Re-render community wall to apply admin delete buttons if admin
+          initCommunityWall();
+
+          // Immediately start auto-playing the gifts and clicking to next!
+          if (typeof startStoryAutoPlay === 'function') {
+            startStoryAutoPlay();
+          }
+        }
+      });
+    }
+
+    // Name switcher triggers
+    if (navChangeNameBtn) {
+      navChangeNameBtn.addEventListener('click', openChangeNameModal);
+    }
+    if (changeNameCloseBtn) {
+      changeNameCloseBtn.addEventListener('click', closeChangeNameModal);
+    }
+    if (changeNameBackdrop) {
+      changeNameBackdrop.addEventListener('click', closeChangeNameModal);
+    }
+    if (changeNameForm) {
+      changeNameForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const newName = changeNameInput.value.trim();
+        if (newName) {
+          const res = window.SecurityGatekeeper 
+            ? window.SecurityGatekeeper.registerVisitor(newName, '')
+            : { success: true, isAdmin: (newName.toLowerCase() === 'admin134434'), name: newName };
+
+          applyVisitorIdentity(res.name);
+          closeChangeNameModal();
+          showToast(`Name updated to: ${res.name}`);
+          initCommunityWall();
+        }
+      });
+    }
+  }
+
+  function applyVisitorIdentity(name) {
+    const isAdmin = (name.toLowerCase() === 'admin134434') || (localStorage.getItem('dad_is_admin') === 'true');
+
+    if (navVisitorPill && navVisitorDisplayName) {
+      navVisitorDisplayName.textContent = name;
+      navVisitorPill.style.display = 'inline-flex';
+    }
+
+    // Show/hide admin guestbook button
+    if (guestbookOpenBtn) {
+      guestbookOpenBtn.style.display = isAdmin ? 'inline-flex' : 'none';
+    }
+  }
+
+  function openChangeNameModal() {
+    if (changeNameModal) {
+      const current = localStorage.getItem('dad_visitor_name') || '';
+      if (changeNameInput) changeNameInput.value = current;
+      changeNameModal.classList.add('active');
+      changeNameModal.style.display = 'flex';
+      if (changeNameInput) changeNameInput.focus();
+    }
+  }
+
+  function closeChangeNameModal() {
+    if (changeNameModal) {
+      changeNameModal.classList.remove('active');
+      changeNameModal.style.display = 'none';
+    }
+  }
+
+  /* -------------------------------------------------------------------------
+     Config Population
+     ------------------------------------------------------------------------- */
+  function initContentFromConfig() {
+    if (config.DAD_NAME) {
+      const navBrand = document.getElementById('nav-brand-title');
+      if (navBrand) navBrand.textContent = config.DAD_NAME;
+    }
+
+    // 1. Entry I Content & Photo
+    if (config.ENTRY_1) {
       const entry1Img = document.getElementById('entry1-img');
       const entry1Frame = document.getElementById('entry1-photo-frame');
       const entry1Stamp = document.getElementById('entry1-photo-stamp');
-      if (entry1Img) entry1Img.src = config.ENTRY_1.photo.src;
-      if (entry1Frame) {
+      if (entry1Img && config.ENTRY_1.photo) entry1Img.src = config.ENTRY_1.photo.src;
+      if (entry1Frame && config.ENTRY_1.photo) {
         entry1Frame.setAttribute('data-src', config.ENTRY_1.photo.src);
-        entry1Frame.setAttribute('data-title', config.ENTRY_1.photo.caption || 'The Early Years');
+        entry1Frame.setAttribute('data-title', config.ENTRY_1.photo.caption || 'A Lifetime of Integrity');
       }
-      if (entry1Stamp) entry1Stamp.textContent = `${config.ENTRY_1.photo.year || '2001'} — ${config.ENTRY_1.photo.caption || 'HERITAGE'}`;
+      if (entry1Stamp && config.ENTRY_1.photo) {
+        entry1Stamp.textContent = `${config.ENTRY_1.photo.year || '2001'} — ${config.ENTRY_1.photo.caption || 'INTEGRITY'}`;
+      }
     }
 
-    // 2. Dynamic Timeline Reels (Entry III)
+    // 2. Timeline Reels (Entry III)
     if (config.ENTRY_3 && Array.isArray(config.ENTRY_3.reels)) {
       const reelContainer = document.getElementById('timeline-reels-container');
       if (reelContainer) {
@@ -160,7 +322,7 @@
       }
     }
 
-    // 3. Dynamic Polaroids Constellation (Entry IV)
+    // 3. Polaroids Constellation (Entry IV)
     if (config.ENTRY_4 && Array.isArray(config.ENTRY_4.items)) {
       const polaroidContainer = document.getElementById('polaroid-scatter-constellation');
       if (polaroidContainer) {
@@ -194,98 +356,498 @@
     }
   }
 
-  function checkGatekeeperStatus() {
-    const requiredPasscode = config.PASSCODE;
-    if (!requiredPasscode || requiredPasscode.trim() === '') {
-      passcodeGate.classList.remove('active');
-      return;
-    }
+  /* =========================================================================
+     2. STORYTELLING SHOWCASE ENGINE ("GIFTS OVER THE YEARS") - AUTO-PLAY SYSTEM
+     ========================================================================= */
+  let storyAutoPlayTimer = null;
+  let storyAutoProgressAnimFrame = null;
+  let isStoryAutoPlaying = true;
+  let progressStartTime = 0;
 
-    const isUnlocked = localStorage.getItem(PASSCODE_STORAGE_KEY);
-    if (isUnlocked === 'true') {
-      passcodeGate.classList.remove('active');
+  function startStoryAutoPlay() {
+    isStoryAutoPlaying = true;
+    updateAutoPlayButtonUI();
+    runCurrentSlideAutoPlay();
+  }
+  window.startStoryAutoPlay = startStoryAutoPlay;
+
+  function pauseStoryAutoPlay() {
+    isStoryAutoPlaying = false;
+    clearTimeout(storyAutoPlayTimer);
+    cancelAnimationFrame(storyAutoProgressAnimFrame);
+    resetAllTimerBars();
+    updateAutoPlayButtonUI();
+  }
+  window.pauseStoryAutoPlay = pauseStoryAutoPlay;
+
+  function toggleStoryAutoPlay() {
+    if (isStoryAutoPlaying) {
+      pauseStoryAutoPlay();
+      showToast('⏸ Story Auto-Play Paused');
     } else {
-      passcodeGate.classList.add('active');
+      startStoryAutoPlay();
+      showToast('▶ Story Auto-Play Resumed');
     }
   }
 
-  passcodeForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const entered = passcodeInput.value.trim();
-    if (entered === config.PASSCODE || entered.toUpperCase() === 'DAD2026' || entered.toUpperCase() === 'LELOUCH') {
-      passcodeErrorMsg.style.display = 'none';
-      gatePasscodeCard.style.display = 'none';
-      gateVisitorCard.style.display = 'block';
-      visitorNameInput.focus();
+  function updateAutoPlayButtonUI() {
+    const btn = document.getElementById('story-autoplay-btn');
+    const icon = document.getElementById('autoplay-icon');
+    const text = document.getElementById('autoplay-text');
+    if (!btn) return;
+
+    if (isStoryAutoPlaying) {
+      btn.classList.remove('paused');
+      if (icon) icon.textContent = '⏸';
+      if (text) text.textContent = 'Auto-Playing';
+      btn.title = 'Click to Pause Automatic Story';
     } else {
-      passcodeErrorMsg.style.display = 'block';
-      passcodeInput.value = '';
+      btn.classList.add('paused');
+      if (icon) icon.textContent = '▶';
+      if (text) text.textContent = 'Auto-Play';
+      btn.title = 'Click to Resume Automatic Story';
     }
-  });
+  }
 
-  visitorForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const name = visitorNameInput.value.trim();
-    const note = visitorNoteInput.value.trim();
-    if (!name) {
-      visitorErrorMsg.style.display = 'block';
-      return;
+  function resetAllTimerBars() {
+    document.querySelectorAll('.gift-timer-fill').forEach(fill => {
+      fill.style.width = '0%';
+    });
+  }
+
+  function animateProgressBar(durationMs) {
+    cancelAnimationFrame(storyAutoProgressAnimFrame);
+    progressStartTime = performance.now();
+
+    const activeSlide = giftSlides[currentStorySlideIdx];
+    const fillEl = activeSlide ? activeSlide.querySelector('.gift-timer-fill') : null;
+    if (!fillEl) return;
+
+    resetAllTimerBars();
+
+    function step(now) {
+      if (!isStoryAutoPlaying) return;
+      const elapsed = now - progressStartTime;
+      const pct = Math.min((elapsed / durationMs) * 100, 100);
+      fillEl.style.width = `${pct}%`;
+
+      if (pct < 100) {
+        storyAutoProgressAnimFrame = requestAnimationFrame(step);
+      }
     }
 
-    // Save visitor locally
-    try {
-      const visitors = JSON.parse(localStorage.getItem('tapz_visitors_v2') || '[]');
-      visitors.push({ name, note, time: new Date().toISOString() });
-      localStorage.setItem('tapz_visitors_v2', JSON.stringify(visitors));
-    } catch (err) {}
+    storyAutoProgressAnimFrame = requestAnimationFrame(step);
+  }
 
-    localStorage.setItem(PASSCODE_STORAGE_KEY, 'true');
-    passcodeGate.classList.remove('active');
-    showToast(`Welcome, ${name}!`);
+  function runCurrentSlideAutoPlay() {
+    clearTimeout(storyAutoPlayTimer);
+    cancelAnimationFrame(storyAutoProgressAnimFrame);
+    resetAllTimerBars();
 
-    // Auto-start ambient music if enabled
-    if (config.AUDIO && config.AUDIO.autoPlayAfterUnlock) {
-      startMusic();
+    if (!isStoryAutoPlaying) return;
+
+    const activeSlide = giftSlides[currentStorySlideIdx];
+    if (!activeSlide) return;
+
+    // Pause all other videos
+    giftSlides.forEach((s, idx) => {
+      if (idx !== currentStorySlideIdx) {
+        const v = s.querySelector('video');
+        if (v) {
+          v.pause();
+          v.currentTime = 0;
+        }
+      }
+    });
+
+    const activeVideo = activeSlide.querySelector('video');
+    const activeWrap = activeSlide.querySelector('.gift-card-media-wrap');
+
+    if (currentStorySlideIdx === 0) {
+      // 1. FIRST SLIDE (The Mohenoa Jumper): DO NOT AUTO-SKIP!
+      // Let the user read the highlight text at their own pace until they click/tap next.
+      isCanvasPaused = false;
+      clearTimeout(storyAutoPlayTimer);
+      cancelAnimationFrame(storyAutoProgressAnimFrame);
+      resetAllTimerBars();
+    } else if (activeVideo) {
+      // 2. VIDEO SLIDES (African Dance, Mum's AI Video, Prime Edit):
+      // User request: AUTO UNMUTE FOR THE INTRO!
+      isCanvasPaused = true;
+      activeVideo.currentTime = 0;
+      activeVideo.muted = false; // Auto unmute!
+      activeVideo.volume = 1.0;
+
+      const soundBtn = activeSlide.querySelector('.video-sound-toggle-btn');
+      if (soundBtn) {
+        soundBtn.textContent = '🔊 Sound: On (Tap to Mute)';
+        soundBtn.classList.add('unmuted');
+      }
+
+      // Duck ambient background music so video audio is crisp & clear
+      if (audioPlayer && isAudioPlaying) {
+        audioPlayer.volume = 0.02;
+      }
+
+      const playPromise = activeVideo.play();
+      if (playPromise && typeof playPromise.then === 'function') {
+        playPromise.then(() => {
+          if (activeWrap) activeWrap.classList.add('is-playing');
+        }).catch((err) => {
+          console.warn('Browser prevented unmuted autoplay, playing muted fallback:', err);
+          activeVideo.muted = true;
+          activeVideo.play().then(() => {
+            if (activeWrap) activeWrap.classList.add('is-playing');
+          }).catch(() => {});
+          if (soundBtn) {
+            soundBtn.textContent = '🔇 Tap to Unmute';
+            soundBtn.classList.remove('unmuted');
+          }
+        });
+      }
+
+      const onEnded = () => {
+        isCanvasPaused = false;
+        activeVideo.removeEventListener('ended', onEnded);
+        clearTimeout(storyAutoPlayTimer);
+        if (activeWrap) activeWrap.classList.remove('is-playing');
+        // Restore background audio volume
+        if (audioPlayer && isAudioPlaying) {
+          audioPlayer.volume = 0.20;
+        }
+        advanceNextSlideAuto();
+      };
+      activeVideo.addEventListener('ended', onEnded, { once: true });
+
+      // Safety timeout: wait for full video duration + 1.5s
+      let videoFallbackDuration = 32000;
+      if (activeVideo.duration && !isNaN(activeVideo.duration) && activeVideo.duration > 2) {
+        videoFallbackDuration = Math.round(activeVideo.duration * 1000) + 1500;
+      }
+      animateProgressBar(videoFallbackDuration);
+
+      storyAutoPlayTimer = setTimeout(() => {
+        isCanvasPaused = false;
+        activeVideo.removeEventListener('ended', onEnded);
+        if (audioPlayer && isAudioPlaying) {
+          audioPlayer.volume = 0.20;
+        }
+        advanceNextSlideAuto();
+      }, videoFallbackDuration);
+
+    } else if (currentStorySlideIdx === 4) {
+      // 3. LAST SLIDE (The 2026 Grand Journal Keepsake)
+      isCanvasPaused = false;
+      clearTimeout(storyAutoPlayTimer);
+      cancelAnimationFrame(storyAutoProgressAnimFrame);
+      resetAllTimerBars();
+      if (audioPlayer && isAudioPlaying) {
+        audioPlayer.volume = 0.20;
+      }
+      if (heroOpenBtn) {
+        heroOpenBtn.classList.add('pulse-glow');
+      }
+      pauseStoryAutoPlay();
     }
-  });
+  }
+
+  function advanceNextSlideAuto() {
+    if (!isStoryAutoPlaying) return;
+    if (currentStorySlideIdx < giftSlides.length - 1) {
+      goToSlide(currentStorySlideIdx + 1);
+    } else {
+      pauseStoryAutoPlay();
+    }
+  }
+
+  function goToSlide(idx) {
+    if (idx < 0) idx = giftSlides.length - 1;
+    if (idx >= giftSlides.length) idx = 0;
+    currentStorySlideIdx = idx;
+
+    // Trigger 3D cloud burst animation on each transition
+    if (cloudBurstForward) {
+      cloudBurstForward.classList.add('burst-active');
+      setTimeout(() => cloudBurstForward.classList.remove('burst-active'), 900);
+    }
+
+    // When changing slides, restore ambient music if moving away from a video slide
+    if (audioPlayer && isAudioPlaying) {
+      audioPlayer.volume = 0.20;
+    }
+
+    giftSlides.forEach((slide, sIdx) => {
+      const isActive = (sIdx === currentStorySlideIdx);
+      slide.classList.toggle('active', isActive);
+      const v = slide.querySelector('video');
+      const wrap = slide.querySelector('.gift-card-media-wrap');
+      if (v && !isActive) {
+        v.pause();
+        v.currentTime = 0;
+        v.muted = true;
+        if (wrap) wrap.classList.remove('is-playing');
+      }
+    });
+
+    storyDots.forEach((dot, dIdx) => {
+      dot.classList.toggle('active', dIdx === currentStorySlideIdx);
+    });
+
+    if (isStoryAutoPlaying) {
+      runCurrentSlideAutoPlay();
+    } else {
+      // If paused, still play current slide video inline with sound
+      const activeSlide = giftSlides[currentStorySlideIdx];
+      const activeVideo = activeSlide ? activeSlide.querySelector('video') : null;
+      const activeWrap = activeSlide ? activeSlide.querySelector('.gift-card-media-wrap') : null;
+      const soundBtn = activeSlide ? activeSlide.querySelector('.video-sound-toggle-btn') : null;
+      if (activeVideo) {
+        activeVideo.currentTime = 0;
+        activeVideo.muted = false; // Auto unmute!
+        activeVideo.volume = 1.0;
+        if (soundBtn) {
+          soundBtn.textContent = '🔊 Sound: On (Tap to Mute)';
+          soundBtn.classList.add('unmuted');
+        }
+        if (audioPlayer && isAudioPlaying) {
+          audioPlayer.volume = 0.02;
+        }
+        activeVideo.play().then(() => {
+          if (activeWrap) activeWrap.classList.add('is-playing');
+        }).catch(() => {
+          activeVideo.muted = true;
+          activeVideo.play().then(() => {
+            if (activeWrap) activeWrap.classList.add('is-playing');
+          }).catch(() => {});
+        });
+      }
+    }
+  }
+
+  window.storyGoToNext = function () {
+    if (currentStorySlideIdx < giftSlides.length - 1) {
+      goToSlide(currentStorySlideIdx + 1);
+    } else {
+      exitTheaterIntroMode();
+    }
+  };
+
+  window.storyGoToPrev = function () {
+    if (currentStorySlideIdx > 0) {
+      goToSlide(currentStorySlideIdx - 1);
+    }
+  };
+
+  /* Video Click Interactions & Sound Controls */
+  function initVideoInteractions() {
+    giftSlides.forEach((slide) => {
+      const video = slide.querySelector('video');
+      const mediaWrap = slide.querySelector('.gift-card-media-wrap');
+      const soundBtn = slide.querySelector('.video-sound-toggle-btn');
+      const progressFill = slide.querySelector('.video-progress-fill');
+
+      if (!video) return;
+
+      // Ensure video is configured for smooth mobile and desktop playback
+      video.playsInline = true;
+      video.preload = 'auto';
+
+      // Click anywhere on mediaWrap or video to toggle play/pause
+      if (mediaWrap) {
+        mediaWrap.addEventListener('click', (e) => {
+          if (e.target.closest('.video-sound-toggle-btn') || e.target.closest('.video-skip-overlay-btn')) {
+            return;
+          }
+          if (video.paused) {
+            video.play().then(() => {
+              mediaWrap.classList.add('is-playing');
+            }).catch(() => {});
+          } else {
+            video.pause();
+            mediaWrap.classList.remove('is-playing');
+          }
+        });
+      }
+
+      // Sound toggle button (Mute / Unmute)
+      if (soundBtn) {
+        soundBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          if (video.muted) {
+            video.muted = false;
+            soundBtn.textContent = '🔊 Sound: On (Tap to Mute)';
+            soundBtn.classList.add('unmuted');
+            // Duck background ambient music so video audio is clear
+            if (audioPlayer && isAudioPlaying) {
+              audioPlayer.volume = 0.04;
+            }
+          } else {
+            video.muted = true;
+            soundBtn.textContent = '🔇 Sound: Off (Tap to Unmute)';
+            soundBtn.classList.remove('unmuted');
+            // Restore background music
+            if (audioPlayer && isAudioPlaying) {
+              audioPlayer.volume = 0.20;
+            }
+          }
+        });
+      }
+
+      // Time update for progress bar
+      video.addEventListener('timeupdate', () => {
+        if (progressFill && video.duration && !isNaN(video.duration)) {
+          const pct = Math.min((video.currentTime / video.duration) * 100, 100);
+          progressFill.style.width = `${pct}%`;
+        }
+      });
+
+      video.addEventListener('play', () => {
+        if (mediaWrap) mediaWrap.classList.add('is-playing');
+        isCanvasPaused = true;
+      });
+
+      video.addEventListener('pause', () => {
+        if (mediaWrap) mediaWrap.classList.remove('is-playing');
+      });
+
+      video.addEventListener('ended', () => {
+        if (mediaWrap) mediaWrap.classList.remove('is-playing');
+        isCanvasPaused = false;
+        if (audioPlayer && isAudioPlaying) {
+          audioPlayer.volume = 0.20;
+        }
+      });
+    });
+  }
+
+  function initStoryShowcase() {
+    if (giftSlides.length === 0) return;
+
+    if (storyPrevBtn) {
+      storyPrevBtn.addEventListener('click', () => {
+        goToSlide(currentStorySlideIdx - 1);
+      });
+    }
+
+    if (storyNextBtn) {
+      storyNextBtn.addEventListener('click', () => {
+        goToSlide(currentStorySlideIdx + 1);
+      });
+    }
+
+    storyDots.forEach((dot, idx) => {
+      dot.addEventListener('click', () => {
+        goToSlide(idx);
+      });
+    });
+
+    const fastSkipBtn = document.getElementById('story-fast-skip-btn');
+    if (fastSkipBtn) {
+      fastSkipBtn.addEventListener('click', () => {
+        window.storyGoToNext();
+      });
+    }
+
+    // Theater Mode Close Button (Matches Screenshot 1 & 3 gold circle '✕')
+    const theaterCloseBtn = document.getElementById('theater-close-btn');
+    if (theaterCloseBtn) {
+      theaterCloseBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        exitTheaterIntroMode();
+      });
+    }
+
+    // Top Nav Replay Intro Show Button
+    const navIntroReplayBtn = document.getElementById('nav-intro-replay-btn');
+    if (navIntroReplayBtn) {
+      navIntroReplayBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        document.body.classList.add('theater-intro-active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        goToSlide(0);
+        showToast('✨ Cinematic Intro Replaying');
+      });
+    }
+
+    // Initialize Video Click & Sound controls
+    initVideoInteractions();
+
+    // Helper to play gift video in lightbox
+    window.playGiftVideo = function (videoSrc, videoTitle) {
+      openLightbox(videoSrc, videoTitle, 'Gifts Over The Years • Cherished Memory', true);
+    };
+
+    // Hero Open button smoothly exits theater mode & scrolls to Entry I with 20% music
+    if (heroOpenBtn) {
+      heroOpenBtn.addEventListener('click', (e) => {
+        if (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        exitTheaterIntroMode(true);
+        const entry1 = document.getElementById('entry-1');
+        if (entry1) {
+          entry1.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    }
+
+    const heroScrollCue = document.getElementById('hero-scroll-cue');
+    if (heroScrollCue) {
+      heroScrollCue.addEventListener('click', (e) => {
+        if (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        exitTheaterIntroMode(true);
+        const entry1 = document.getElementById('entry-1');
+        if (entry1) {
+          entry1.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    }
+  }
 
   /* =========================================================================
-     2. LEFT-RAIL TIMELINE TRACKING WITH GLIDING BEAD
+     3. LEFT-RAIL TIMELINE TRACKING WITH GLIDING BEAD (FIXED ALIGNMENT)
      ========================================================================= */
   function initScrollTracking() {
     window.addEventListener('scroll', updateTimelineProgress, { passive: true });
     window.addEventListener('resize', updateTimelineProgress, { passive: true });
 
-    // Smooth scroll on node click
+    // Smooth scroll on timeline node click
     railNodes.forEach((node) => {
       node.addEventListener('click', () => {
         const targetId = node.getAttribute('data-target');
         const targetEl = document.getElementById(targetId);
+        if (targetId === 'entry-1') {
+          unlockAndPlayAudioAt20Percent();
+          exitTheaterIntroMode();
+        }
         if (targetEl) {
           targetEl.scrollIntoView({ behavior: 'smooth' });
         }
       });
     });
 
-    if (heroOpenBtn) {
-      heroOpenBtn.addEventListener('click', () => {
-        const entry1 = document.getElementById('entry-1');
-        if (entry1) {
-          entry1.scrollIntoView({ behavior: 'smooth' });
-          if (!isAudioPlaying) startMusic();
-        }
-      });
-    }
-
     if (navJournalBtn) {
       navJournalBtn.addEventListener('click', () => {
-        document.getElementById('entry-1').scrollIntoView({ behavior: 'smooth' });
+        pauseStoryAutoPlay();
+        exitTheaterIntroMode();
+        unlockAndPlayAudioAt20Percent();
+        const entry1 = document.getElementById('entry-1');
+        if (entry1) entry1.scrollIntoView({ behavior: 'smooth' });
       });
     }
 
     if (navCommunityBtn) {
       navCommunityBtn.addEventListener('click', () => {
-        document.getElementById('community-wall-section').scrollIntoView({ behavior: 'smooth' });
+        exitTheaterIntroMode();
+        const commSec = document.getElementById('community-wall-section');
+        if (commSec) commSec.scrollIntoView({ behavior: 'smooth' });
       });
     }
 
@@ -295,7 +857,17 @@
       });
     }
 
-    updateTimelineProgress();
+    // Direct mobile touch/click on Entry 1 triggers 20% audio unlock
+    const entry1El = document.getElementById('entry-1');
+    if (entry1El) {
+      entry1El.addEventListener('click', () => {
+        unlockAndPlayAudioAt20Percent();
+        exitTheaterIntroMode();
+      });
+    }
+
+    // Initial position update
+    setTimeout(updateTimelineProgress, 100);
   }
 
   function updateTimelineProgress() {
@@ -308,37 +880,48 @@
       railProgressBar.style.height = `${progress * 100}%`;
     }
 
-    // Determine active section
+    // Determine active section using viewport-relative coordinates
     let currentIdx = 0;
+    const triggerOffset = windowHeight * 0.45;
+
     sections.forEach((sec, idx) => {
-      const top = sec.offsetTop - windowHeight * 0.35;
-      if (scrollPos >= top) {
+      const rect = sec.getBoundingClientRect();
+      if (rect.top <= triggerOffset) {
         currentIdx = idx;
       }
     });
 
-    // Update active node & bead position
+    // If user has scrolled while theater mode was active, exit it cleanly without forcing scroll
+    if (document.body.classList.contains('theater-intro-active') && (currentIdx > 0 || scrollPos > 350)) {
+      exitTheaterIntroMode(false);
+    }
+
+    // Update active node & bead position with pixel-perfect anchor
     railNodes.forEach((node, idx) => {
-      const isActive = idx === currentIdx;
+      const isActive = (idx === currentIdx);
       node.classList.toggle('active', isActive);
-      if (isActive && railActiveBead) {
-        const nodeRect = node.getBoundingClientRect();
-        const railRect = timelineRail.getBoundingClientRect();
-        const relativeTop = nodeRect.top - railRect.top + nodeRect.height / 2;
-        railActiveBead.style.top = `${relativeTop}px`;
+
+      if (isActive && railActiveBead && railTrack) {
+        const dot = node.querySelector('.node-dot');
+        if (dot) {
+          const dotRect = dot.getBoundingClientRect();
+          const trackRect = railTrack.getBoundingClientRect();
+          const beadTop = (dotRect.top + dotRect.height / 2) - trackRect.top;
+          railActiveBead.style.top = `${beadTop}px`;
+        }
       }
     });
 
     // Update nav view tabs
     if (navJournalBtn && navCommunityBtn) {
-      const inCommunity = currentIdx === 6;
+      const inCommunity = (currentIdx === 6);
       navJournalBtn.classList.toggle('active', !inCommunity);
       navCommunityBtn.classList.toggle('active', inCommunity);
     }
   }
 
   /* =========================================================================
-     3. AMBIENT AUDIO & SOFT MUSIC ENGINE (STATIC & GITHUB READY)
+     4. AMBIENT AUDIO & SONG PLAYLIST ENGINE
      ========================================================================= */
   function initAudioPlaylist() {
     if (config.AUDIO && Array.isArray(config.AUDIO.playlist) && config.AUDIO.playlist.length > 0) {
@@ -361,6 +944,8 @@
     if (audioPrevBtn) audioPrevBtn.addEventListener('click', prevTrack);
 
     if (audioVolumeSlider) {
+      audioVolumeSlider.value = 20;
+      if (volumeLabel) volumeLabel.textContent = '20%';
       audioVolumeSlider.addEventListener('input', (e) => {
         const val = e.target.value / 100;
         if (audioPlayer) audioPlayer.volume = val;
@@ -369,13 +954,71 @@
     }
   }
 
+  function exitTheaterIntroMode(shouldScroll = true) {
+    const wasTheaterActive = document.body.classList.contains('theater-intro-active');
+    if (wasTheaterActive) {
+      document.body.classList.remove('theater-intro-active');
+
+      // Pause all intro slide videos and reset states
+      giftSlides.forEach(slide => {
+        const v = slide.querySelector('video');
+        const wrap = slide.querySelector('.gift-card-media-wrap');
+        if (v) {
+          v.pause();
+          if (wrap) wrap.classList.remove('is-playing');
+        }
+      });
+
+      isCanvasPaused = false;
+      clearTimeout(storyAutoPlayTimer);
+      cancelAnimationFrame(storyAutoProgressAnimFrame);
+      unlockAndPlayAudioAt20Percent();
+
+      if (typeof launchCelebrationConfetti === 'function') {
+        launchCelebrationConfetti();
+      }
+    }
+
+    if (shouldScroll) {
+      const entry1 = document.getElementById('entry-1');
+      if (entry1) {
+        setTimeout(() => {
+          entry1.scrollIntoView({ behavior: 'smooth' });
+        }, 50);
+      }
+    }
+  }
+  window.exitTheaterIntroMode = exitTheaterIntroMode;
+
+  function unlockAndPlayAudioAt20Percent() {
+    if (!audioPlayer) {
+      audioPlayer = new Audio();
+      audioPlayer.volume = 0.20;
+      audioPlayer.addEventListener('ended', nextTrack);
+      audioPlayer.addEventListener('error', () => setTimeout(nextTrack, 1000));
+    } else {
+      audioPlayer.volume = 0.20;
+    }
+    if (audioVolumeSlider) audioVolumeSlider.value = 20;
+    if (volumeLabel) volumeLabel.textContent = '20%';
+    if (!isAudioPlaying) {
+      startMusic();
+    }
+  }
+  window.unlockAndPlayAudioAt20Percent = unlockAndPlayAudioAt20Percent;
+
   function startMusic() {
     if (!audioPlayer) {
       audioPlayer = new Audio();
-      audioPlayer.volume = (config.AUDIO && config.AUDIO.volume) || 0.35;
+      audioPlayer.volume = 0.20;
       audioPlayer.addEventListener('ended', nextTrack);
       audioPlayer.addEventListener('error', () => setTimeout(nextTrack, 1000));
+    } else if (audioPlayer.volume > 0.4) {
+      audioPlayer.volume = 0.20;
     }
+
+    if (audioVolumeSlider) audioVolumeSlider.value = Math.round(audioPlayer.volume * 100);
+    if (volumeLabel) volumeLabel.textContent = `${Math.round(audioPlayer.volume * 100)}%`;
 
     const track = playlist[currentSongIndex];
     if (!track) return;
@@ -448,17 +1091,15 @@
   }
 
   /* =========================================================================
-     4. LIGHTBOX ZOOM ENGINE & THIRST TRAP VIDEO MEDIA HUB
+     5. LIGHTBOX ZOOM & VIDEO PLAYER (DAD'S EDIT HUB)
      ========================================================================= */
-  let wasAudioPlayingBeforeVideo = false;
-
   function launchDadVideoEdit(e) {
     if (e && e.preventDefault) e.preventDefault();
     if (e && e.stopPropagation) e.stopPropagation();
     launchCelebrationConfetti();
     const cfg = window.JOURNAL_CONFIG || {};
     const videoSrc = (cfg.VIDEO_EDIT && cfg.VIDEO_EDIT.src) || 'assets/videos/thirst trap edit of my dad.mp4';
-    const videoTitle = (cfg.VIDEO_EDIT && cfg.VIDEO_EDIT.title) || '🔥 Ratu Nautu Latunipulu — The Official Edit';
+    const videoTitle = (cfg.VIDEO_EDIT && cfg.VIDEO_EDIT.title) || '🔥 Ratu Nautu Latunipulu — The Official Prime Years Edit';
     const videoCaption = (cfg.VIDEO_EDIT && cfg.VIDEO_EDIT.caption) || 'Proceed with caution: High aura ahead.';
     openLightbox(videoSrc, videoTitle, videoCaption, true);
   }
@@ -466,16 +1107,19 @@
   window.launchDadVideoEdit = launchDadVideoEdit;
 
   function initLightboxTriggers() {
-    // Global Event Delegation for all zoomable photos, polaroids, & video buttons
+    // Dedicated Prime Years Edit button
+    if (thirstTrapLaunchBtn) {
+      thirstTrapLaunchBtn.addEventListener('click', launchDadVideoEdit);
+    }
+
+    // Global Event Delegation for zoomable photos, polaroids, & video buttons
     document.addEventListener('click', (e) => {
-      // 1. Check if thirst trap button or child clicked
       const editBtn = e.target.closest('#thirst-trap-launch-btn, .thirst-trap-btn');
       if (editBtn) {
         launchDadVideoEdit(e);
         return;
       }
 
-      // 2. Check if close button or backdrop clicked
       const closeTarget = e.target.closest('#lightbox-close-btn, #lightbox-close-backdrop');
       if (closeTarget) {
         e.preventDefault();
@@ -483,7 +1127,6 @@
         return;
       }
 
-      // 3. Zoomable photos & polaroids
       const zoomItem = e.target.closest('.photo-zoomable, .scatter-polaroid-item');
       if (zoomItem) {
         const img = zoomItem.querySelector('img');
@@ -508,7 +1151,7 @@
         crestClickTimer = setTimeout(() => { crestClickCount = 0; }, 1200);
         if (crestClickCount >= 3) {
           crestClickCount = 0;
-          showToast('🔥 SECRET EDIT UNLOCKED!');
+          showToast('🔥 SECRET PRIME EDIT UNLOCKED!');
           launchDadVideoEdit();
         }
       });
@@ -516,11 +1159,7 @@
   }
 
   function openLightbox(src, title, caption, isVideo = false) {
-    const lightbox = document.getElementById('media-lightbox');
-    const target = document.getElementById('lightbox-media-target');
-    const titleEl = document.getElementById('lightbox-title');
-    const captionEl = document.getElementById('lightbox-caption');
-    if (!lightbox || !target || !src) return;
+    if (!mediaLightbox || !lightboxMediaTarget || !src) return;
     
     if (isVideo || src.endsWith('.mov') || src.endsWith('.mp4') || src.includes('.mp4')) {
       wasAudioPlayingBeforeVideo = isAudioPlaying;
@@ -530,42 +1169,40 @@
         updateAudioUI(false, '');
       }
 
-      // Pause ambient dust canvas to free up 100% GPU for smooth video hardware acceleration
       isCanvasPaused = true;
 
-      const safeSrc = encodeURI(src);
-      target.innerHTML = `
+      // Ensure proper MP4 source element with fallback
+      lightboxMediaTarget.innerHTML = `
         <div class="video-player-container">
-          <video id="active-lightbox-video" src="${safeSrc}" controls playsinline preload="auto" class="lightbox-video-player" style="max-height:75vh; width:100%; max-width:650px;"></video>
+          <video id="active-lightbox-video" controls playsinline preload="auto" class="lightbox-video-player">
+            <source src="${src}" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
         </div>
       `;
 
       setTimeout(() => {
         const activeVideo = document.getElementById('active-lightbox-video');
-        if (activeVideo) {
-          activeVideo.play().catch(err => {
-            console.log("Autoplay unmuted blocked by browser:", err);
-          });
+        if (activeVideo && typeof activeVideo.play === 'function') {
+          activeVideo.play().catch(() => {});
         }
-      }, 60);
+      }, 80);
     } else {
-      target.innerHTML = `<img src="${src}" alt="${title || ''}" loading="eager">`;
+      lightboxMediaTarget.innerHTML = `<img src="${src}" alt="${title || ''}" loading="eager">`;
     }
 
-    if (titleEl) titleEl.textContent = title || '';
-    if (captionEl) captionEl.textContent = caption || '';
-    lightbox.classList.add('active');
-    lightbox.style.display = 'flex';
+    if (lightboxTitle) lightboxTitle.textContent = title || '';
+    if (lightboxCaption) lightboxCaption.textContent = caption || '';
+    mediaLightbox.classList.add('active');
+    mediaLightbox.style.display = 'flex';
   }
 
   window.openLightbox = openLightbox;
 
   function closeLightbox() {
-    const lightbox = document.getElementById('media-lightbox');
-    const target = document.getElementById('lightbox-media-target');
-    if (!lightbox) return;
-    lightbox.classList.remove('active');
-    lightbox.style.display = 'none';
+    if (!mediaLightbox) return;
+    mediaLightbox.classList.remove('active');
+    mediaLightbox.style.display = 'none';
 
     const activeVideo = document.getElementById('active-lightbox-video');
     if (activeVideo) {
@@ -573,9 +1210,8 @@
       activeVideo.src = '';
       activeVideo.remove();
     }
-    if (target) target.innerHTML = '';
+    if (lightboxMediaTarget) lightboxMediaTarget.innerHTML = '';
 
-    // Resume ambient dust canvas
     isCanvasPaused = false;
 
     if (wasAudioPlayingBeforeVideo && audioPlayer) {
@@ -591,7 +1227,7 @@
   window.closeLightbox = closeLightbox;
 
   /* =========================================================================
-     5. COMMUNITY PHOTO WALL & UPLOAD ENGINE (SYNCED WITH LIVE BACKEND & OFFLINE CACHE)
+     6. COMMUNITY PHOTO WALL & INFINITE SLOTS (UP TO 100) + ADMIN DELETION
      ========================================================================= */
   function initUploadEngine() {
     if (navAddPhotoBtn) navAddPhotoBtn.addEventListener('click', openUploadModal);
@@ -666,7 +1302,7 @@
   function openUploadModal() {
     if (uploadPhotoModal) {
       clearSelectedFile();
-      uploadErrorMsg.style.display = 'none';
+      if (uploadErrorMsg) uploadErrorMsg.style.display = 'none';
       uploadPhotoModal.classList.add('active');
     }
   }
@@ -681,11 +1317,12 @@
     const caption = uploaderCaptionInput.value.trim();
 
     if (!currentUploadedPhotoData || !fatherName || !uploaderName) {
-      uploadErrorMsg.style.display = 'block';
+      if (uploadErrorMsg) uploadErrorMsg.style.display = 'block';
       return;
     }
 
     const localPhoto = {
+      id: Date.now(),
       url: currentUploadedPhotoData,
       title: `Father: ${fatherName}`,
       caption: caption || 'Honoring our beloved father',
@@ -693,7 +1330,7 @@
       date: new Date().toLocaleDateString()
     };
 
-    // 1. Try sending to live server backend API
+    // Try posting to backend
     try {
       const resp = await fetch('/api/upload_photo', {
         method: 'POST',
@@ -708,14 +1345,13 @@
       if (resp.ok) {
         const result = await resp.json();
         if (result.success && result.photo) {
-          localPhoto.url = result.photo.url;
+          localPhoto.id = result.photo.id || localPhoto.id;
+          localPhoto.url = result.photo.url || localPhoto.url;
         }
       }
-    } catch (err) {
-      // Backend not reached (e.g. offline or static host); fallback to local persistence
-    }
+    } catch (err) {}
 
-    // 2. Save locally for instant persistence
+    // Save locally
     try {
       const stored = JSON.parse(localStorage.getItem(COMMUNITY_STORAGE_KEY) || '[]');
       stored.unshift(localPhoto);
@@ -726,7 +1362,6 @@
     initCommunityWall();
     showToast(`Photo for ${fatherName} added to Wall of Honor!`);
     
-    // Smooth scroll down to the community wall
     const wallSec = document.getElementById('community-wall-section');
     if (wallSec) wallSec.scrollIntoView({ behavior: 'smooth' });
   }
@@ -734,13 +1369,18 @@
   async function initCommunityWall() {
     if (!communityCollageBoard) return;
 
-    // 1. Primary Feature for Dad
+    const isAdmin = window.SecurityGatekeeper 
+      ? window.SecurityGatekeeper.isAdmin()
+      : ((localStorage.getItem('dad_visitor_name') || '').toLowerCase() === 'admin134434');
+
+    // 1. Dad's Primary Card
     const dadPrimaryCard = {
       url: "assets/photos/464825450_10225438053368831_2504579000914362514_n.jpg",
       title: "Ratu Nautu Latunipulu",
       caption: "Our Pillar of Strength & Wisdom",
       uploader: "Latunipulu Family",
-      tilt: "-2deg"
+      tilt: "-2deg",
+      isPrimaryDad: true
     };
 
     let serverPhotos = [];
@@ -750,6 +1390,7 @@
         const data = await res.json();
         if (data.success && Array.isArray(data.photos)) {
           serverPhotos = data.photos.map(p => ({
+            id: p.id,
             url: p.url,
             title: p.father_name ? `Father: ${p.father_name}` : `Father tribute`,
             caption: p.caption || "Special Memory",
@@ -757,16 +1398,14 @@
           }));
         }
       }
-    } catch (e) {
-      // Server not reachable
-    }
+    } catch (e) {}
 
     let localPhotos = [];
     try {
       localPhotos = JSON.parse(localStorage.getItem(COMMUNITY_STORAGE_KEY) || '[]');
     } catch (e) {}
 
-    // Combine unique photos (avoid duplicates)
+    // Combine photos
     const combinedMap = new Map();
     [...serverPhotos, ...localPhotos].forEach(p => {
       if (p.url && !combinedMap.has(p.url)) {
@@ -774,7 +1413,8 @@
       }
     });
 
-    const allPhotos = [dadPrimaryCard, ...Array.from(combinedMap.values())];
+    const userUploadedList = Array.from(combinedMap.values());
+    const allPhotos = [dadPrimaryCard, ...userUploadedList];
 
     communityCollageBoard.innerHTML = '';
 
@@ -785,8 +1425,15 @@
       const tilt = item.tilt || `${((idx % 5) - 2) * 2.2}deg`;
       card.style.transform = `rotate(${tilt})`;
 
+      // Admin delete button (only for non-primary community uploads)
+      let adminBtnHtml = '';
+      if (isAdmin && !item.isPrimaryDad) {
+        adminBtnHtml = `<button class="admin-delete-photo-btn" title="Delete this photo from Wall of Honor">✕ Delete</button>`;
+      }
+
       card.innerHTML = `
         <div class="scotch-tape"></div>
+        ${adminBtnHtml}
         <div class="polaroid-img-wrap">
           <img src="${item.url}" alt="${item.title}" loading="lazy">
         </div>
@@ -797,15 +1444,39 @@
         </div>
       `;
 
-      card.addEventListener('click', () => openLightbox(item.url, item.title, `${item.caption} — Shared by ${item.uploader}`));
+      // Lightbox click
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('.admin-delete-photo-btn')) return;
+        openLightbox(item.url, item.title, `${item.caption} — Shared by ${item.uploader}`);
+      });
+
+      // Admin delete handler
+      if (isAdmin && !item.isPrimaryDad) {
+        const delBtn = card.querySelector('.admin-delete-photo-btn');
+        if (delBtn) {
+          delBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            deleteCommunityPhoto(item, card);
+          });
+        }
+      }
+
       communityCollageBoard.appendChild(card);
     });
 
-    // 3. Render 4 interactive empty upload spaces
-    for (let s = 0; s < 4; s++) {
+    // Dynamic infinite upload slots: Always show 5-6 ready "+ Add Your Father" empty slots by default!
+    // As slots get filled with photos, append empty slots one by one up to MAX_WALL_CAPACITY (100).
+    const DEFAULT_EMPTY_SLOTS = 5;
+    const MAX_WALL_CAPACITY = 100;
+    const slotsToShow = Math.max(1, Math.min(DEFAULT_EMPTY_SLOTS, MAX_WALL_CAPACITY - allPhotos.length));
+
+    for (let s = 0; s < slotsToShow; s++) {
+      const slotIndex = allPhotos.length + s;
+      if (slotIndex > MAX_WALL_CAPACITY) break;
+
       const emptySlot = document.createElement('div');
       emptySlot.className = 'polaroid-scatter-card empty-slot-card';
-      const tilt = `${((s % 5) - 2) * 2}deg`;
+      const tilt = `${(((slotIndex) % 5) - 2) * 2}deg`;
       emptySlot.style.transform = `rotate(${tilt})`;
 
       emptySlot.innerHTML = `
@@ -815,8 +1486,8 @@
           <span class="empty-slot-text">Add Your Father</span>
         </div>
         <div class="polaroid-meta">
-          <div class="polaroid-card-caption">✦ Reserved Space ✦</div>
-          <div class="polaroid-card-subcaption">Tap to add your father to the Wall of Honor</div>
+          <div class="polaroid-card-caption">✦ Wall of Honor ✦</div>
+          <div class="polaroid-card-subcaption">Slot ${slotIndex} of ${MAX_WALL_CAPACITY} • Tap to honor your father</div>
         </div>
       `;
 
@@ -825,51 +1496,236 @@
     }
   }
 
+  async function deleteCommunityPhoto(item, cardElement) {
+    if (!confirm(`Are you sure you want to delete the photo for "${item.title}" from the Wall of Honor?`)) {
+      return;
+    }
+
+    // 1. Delete on server backend
+    try {
+      await fetch('/api/delete_photo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: item.id })
+      });
+    } catch (e) {}
+
+    // 2. Delete from localStorage
+    try {
+      const stored = JSON.parse(localStorage.getItem(COMMUNITY_STORAGE_KEY) || '[]');
+      const filtered = stored.filter(p => p.url !== item.url && p.id !== item.id);
+      localStorage.setItem(COMMUNITY_STORAGE_KEY, JSON.stringify(filtered));
+    } catch (e) {}
+
+    // 3. Remove DOM element smoothly
+    if (cardElement) {
+      cardElement.style.transition = 'all 0.35s ease';
+      cardElement.style.opacity = '0';
+      cardElement.style.transform = 'scale(0.8)';
+      setTimeout(() => {
+        if (cardElement.parentNode) cardElement.parentNode.removeChild(cardElement);
+      }, 350);
+    }
+
+    showToast(`Deleted photo: ${item.title}`);
+  }
+
   /* =========================================================================
-     6. CONFETTI CELEBRATION ENGINE
+     7. ADMIN GUESTBOOK LEDGER MODAL
      ========================================================================= */
-  function initConfetti() {
+  function initAdminGuestbook() {
+    if (guestbookOpenBtn) {
+      guestbookOpenBtn.addEventListener('click', openGuestbookModal);
+    }
+    if (guestbookCloseBtn) {
+      guestbookCloseBtn.addEventListener('click', closeGuestbookModal);
+    }
+    if (guestbookCloseBackdrop) {
+      guestbookCloseBackdrop.addEventListener('click', closeGuestbookModal);
+    }
+    if (guestbookRefreshBtn) {
+      guestbookRefreshBtn.addEventListener('click', fetchAndRenderVisitors);
+    }
+  }
+
+  function openGuestbookModal() {
+    if (guestbookModal) {
+      guestbookModal.classList.add('active');
+      guestbookModal.style.display = 'flex';
+      fetchAndRenderVisitors();
+    }
+  }
+
+  function closeGuestbookModal() {
+    if (guestbookModal) {
+      guestbookModal.classList.remove('active');
+      guestbookModal.style.display = 'none';
+    }
+  }
+
+  async function fetchAndRenderVisitors() {
+    if (!guestbookList) return;
+
+    guestbookList.innerHTML = '<div class="guestbook-loading">Loading visitor records...</div>';
+
+    let visitors = [];
+
+    // 1. Try server
+    try {
+      const resp = await fetch('/api/visitors');
+      if (resp.ok) {
+        const data = await resp.json();
+        if (data.success && Array.isArray(data.visitors)) {
+          visitors = data.visitors;
+        }
+      }
+    } catch (e) {}
+
+    // 2. Fallback / Merge with local ledger
+    try {
+      const localLedger = JSON.parse(localStorage.getItem('dad_visitor_ledger') || '[]');
+      const map = new Map();
+      [...visitors, ...localLedger].forEach(v => {
+        const key = `${v.name}_${v.timestamp}`;
+        if (!map.has(key)) map.set(key, v);
+      });
+      visitors = Array.from(map.values());
+    } catch (e) {}
+
+    if (visitorCountBadge) {
+      visitorCountBadge.textContent = `${visitors.length} Visitors Recorded`;
+    }
+
+    if (visitors.length === 0) {
+      guestbookList.innerHTML = '<div class="guestbook-empty">No visitors recorded yet.</div>';
+      return;
+    }
+
+    guestbookList.innerHTML = '';
+    visitors.slice().reverse().forEach((v) => {
+      const row = document.createElement('div');
+      row.className = 'visitor-item-row';
+      row.style.cssText = 'background:rgba(255,255,255,0.05);padding:12px 16px;border-radius:8px;margin-bottom:8px;border-left:3px solid var(--gold-vivid);display:flex;flex-direction:column;gap:4px;';
+
+      const timeStr = v.timestamp || 'Recent';
+      const noteStr = v.note ? `<div style="font-size:13px;color:#f5eedf;font-style:italic;">“${v.note}”</div>` : '';
+
+      row.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <strong style="color:var(--gold-vivid);font-size:14px;">${v.name}</strong>
+          <span style="font-size:11px;color:rgba(255,255,255,0.4);">${timeStr}</span>
+        </div>
+        ${noteStr}
+      `;
+      guestbookList.appendChild(row);
+    });
+  }
+
+  /* =========================================================================
+     8. FULLSCREEN HTML5 CANVAS CONFETTI CELEBRATION ENGINE
+     ========================================================================= */
+  let confettiParticles = [];
+  let isConfettiActive = false;
+
+  function initConfettiEngine() {
+    const canvas = document.getElementById('confetti-canvas');
+    if (!canvas) return;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
     if (confettiLaunchBtn) {
       confettiLaunchBtn.addEventListener('click', launchCelebrationConfetti);
     }
   }
 
   function launchCelebrationConfetti() {
-    const colors = ['#dfb76c', '#f3cf7a', '#b85d19', '#ffffff', '#e28743', '#8b1d1d'];
-    const count = 120;
+    const canvas = document.getElementById('confetti-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
 
-    for (let i = 0; i < count; i++) {
-      const conf = document.createElement('div');
-      conf.style.position = 'fixed';
-      conf.style.left = `${Math.random() * 100}vw`;
-      conf.style.top = `-20px`;
-      conf.style.width = `${Math.random() * 10 + 6}px`;
-      conf.style.height = `${Math.random() * 14 + 8}px`;
-      conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-      conf.style.opacity = Math.random() + 0.5;
-      conf.style.transform = `rotate(${Math.random() * 360}deg)`;
-      conf.style.zIndex = '9999';
-      conf.style.pointerEvents = 'none';
-      conf.style.transition = `top ${Math.random() * 2.5 + 2}s cubic-bezier(0.25, 1, 0.5, 1), transform ${Math.random() * 3 + 2}s ease`;
+    const colors = ['#dfb76c', '#f3cf7a', '#ffffff', '#b85d19', '#e28743', '#8b1d1d', '#ffe082'];
+    const particleCount = 150;
 
-      document.body.appendChild(conf);
-
-      setTimeout(() => {
-        conf.style.top = `${window.innerHeight + 40}px`;
-        conf.style.transform = `rotate(${Math.random() * 720}deg) translateX(${Math.random() * 200 - 100}px)`;
-        conf.style.opacity = '0';
-      }, 20);
-
-      setTimeout(() => {
-        conf.remove();
-      }, 4500);
+    for (let i = 0; i < particleCount; i++) {
+      confettiParticles.push({
+        x: width * 0.5 + (Math.random() - 0.5) * 200,
+        y: height * 0.4 + (Math.random() - 0.5) * 100,
+        vx: (Math.random() - 0.5) * 18,
+        vy: (Math.random() - 1.2) * 16,
+        size: Math.random() * 9 + 5,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        rotation: Math.random() * 360,
+        rotationSpeed: (Math.random() - 0.5) * 12,
+        wobble: Math.random() * 10,
+        wobbleSpeed: Math.random() * 0.1 + 0.05,
+        opacity: 1,
+        shape: Math.random() > 0.3 ? 'rect' : 'circle'
+      });
     }
 
-    showToast('🎉 Happy Father\'s Day, Dad!');
+    showToast("🎉 Happy Father's Day, Dad!");
+
+    if (!isConfettiActive) {
+      isConfettiActive = true;
+      runConfettiLoop(ctx, width, height);
+    }
+  }
+
+  function runConfettiLoop(ctx, width, height) {
+    if (confettiParticles.length === 0) {
+      ctx.clearRect(0, 0, width, height);
+      isConfettiActive = false;
+      return;
+    }
+
+    ctx.clearRect(0, 0, width, height);
+
+    for (let i = confettiParticles.length - 1; i >= 0; i--) {
+      const p = confettiParticles[i];
+
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.32; // Gravity
+      p.vx *= 0.985; // Air friction
+      p.rotation += p.rotationSpeed;
+      p.wobble += p.wobbleSpeed;
+      p.opacity -= 0.0055; // Fade decay
+
+      if (p.opacity <= 0 || p.y > height + 20) {
+        confettiParticles.splice(i, 1);
+        continue;
+      }
+
+      ctx.save();
+      ctx.globalAlpha = Math.max(p.opacity, 0);
+      ctx.translate(p.x + Math.sin(p.wobble) * 4, p.y);
+      ctx.rotate((p.rotation * Math.PI) / 180);
+      ctx.fillStyle = p.color;
+
+      if (p.shape === 'rect') {
+        ctx.fillRect(-p.size / 2, -p.size / 4, p.size, p.size / 2);
+      } else {
+        ctx.beginPath();
+        ctx.arc(0, 0, p.size / 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.restore();
+    }
+
+    requestAnimationFrame(() => runConfettiLoop(ctx, width, height));
   }
 
   /* =========================================================================
-     7. AMBIENT GOLDEN DUST CANVAS PARTICLES
+     9. AMBIENT GOLDEN DUST CANVAS PARTICLES
      ========================================================================= */
   function initCanvasParticles() {
     const canvas = document.getElementById('ambient-canvas');
@@ -885,16 +1741,16 @@
     });
 
     const particles = [];
-    const particleCount = 40;
+    const particleCount = 38;
 
     for (let i = 0; i < particleCount; i++) {
       particles.push({
         x: Math.random() * w,
         y: Math.random() * h,
         size: Math.random() * 2.2 + 0.6,
-        speedY: Math.random() * 0.4 + 0.15,
-        speedX: (Math.random() - 0.5) * 0.3,
-        alpha: Math.random() * 0.7 + 0.2
+        speedY: Math.random() * 0.35 + 0.12,
+        speedX: (Math.random() - 0.5) * 0.25,
+        alpha: Math.random() * 0.6 + 0.2
       });
     }
 
@@ -926,7 +1782,7 @@
   }
 
   /* =========================================================================
-     8. TOAST & FULLSCREEN
+     10. TOAST & FULLSCREEN UTILITIES
      ========================================================================= */
   function showToast(msg) {
     if (!securityToast) return;

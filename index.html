@@ -8,7 +8,7 @@
   <!-- Privacy & Static Hosting Meta -->
   <meta name="referrer" content="no-referrer">
   <meta name="robots" content="noindex, nofollow, noarchive">
-  <meta name="description" content="A living keepsake journal honoring Ratu Nautu Latunipulu.">
+  <meta name="description" content="A living keepsake journal honoring Ratu Nautu Latunipulu — Father's Day 2026.">
   
   <title>The Journal of Him — Ratu Nautu Latunipulu</title>
 
@@ -17,25 +17,28 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=Dancing+Script:wght@600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,600;1,6..72,400;1,6..72,600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=3.0">
 </head>
 <body class="editorial-body">
+
+  <!-- Fullscreen Confetti Particle Canvas -->
+  <canvas id="confetti-canvas"></canvas>
 
   <!-- Ambient Golden Island Dust Canvas -->
   <canvas id="ambient-canvas"></canvas>
 
   <!-- Left-Rail Timeline Progress Rail -->
   <nav class="timeline-rail" id="timeline-rail" aria-label="Timeline Navigation">
-    <div class="rail-track">
+    <div class="rail-track" id="rail-track">
       <div class="rail-progress-bar" id="rail-progress-bar"></div>
       <div class="rail-active-bead" id="rail-active-bead"></div>
     </div>
     <div class="rail-nodes">
-      <button class="rail-node active" data-target="hero-section" title="The Cover">
+      <button class="rail-node active" data-target="hero-section" title="The Story & Cover">
         <span class="node-dot"></span>
-        <span class="node-label">Cover</span>
+        <span class="node-label">Story</span>
       </button>
-      <button class="rail-node" data-target="entry-1" title="Entry I: The Early Years">
+      <button class="rail-node" data-target="entry-1" title="Entry I: Faith & Integrity">
         <span class="node-dot"></span>
         <span class="node-label">Entry I</span>
       </button>
@@ -70,6 +73,18 @@
     </div>
 
     <div class="nav-center-cluster">
+      <!-- Visitor Identity Pill & Name Switcher (Placed right next to Journal button) -->
+      <div class="nav-visitor-pill" id="nav-visitor-pill" style="display: none;">
+        <span class="visitor-avatar">👋</span>
+        <span class="visitor-greeting">Welcome, <strong id="nav-visitor-display-name">Guest</strong></span>
+        <button class="nav-change-name-btn" id="nav-change-name-btn" title="Change your visitor name">Change</button>
+      </div>
+
+      <button class="nav-view-tab" id="nav-intro-replay-btn" title="Watch Intro Showcase">
+        <span class="btn-icon">🎬</span>
+        <span>Intro Show</span>
+      </button>
+
       <button class="nav-view-tab active" id="nav-journal-btn">
         <span class="btn-icon">📖</span>
         <span>The Journal</span>
@@ -99,8 +114,8 @@
         <!-- Volume Control Slider -->
         <div class="audio-volume-control" title="Music Volume">
           <span class="volume-icon" id="volume-icon">🔉</span>
-          <input type="range" id="audio-volume-slider" min="0" max="100" value="35" class="volume-slider" aria-label="Volume Slider">
-          <span class="volume-label" id="volume-label">35%</span>
+          <input type="range" id="audio-volume-slider" min="0" max="100" value="20" class="volume-slider" aria-label="Volume Slider">
+          <span class="volume-label" id="volume-label">20%</span>
         </div>
       </div>
 
@@ -120,57 +135,289 @@
   <!-- ================= SCROLLING JOURNAL CONTAINER ================= -->
   <main class="journal-scroll-container" id="journal-scroll-container">
 
-    <!-- ================= SECTION 0: HERO CINEMATIC COVER ================= -->
-    <section class="journal-section hero-cover-section island-bg-twilight" id="hero-section" data-section-idx="0">
-      <div class="tongan-tapa-border top"></div>
-      <div class="hero-cover-content">
-        <div class="hero-badge-tag" id="hero-keepsake-tag">A FATHER'S DAY KEEPSAKE</div>
-        
-        <h1 class="hero-main-title">
-          The Journal <br>
-          <span class="title-cursive-accent" id="hero-cursive-name">of Him</span>
-        </h1>
-        
-        <p class="hero-narrative-sub" id="hero-sub-text">
-          A living archive of the man who never asked to be remembered — and impossible to forget. What follows is a journey, page by page.
-        </p>
-
-        <button class="hero-open-btn" id="hero-open-btn">
-          <span class="btn-book-icon">📖</span>
-          <span class="btn-open-text">OPEN THE JOURNAL</span>
-          <div class="btn-gold-underline"></div>
-        </button>
-
-        <div class="hero-scroll-cue">
-          <span class="cue-mouse"></span>
-          <span class="cue-label">SCROLL TO READ</span>
-        </div>
+    <!-- ================= SECTION 0: CELESTIAL STORYTELLING HERO ================= -->
+    <section class="journal-section hero-cover-section celestial-story-stage" id="hero-section" data-section-idx="0">
+      
+      <!-- Imaginary Sky, Stars & Drifting Clouds Layers -->
+      <div class="celestial-sky-backdrop">
+        <div class="stars-particle-layer" id="stars-particle-layer"></div>
+        <div class="cloud-drift-layer cloud-layer-back"></div>
+        <div class="cloud-drift-layer cloud-layer-mid"></div>
+        <div class="cloud-drift-layer cloud-layer-front"></div>
+        <div class="cloud-burst-forward" id="cloud-burst-forward"></div>
       </div>
+
+      <div class="tongan-tapa-border top"></div>
+
+      <div class="storytelling-hero-content">
+        <!-- Story Show Intro Header -->
+        <div class="story-show-header" id="story-show-header">
+          <div class="hero-badge-tag" id="story-show-badge">✨ NEVER THE SAME GIFT TWICE • A TRADITION OF ORIGINALITY</div>
+          <h1 class="story-main-title">
+            Every Year, <br>
+            <span class="title-cursive-accent">Something Completely Different</span>
+          </h1>
+          <p class="story-intro-sub">
+            Every time I give a gift, I make sure it is completely unique — never repeating, always one of a kind. Step into our journey through the years to see how each gift pushed creativity in a brand new way!
+          </p>
+        </div>
+
+        <!-- Interactive Gift Showcase Showcase Carousel (Cinematic Big Focus Mode) -->
+        <div class="gift-showcase-stage" id="gift-showcase-stage">
+
+          <!-- Golden Circular Close / Exit Button (Matches Screenshot 1 & 3) -->
+          <button class="theater-close-btn" id="theater-close-btn" onclick="window.exitTheaterIntroMode && window.exitTheaterIntroMode()" title="Exit Intro to Journal" aria-label="Exit Intro">✕</button>
+          
+          <!-- Slide 1: The Mum Heritage Jumper -->
+          <div class="gift-slide active" data-slide-idx="0">
+            <div class="gift-card-media-wrap photo-focus-wrap" title="Click to View Full Size">
+              <img src="assets/photos/mums_jumper.png" alt="Mohenoa Family Jumper" class="gift-media-img photo-zoomable" data-src="assets/photos/mums_jumper.png" data-title="The Mohenoa Family Jumper">
+              <span class="gift-type-pill">🧥 Custom Wearable Heritage</span>
+            </div>
+            <div class="gift-card-details">
+              <span class="gift-step-badge">✨ 2023 • SOMETHING NEW: CUSTOM WEARABLE HERITAGE</span>
+              <h2 class="gift-title">The Mohenoa Family Jumper</h2>
+              
+              <!-- Highlight Text Telling What I Did For The Jumper -->
+              <div class="gift-highlight-callout">
+                <div class="callout-heading">
+                  <span class="callout-icon">💡</span>
+                  <span class="callout-label">WHAT I DID FOR THIS GIFT:</span>
+                </div>
+                <p class="callout-body">
+                  I custom-designed an exclusive tribute hoodie from scratch for Mum — featuring her parents, her beloved family, and our sacred Mohenoa heritage, so she can always wear her family close to her heart wherever she goes.
+                </p>
+              </div>
+
+              <!-- Action button telling user to click or tap next to continue -->
+              <div class="slide-interactive-cta">
+                <button class="cinematic-primary-btn" onclick="window.storyGoToNext && window.storyGoToNext()" title="Advance to Next Gift">
+                  <span>👉 Click or Tap 'Next' to Continue</span>
+                  <span class="btn-arrow">➔</span>
+                </button>
+                <div class="cta-sub-hint">Step 1 of 5 • Take your time to read and explore</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 2: UniqueWishes African Dance Greeting Video -->
+          <div class="gift-slide" data-slide-idx="1">
+            <div class="gift-card-media-wrap video-preview-wrap" data-video-slide="true" title="Click Video to Play or Pause">
+              <video src="assets/videos/82566.mp4" playsinline muted class="gift-media-video" preload="auto"></video>
+              <div class="gift-play-overlay">
+                <span class="play-triangle">▶</span>
+                <span class="play-label">Play Video</span>
+              </div>
+              <button type="button" class="video-sound-toggle-btn" title="Toggle Video Audio">🔇 Sound: Off (Tap to Unmute)</button>
+              <div class="video-progress-tracker"><div class="video-progress-fill"></div></div>
+              <span class="gift-type-pill">💃 African Dance Greeting</span>
+              <button type="button" class="video-skip-overlay-btn" onclick="event.stopPropagation(); window.storyGoToNext && window.storyGoToNext()" title="Skip Video">⏭ Skip / Next</button>
+            </div>
+            <div class="gift-card-details">
+              <span class="gift-step-badge">✨ 2024 • SOMETHING NEW: VIRAL INTERNATIONAL COMEDY & DANCE</span>
+              <h2 class="gift-title">African Dance Birthday Greeting</h2>
+              
+              <div class="gift-highlight-callout">
+                <div class="callout-heading">
+                  <span class="callout-icon">💃</span>
+                  <span class="callout-label">DOING SOMETHING TOTALLY DIFFERENT:</span>
+                </div>
+                <p class="callout-body">
+                  Switching it up completely: A personalized celebration from a viral African dance troupe bringing explosive laughter, high-energy dancing, and infectious joy to our whole home.
+                </p>
+              </div>
+
+              <div class="slide-interactive-cta video-cta-row">
+                <a href="https://uniquewishes.shop/pages/african-dance-greeting?srsltid=AfmBOopKzY7F-230uTEelE8JQVRpaw8mDCj2vu64CKlQkui9HEz0_REQ" target="_blank" rel="noopener noreferrer" class="gift-external-link">
+                  🔗 View UniqueWishes Dance Page ↗
+                </a>
+                <button class="cinematic-skip-btn" onclick="window.storyGoToNext && window.storyGoToNext()" title="Skip to Next Gift">
+                  <span>⏭ Skip / Next Gift</span>
+                  <span class="btn-arrow">➔</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 3: Mum's AI Animated Birthday Film -->
+          <div class="gift-slide" data-slide-idx="2">
+            <div class="gift-card-media-wrap video-preview-wrap" data-video-slide="true" title="Click Video to Play or Pause">
+              <video src="assets/videos/mums ai video.mp4" playsinline muted class="gift-media-video" preload="auto"></video>
+              <div class="gift-play-overlay">
+                <span class="play-triangle">▶</span>
+                <span class="play-label">Play Video</span>
+              </div>
+              <button type="button" class="video-sound-toggle-btn" title="Toggle Video Audio">🔇 Sound: Off (Tap to Unmute)</button>
+              <div class="video-progress-tracker"><div class="video-progress-fill"></div></div>
+              <span class="gift-type-pill">✨ AI Living Cinema</span>
+              <button type="button" class="video-skip-overlay-btn" onclick="event.stopPropagation(); window.storyGoToNext && window.storyGoToNext()" title="Skip Video">⏭ Skip / Next</button>
+            </div>
+            <div class="gift-card-details">
+              <span class="gift-step-badge">✨ 2024 • SOMETHING NEW: LIVING AI CINEMATOGRAPHY</span>
+              <h2 class="gift-title">Mum's Animated Birthday Film</h2>
+              
+              <div class="gift-highlight-callout">
+                <div class="callout-heading">
+                  <span class="callout-icon">🎬</span>
+                  <span class="callout-label">PUSHING TECHNOLOGY & CREATIVITY:</span>
+                </div>
+                <p class="callout-body">
+                  Transforming old static family photographs and bringing them to life into an animated, cinematic living movie — blending cherished memories with cutting-edge AI visual storytelling.
+                </p>
+              </div>
+
+              <div class="slide-interactive-cta">
+                <button class="cinematic-skip-btn" onclick="window.storyGoToNext && window.storyGoToNext()" title="Skip to Next Gift">
+                  <span>⏭ Skip / Next Gift</span>
+                  <span class="btn-arrow">➔</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 4: Dad's Prime Years Aura Edit -->
+          <div class="gift-slide" data-slide-idx="3">
+            <div class="gift-card-media-wrap video-preview-wrap" data-video-slide="true" title="Click Video to Play or Pause">
+              <video src="assets/videos/thirst trap edit of my dad.mp4" playsinline muted class="gift-media-video" preload="auto"></video>
+              <div class="gift-play-overlay">
+                <span class="play-triangle">▶</span>
+                <span class="play-label">Play Video</span>
+              </div>
+              <button type="button" class="video-sound-toggle-btn" title="Toggle Video Audio">🔇 Sound: Off (Tap to Unmute)</button>
+              <div class="video-progress-tracker"><div class="video-progress-fill"></div></div>
+              <span class="gift-type-pill">🔥 Prime Years Edit</span>
+              <button type="button" class="video-skip-overlay-btn" onclick="event.stopPropagation(); window.storyGoToNext && window.storyGoToNext()" title="Skip Video">⏭ Skip Video</button>
+            </div>
+            <div class="gift-card-details">
+              <span class="gift-step-badge">✨ 2025 • SOMETHING NEW: THE HIGH-AURA PRIME YEARS EDIT</span>
+              <h2 class="gift-title">Dad's Prime Years 'Aura' Edit</h2>
+              
+              <div class="gift-highlight-callout">
+                <div class="callout-heading">
+                  <span class="callout-icon">🔥</span>
+                  <span class="callout-label">A WHOLE NEW TRIBUTE FOR DAD:</span>
+                </div>
+                <p class="callout-body">
+                  An electrifying, throwback aura edit honoring Dad's swagger, effortless island style, and unmistakable presence back in his prime glory days.
+                </p>
+              </div>
+
+              <div class="slide-interactive-cta">
+                <button class="cinematic-skip-btn" onclick="window.storyGoToNext && window.storyGoToNext()" title="Skip to Next Gift">
+                  <span>⏭ Skip / Next Gift</span>
+                  <span class="btn-arrow">➔</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 5: The Grand 2026 Keepsake Website (The Journal of Him) -->
+          <div class="gift-slide" data-slide-idx="4">
+            <div class="gift-card-media-wrap journal-tribute-media photo-focus-wrap" title="Click to View Full Size">
+              <img src="assets/photos/IMG_9293.JPG" alt="The Journal of Him" class="gift-media-img photo-zoomable" data-src="assets/photos/IMG_9293.JPG" data-title="The Journal of Him">
+              <span class="gift-type-pill">👑 2026 Grand Keepsake</span>
+            </div>
+            <div class="gift-card-details">
+              <span class="gift-step-badge">👑 2026 • THE ULTIMATE EVOLUTION: AN INTERACTIVE LIVING ARCHIVE</span>
+              <h2 class="gift-title">The Journal of Him</h2>
+              
+              <div class="gift-highlight-callout grand-evolution">
+                <div class="callout-heading">
+                  <span class="callout-icon">🌟</span>
+                  <span class="callout-label">ONLINE FOR THE ENTIRE YEAR:</span>
+                </div>
+                <p class="callout-body">
+                  Every year, I strive to create something truly unforgettable when giving gifts — and this is my 2026 Father’s Day tribute. Kept live online for the entire year so our family can forever revisit these memories, this archive is a window into the life of my father: a man whose easy humor, calm mannerisms, and gentle wisdom taught us to always smile and laugh things off, knowing that no storm lasts forever.
+                </p>
+              </div>
+
+              <div class="slide-interactive-cta">
+                <button class="hero-open-journal-cta grand-entry-btn" id="hero-open-btn">
+                  <span class="btn-book-icon">📖</span>
+                  <span>OPEN THE JOURNAL & READ HIS STORY</span>
+                  <span class="btn-arrow">➔</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Slide Stepper & Controls -->
+        <div class="story-stepper-row">
+          <button class="story-nav-btn prev" id="story-prev-btn" aria-label="Previous Gift">‹ Prev</button>
+          
+          <div class="story-dots-cluster" id="story-dots-cluster">
+            <button class="story-dot active" data-goto="0" title="Gift 1: Jumper"><span>1</span></button>
+            <button class="story-dot" data-goto="1" title="Gift 2: African Dance"><span>2</span></button>
+            <button class="story-dot" data-goto="2" title="Gift 3: AI Film"><span>3</span></button>
+            <button class="story-dot" data-goto="3" title="Gift 4: Prime Edit"><span>4</span></button>
+            <button class="story-dot" data-goto="4" title="Gift 5: The Journal"><span>5</span></button>
+          </div>
+
+          <button class="story-nav-btn next" id="story-next-btn" aria-label="Next Gift">Next ›</button>
+
+          <!-- Skip / Next Gift Fast Button for iPad & Phone -->
+          <button class="story-fast-skip-btn" id="story-fast-skip-btn" onclick="window.storyGoToNext && window.storyGoToNext()" title="Skip to Next Gift">
+            <span>⏭ Skip / Next</span>
+          </button>
+        </div>
+
+        <div class="hero-scroll-cue" id="hero-scroll-cue">
+          <span class="cue-mouse"></span>
+          <span class="cue-label">SCROLL TO EXPLORE JOURNAL</span>
+        </div>
+
+      </div>
+
       <div class="tongan-tapa-border bottom"></div>
     </section>
 
-    <!-- ================= ENTRY I: THE EARLY YEARS ================= -->
+    <!-- ================= ENTRY I: FAITH & EARLY INTEGRITY ================= -->
     <section class="journal-section entry-section island-bg-cream" id="entry-1" data-section-idx="1">
       <div class="section-watermark-tapa"></div>
       <div class="entry-grid-container">
         
         <!-- Left Editorial Text -->
         <div class="entry-text-col">
-          <div class="entry-header-tag" id="entry1-tag">ENTRY I • THE EARLY YEARS</div>
-          <h2 class="entry-display-headline" id="entry1-headline">He lived in <br>weather,</h2>
+          <div class="entry-header-tag" id="entry1-tag">ENTRY I • FAITH & INTEGRITY</div>
+          
+          <h2 class="entry-display-headline" id="entry1-headline">A Man Who <br>Showed Up,</h2>
           <div class="entry-gold-divider"></div>
+          
           <p class="entry-narrative-body" id="entry1-body">
-            Of all the things he was — builder, teacher, quiet comedian — he was first a man who simply showed up, season after season, to be where the day needed him. These are the years that taught the rest.
+            People knew my dad for many things — builder, mechanic, comedian, gardener. But above all, he was first and foremost a man who showed up: a father who was always there whenever we needed him most. This journal is a token of my deepest appreciation for the man he has always been.
           </p>
-          <div class="entry-anchor-date" id="entry1-anchor">ANCHORED IN 2001 • 2019</div>
+
+          <!-- Heartfelt Appreciation & Spiritual Accountability Card with Proverbs 20:7 underneath -->
+          <div class="spiritual-gratitude-card">
+            <div class="spiritual-card-crest">🕊️</div>
+            <h3 class="spiritual-card-title">A Foundation of Faith & Example</h3>
+            <p class="spiritual-card-p">
+              Thank you, Dad, for always keeping us accountable, guiding us to church, and helping build a foundation of morals and faith that shape who we are today.
+            </p>
+            <p class="spiritual-card-p">
+              Thank you for always leading by example — staying behind to clean up at church functions, standing as a true pioneer in our community, and watching over us through every spiritual battle.
+            </p>
+
+            <!-- Proverbs 20:7 Scripture Quote positioned under gratitude text -->
+            <div class="scripture-highlight-subcard">
+              <blockquote class="scripture-quote-text">
+                “The righteous man walks in his integrity; his children are blessed after him.”
+              </blockquote>
+              <div class="scripture-ref-tag">— Proverbs 20:7</div>
+            </div>
+
+            <div class="entry-anchor-date" id="entry1-anchor">ANCHORED IN FAITH • 2001 — 2026</div>
+          </div>
         </div>
 
         <!-- Right Hero Photo -->
         <div class="entry-photo-col">
           <div class="editorial-photo-mount">
-            <div class="editorial-frame photo-zoomable" id="entry1-photo-frame">
-              <img src="assets/photos/461726255_10225072540511238_9061600720500740799_n.jpg" alt="Ratu Nautu Latunipulu" class="editorial-img" id="entry1-img">
-              <div class="photo-bottom-stamp" id="entry1-photo-stamp">2001 — ON THE TRUNK</div>
+            <div class="editorial-frame photo-zoomable" id="entry1-photo-frame" data-src="assets/photos/IMG_9293.JPG" data-title="A Lifetime of Integrity">
+              <img src="assets/photos/IMG_9293.JPG" alt="Ratu Nautu Latunipulu" class="editorial-img" id="entry1-img">
+              <div class="photo-bottom-stamp" id="entry1-photo-stamp">2001 — A LIFETIME OF INTEGRITY</div>
             </div>
             <div class="island-palm-accent"></div>
           </div>
@@ -183,11 +430,6 @@
     <section class="journal-section entry-section island-bg-sand" id="entry-2" data-section-idx="2">
       <div class="tongan-kupesi-fata-pattern"></div>
       <div class="dedication-container">
-        
-        <div class="tongan-crest-badge">
-          <span class="crest-symbol">👑</span>
-          <span class="crest-motto" id="dedication-tonga-motto">KO E FONUA MO E 'OFA</span>
-        </div>
 
         <div class="entry-header-tag">ENTRY II • THE PILLAR & GUIDE</div>
         <h2 class="entry-display-headline serif-italic">The Hands That Held Us</h2>
@@ -196,16 +438,16 @@
         <div class="dedication-parchment-card">
           <div class="letter-salutation" id="dedication-salutation">Dear Dad,</div>
           <div class="letter-paragraphs" id="dedication-paragraphs">
-            <p>Thank you for being our constant anchor, our loudest supporter, and the greatest example of what it means to lead with love, integrity, and strength.</p>
+            <p>Thank you for being our constant anchor, our loudest supporter, and the greatest example of what it means to lead with love, integrity, and quiet strength.</p>
             <p>Every sacrifice you made, every lesson you taught, and every laugh we shared has shaped who we are today.</p>
             <p>This living archive is our tribute to your life, your heritage, and the priceless moments we carry in our hearts forever.</p>
           </div>
 
           <div class="letter-signature-area">
             <div class="sig-script" id="dedication-signature">With endless love & gratitude,</div>
-            <div class="sig-family" id="dedication-family">— Your Family</div>
-            <div class="wax-seal-gold">
-              <span>FAMILY<br>FIRST</span>
+            <div class="sig-family" id="dedication-family">— Latunipulu Family</div>
+            <div class="wax-seal-tongan" title="Coat of Arms of Tonga Stamp">
+              <img src="assets/photos/Coat_of_arms_of_Tonga.svg.webp" alt="Coat of Arms of Tonga Stamp" class="tongan-wax-seal-img">
             </div>
           </div>
         </div>
@@ -223,41 +465,41 @@
 
       <div class="timeline-reels-container" id="timeline-reels-container">
         
-        <!-- Reel Item 1 (Left Image, Right Text) -->
+        <!-- Reel Item 1: Photo with sister-in-law (Making friends anywhere) -->
         <div class="film-reel-row layout-left">
-          <div class="film-strip-frame photo-zoomable" data-src="assets/photos/465111373_10225469986967151_7970654995887563673_n.jpg" data-title="Two of Us">
+          <div class="film-strip-frame photo-zoomable" data-src="assets/photos/465422921_10225469982327035_8577979762292632392_n.jpg" data-title="Island Warmth & Kinship">
             <div class="sprockets top"></div>
             <div class="film-image-target">
-              <img src="assets/photos/465111373_10225469986967151_7970654995887563673_n.jpg" alt="Two of Us" class="film-img">
+              <img src="assets/photos/465422921_10225469982327035_8577979762292632392_n.jpg" alt="Island Warmth & Kinship" class="film-img">
             </div>
             <div class="sprockets bottom"></div>
           </div>
           <div class="film-reel-meta">
-            <span class="film-year-badge">2009</span>
-            <h3 class="film-title">Two of Us</h3>
-            <p class="film-caption">A photo taken too close, too bright, too fast — and therefore exactly right. This was how he loved: near enough to blur the edges, bright enough to make us squint. We kept it because it kept us.</p>
+            <span class="film-year-badge">2005</span>
+            <h3 class="film-title">Island Warmth & Kinship</h3>
+            <p class="film-caption">Captured in genuine company with his sister-in-law — a true testament to his natural warmth. Dad has that rare gift of getting along with everyone he meets, turning strangers into lifelong friends anywhere he goes.</p>
             <div class="film-meta-divider"></div>
           </div>
         </div>
 
-        <!-- Reel Item 2 (Right Image, Left Text) -->
+        <!-- Reel Item 2: Shared Laughs & Grace (Always smiling & laughing) -->
         <div class="film-reel-row layout-right">
           <div class="film-reel-meta">
-            <span class="film-year-badge">2006</span>
-            <h3 class="film-title">Held, in the Light</h3>
-            <p class="film-caption">Every good photograph of him is overexposed, as if the camera refused to hold a man that bright. She leaned in, the light came through the window, and the whole afternoon became a kind of grace.</p>
+            <span class="film-year-badge">2007</span>
+            <h3 class="film-title">Shared Laughs & Grace</h3>
+            <p class="film-caption">Every memory of Dad is filled with laughter. He was always the first to smile, finding joy in the simplest moments and lifting every room with his contagious, easygoing laughter.</p>
             <div class="film-meta-divider"></div>
           </div>
-          <div class="film-strip-frame photo-zoomable" data-src="assets/photos/465172942_10225469988447188_1277699363661289478_n.jpg" data-title="Held, in the Light">
+          <div class="film-strip-frame photo-zoomable" data-src="assets/photos/465561133_10225469980846998_5089765502435108626_n.jpg" data-title="Shared Laughs & Grace">
             <div class="sprockets top"></div>
             <div class="film-image-target">
-              <img src="assets/photos/465172942_10225469988447188_1277699363661289478_n.jpg" alt="Held, in the Light" class="film-img">
+              <img src="assets/photos/465561133_10225469980846998_5089765502435108626_n.jpg" alt="Shared Laughs & Grace" class="film-img">
             </div>
             <div class="sprockets bottom"></div>
           </div>
         </div>
 
-        <!-- Reel Item 3 (Left Image, Right Text) -->
+        <!-- Reel Item 3: The Glow Between Them -->
         <div class="film-reel-row layout-left">
           <div class="film-strip-frame photo-zoomable" data-src="assets/photos/465367677_10225469988487189_8635519669333974068_n.jpg" data-title="The Glow Between Them">
             <div class="sprockets top"></div>
@@ -267,14 +509,14 @@
             <div class="sprockets bottom"></div>
           </div>
           <div class="film-reel-meta">
-            <span class="film-year-badge">2007</span>
+            <span class="film-year-badge">2009</span>
             <h3 class="film-title">The Glow Between Them</h3>
             <p class="film-caption">Two people who had learned, over years, to live in each other's light. The flare in the lens was only the sun doing what their faces had already done — refusing to let us tell where one ended and the other began.</p>
             <div class="film-meta-divider"></div>
           </div>
         </div>
 
-        <!-- Reel Item 4 (Right Image, Left Text) -->
+        <!-- Reel Item 4: What He Grew -->
         <div class="film-reel-row layout-right">
           <div class="film-reel-meta">
             <span class="film-year-badge">2014</span>
@@ -303,7 +545,7 @@
         <div class="entry-gold-divider centered"></div>
       </div>
 
-      <!-- Organic Floating Polaroid Constellation -->
+      <!-- Organic Floating Polaroid Constellation (1 removed as requested) -->
       <div class="polaroid-scatter-constellation" id="polaroid-scatter-constellation">
         
         <div class="scatter-polaroid-item" style="transform: rotate(-5deg);" data-src="assets/photos/IMG_1908.JPG" data-title="Cherished Moments">
@@ -362,14 +604,6 @@
           <div class="polaroid-year-stamp">2009</div>
         </div>
 
-        <div class="scatter-polaroid-item" style="transform: rotate(6deg);" data-src="assets/photos/465173363_10225469982167031_3135516522095799177_n.jpg" data-title="Celebrations - 2005">
-          <div class="scotch-tape"></div>
-          <div class="polaroid-photo-box">
-            <img src="assets/photos/465173363_10225469982167031_3135516522095799177_n.jpg" alt="Memory" loading="lazy">
-          </div>
-          <div class="polaroid-year-stamp">2005</div>
-        </div>
-
       </div>
     </section>
 
@@ -383,29 +617,34 @@
         <div class="entry-gold-divider centered"></div>
 
         <div class="quotes-editorial-grid" id="quotes-editorial-grid">
+          <!-- Quote 1: Funny / Daily wisdom -->
           <div class="wisdom-quote-card">
-            <div class="quote-text">“Work hard in silence, let your character and integrity do the talking.”</div>
-            <div class="quote-meta">— DAILY LIFE LESSON</div>
+            <div class="quote-text">“If you don't know, try to know.”</div>
+            <div class="quote-meta">— Funniest quote</div>
           </div>
+
+          <!-- Quote 2: Determination & Hard work for our success -->
           <div class="wisdom-quote-card">
-            <div class="quote-text">“No matter how stormy it gets, steady hands always find calm waters.”</div>
-            <div class="quote-meta">— ON OVERCOMING CHALLENGES</div>
+            <div class="quote-text">“Work hard in silence with relentless determination; everything I build is for your success.”</div>
+            <div class="quote-meta">— ON HARD WORK & DETERMINATION</div>
           </div>
+
+          <!-- Quote 3: Family prayer foundation -->
           <div class="wisdom-quote-card">
-            <div class="quote-text">“Family isn't just an important thing. It's everything.”</div>
-            <div class="quote-meta">— CORE VALUE</div>
+            <div class="quote-text">“The family that prays together stays together.”</div>
+            <div class="quote-meta">— FAITH & FAMILY FOUNDATION</div>
           </div>
         </div>
 
         <!-- Epilogue Toast Box -->
         <div class="epilogue-toast-box">
-          <div class="toast-badge">HAPPY FATHER'S DAY</div>
+          <div class="toast-badge">HAPPY FATHER'S DAY 2026</div>
           <h3 class="toast-title">A Toast to You, Dad!</h3>
           <p class="toast-message">May the years ahead bring you robust health, great joy, endless laughter, and many new adventures. We love you more than words can express.</p>
           <div class="toast-signoff">Here's to the legend himself! 🥂</div>
           <div class="toast-actions-row">
             <button type="button" class="toast-celebrate-btn" id="confetti-launch-btn">🎉 Celebrate with Confetti</button>
-            <button type="button" class="toast-celebrate-btn thirst-trap-btn" id="thirst-trap-launch-btn" onclick="window.launchDadVideoEdit && window.launchDadVideoEdit(event)">🔥 Watch Dad's Edit 🤫</button>
+            <button type="button" class="toast-celebrate-btn thirst-trap-btn" id="thirst-trap-launch-btn">🔥 Watch Dad's Edit 🤫</button>
           </div>
         </div>
       </div>
@@ -426,9 +665,9 @@
         </div>
       </div>
 
-      <!-- Polaroid Scatter Grid for Community -->
+      <!-- Dynamic Infinite Expansion Polaroid Wall (up to 100) -->
       <div class="community-collage-board" id="community-collage-board">
-        <!-- Rendered dynamically by app.js: Dad's single tribute + user uploads + interactive empty reserved slots -->
+        <!-- Rendered dynamically by app.js with Admin delete controls and "+ Add Your Father" slot -->
       </div>
     </section>
 
@@ -437,7 +676,7 @@
       <div class="tongan-tapa-footer-line"></div>
       <div class="footer-text">
         <span>Created with love for <strong>Ratu Nautu Latunipulu</strong> & Fathers Everywhere</span>
-        <span class="footer-year">2026 Edition • Cloudflare & GitHub Static Archive</span>
+        <span class="footer-year">2026 Edition • Online for the Whole Year</span>
       </div>
     </footer>
 
@@ -506,44 +745,51 @@
     </div>
   </div>
 
-  <!-- ================= PASSCODE & VISITOR GATEKEEPER ================= -->
+  <!-- ================= VISITOR NAME GATEKEEPER MODAL ================= -->
+  <!-- Passcode completely removed. Only asks "Who is visiting?" and remembers permanently -->
   <div class="passcode-gate" id="passcode-gate">
     <div class="gate-overlay"></div>
     <div class="gate-card-wrapper">
       
-      <!-- STEP 1: Passcode Gate -->
-      <div class="gate-card" id="gate-passcode-card">
-        <div class="gate-crest">👑</div>
-        <h2 class="gate-title">Father's Day Keepsake</h2>
-        <p class="gate-sub">Enter the family passcode to open the living archive.</p>
-
-        <form id="passcode-form" class="gate-form">
-          <div class="input-wrap">
-            <input type="password" id="passcode-input" placeholder="Enter Passcode" autocomplete="off" autofocus>
-          </div>
-          <div class="gate-error" id="passcode-error-msg">Incorrect passcode. Please try again.</div>
-          <button type="submit" class="gate-btn">Unlock Journal</button>
-        </form>
-      </div>
-
-      <!-- STEP 2: Visitor Registration Form -->
-      <div class="gate-card" id="gate-visitor-card" style="display: none;">
+      <div class="gate-card" id="gate-visitor-card">
         <div class="gate-crest">🌴</div>
         <h2 class="gate-title">Welcome to the Celebration!</h2>
-        <p class="gate-sub">Please sign the family guestbook before entering.</p>
+        <p class="gate-sub">Who is visiting today? Please share your name to enter the keepsake.</p>
 
         <form id="visitor-form" class="gate-form">
           <div class="input-wrap">
-            <input type="text" id="visitor-name-input" placeholder="Your Name / Family Name *" required>
+            <label for="visitor-name-input" class="visually-hidden" style="display:none;">Your Name</label>
+            <input type="text" id="visitor-name-input" placeholder="Your Name / Family Name *" required autocomplete="name" autofocus>
           </div>
           <div class="input-wrap">
+            <label for="visitor-note-input" class="visually-hidden" style="display:none;">A wish or note</label>
             <input type="text" id="visitor-note-input" placeholder="A brief wish or note for Dad (optional)">
           </div>
           <div class="gate-error" id="visitor-error-msg">Please enter your name to enter.</div>
-          <button type="submit" class="gate-btn">Sign & Enter Journal</button>
+          <button type="submit" class="gate-btn" id="visitor-submit-btn">✨ Enter The Journal</button>
         </form>
       </div>
 
+    </div>
+  </div>
+
+  <!-- ================= CHANGE VISITOR NAME MODAL ================= -->
+  <div class="guestbook-modal" id="change-name-modal" role="dialog" aria-hidden="true">
+    <div class="guestbook-backdrop" id="change-name-backdrop"></div>
+    <div class="guestbook-dialog" style="max-width: 440px;">
+      <div class="guestbook-header">
+        <div class="guestbook-title-wrap">
+          <span class="guestbook-badge">VISITOR SETTINGS</span>
+          <h2>Update Your Name</h2>
+        </div>
+        <button class="guestbook-close" id="change-name-close-btn" aria-label="Close">✕</button>
+      </div>
+      <form id="change-name-form" class="gate-form" style="margin-top: 18px;">
+        <div class="input-wrap">
+          <input type="text" id="change-name-input" placeholder="Enter New Name / Family Name" required>
+        </div>
+        <button type="submit" class="gate-btn" style="margin-top: 14px;">Save & Update</button>
+      </form>
     </div>
   </div>
 
@@ -553,7 +799,7 @@
     <div class="guestbook-dialog">
       <div class="guestbook-header">
         <div class="guestbook-title-wrap">
-          <span class="guestbook-badge">ADMINISTRATION VAULT</span>
+          <span class="guestbook-badge">ADMINISTRATION VAULT (Admin134434)</span>
           <h2>Visitor Guestbook & Activity</h2>
         </div>
         <button class="guestbook-close" id="guestbook-close-btn" aria-label="Close">✕</button>
@@ -570,12 +816,12 @@
     </div>
   </div>
 
-  <!-- Toast Notification -->
+  <!-- Security / General Toast Notification -->
   <div class="security-toast" id="security-toast"></div>
 
   <!-- Scripts -->
-  <script src="config.js?v=2.2"></script>
-  <script src="security.js?v=2.2"></script>
-  <script src="app.js?v=2.2"></script>
+  <script src="config.js?v=3.0"></script>
+  <script src="security.js?v=3.0"></script>
+  <script src="app.js?v=3.0"></script>
 </body>
 </html>
