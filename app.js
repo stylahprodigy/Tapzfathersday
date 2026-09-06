@@ -866,14 +866,23 @@
     if (!topNavEl) return;
     const currentY = window.scrollY;
     const delta = currentY - lastScrollY;
+    const isMobileOrTablet = window.innerWidth <= 1024;
 
-    if (currentY <= 40) {
+    if (currentY <= 30) {
+      // Near the very top: always show the full navigation header
+      topNavEl.classList.remove('nav-hidden');
       topNavEl.classList.remove('nav-tabs-collapsed');
-    } else if (delta > 8 && currentY > 80) {
-      // Scrolled down -> collapse tabs so top bar stays minimal
-      topNavEl.classList.add('nav-tabs-collapsed');
-    } else if (delta < -6) {
-      // Scrolled up even a little bit -> show tabs immediately
+    } else if (delta > 5 && currentY > 50) {
+      // Scrolled DOWN:
+      // On phone / tablet / iPad: completely hide the entire top header (brand, welcome, intro, journal, buttons)
+      if (isMobileOrTablet) {
+        topNavEl.classList.add('nav-hidden');
+      } else {
+        topNavEl.classList.add('nav-tabs-collapsed');
+      }
+    } else if (delta < -5) {
+      // Scrolled UP even slightly: immediately slide the top header back into view
+      topNavEl.classList.remove('nav-hidden');
       topNavEl.classList.remove('nav-tabs-collapsed');
     }
 
@@ -1641,6 +1650,41 @@
     if (guestbookRefreshBtn) {
       guestbookRefreshBtn.addEventListener('click', fetchAndRenderVisitors);
     }
+
+    const guestbookPurgeBtn = document.getElementById('guestbook-purge-btn');
+    if (guestbookPurgeBtn) {
+      guestbookPurgeBtn.addEventListener('click', async () => {
+        if (!confirm('Are you sure you want to purge all test visitor records? This will delete all entries containing "test", "tester", or "admin" from cloud KV and local ledger.')) {
+          return;
+        }
+
+        guestbookPurgeBtn.textContent = 'Purging...';
+        guestbookPurgeBtn.disabled = true;
+
+        try {
+          await fetch(getApiUrl('/api/delete_visitor'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ purgeTests: true })
+          });
+        } catch (e) {}
+
+        // Clean local storage ledger
+        try {
+          const localLedger = JSON.parse(localStorage.getItem('dad_visitor_ledger') || '[]');
+          const cleaned = localLedger.filter(v => {
+            const n = (v.name || '').toLowerCase();
+            return !n.includes('test') && !n.includes('admin') && n !== 'guest' && n.length > 0;
+          });
+          localStorage.setItem('dad_visitor_ledger', JSON.stringify(cleaned));
+        } catch (e) {}
+
+        guestbookPurgeBtn.textContent = '🗑️ Purge Test Records';
+        guestbookPurgeBtn.disabled = false;
+        showToast('✅ Test visitor records purged successfully!');
+        fetchAndRenderVisitors();
+      });
+    }
   }
 
   function openGuestbookModal() {
@@ -1696,6 +1740,9 @@
       return;
     }
 
+    const isAdmin = (localStorage.getItem('dad_is_admin') === 'true') || 
+                    ((localStorage.getItem('dad_visitor_name') || '').toLowerCase() === 'admin134434');
+
     guestbookList.innerHTML = '';
     visitors.slice().reverse().forEach((v) => {
       const row = document.createElement('div');
@@ -1705,13 +1752,52 @@
       const timeStr = v.timestamp || 'Recent';
       const noteStr = v.note ? `<div style="font-size:13px;color:#f5eedf;font-style:italic;">“${v.note}”</div>` : '';
 
+      const deleteBtnHtml = isAdmin ? `
+        <button class="admin-del-visitor-btn" data-id="${v.id || ''}" data-name="${v.name}" style="background:rgba(220,53,69,0.22);border:1px solid rgba(255,80,80,0.45);color:#ff8888;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;cursor:pointer;margin-left:8px;" title="Delete this visitor">✕ Delete</button>
+      ` : '';
+
       row.innerHTML = `
         <div style="display:flex;justify-content:space-between;align-items:center;">
           <strong style="color:var(--gold-vivid);font-size:14px;">${v.name}</strong>
-          <span style="font-size:11px;color:rgba(255,255,255,0.4);">${timeStr}</span>
+          <div style="display:flex;align-items:center;">
+            <span style="font-size:11px;color:rgba(255,255,255,0.4);">${timeStr}</span>
+            ${deleteBtnHtml}
+          </div>
         </div>
         ${noteStr}
       `;
+
+      if (isAdmin) {
+        const delBtn = row.querySelector('.admin-del-visitor-btn');
+        if (delBtn) {
+          delBtn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            if (!confirm(`Delete visitor record for "${v.name}"?`)) return;
+
+            delBtn.textContent = '...';
+            delBtn.disabled = true;
+
+            try {
+              await fetch(getApiUrl('/api/delete_visitor'), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: v.id, name: v.name })
+              });
+            } catch (err) {}
+
+            // Remove from local storage
+            try {
+              const localLedger = JSON.parse(localStorage.getItem('dad_visitor_ledger') || '[]');
+              const filtered = localLedger.filter(item => item.id !== v.id && item.name !== v.name);
+              localStorage.setItem('dad_visitor_ledger', JSON.stringify(filtered));
+            } catch (err) {}
+
+            showToast(`Deleted visitor: ${v.name}`);
+            fetchAndRenderVisitors();
+          });
+        }
+      }
+
       guestbookList.appendChild(row);
     });
   }

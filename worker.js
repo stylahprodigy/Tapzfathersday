@@ -138,6 +138,45 @@ export default {
       }
     }
 
+    // 6. DELETE VISITOR (Admin Only: Delete single or purge testers)
+    if (url.pathname === '/api/delete_visitor' && request.method === 'POST') {
+      try {
+        const body = await request.json();
+        const visitorId = body.id;
+        const targetName = (body.name || '').trim().toLowerCase();
+        const purgeTests = !!body.purgeTests;
+        const purgeAll = !!body.purgeAll;
+
+        let visitors = await env.DAD_KV.get('visitors', { type: 'json' }) || [];
+
+        if (purgeAll) {
+          visitors = [];
+        } else if (purgeTests) {
+          // Remove any entries with "test", "tester", "admin", "guest", or empty
+          visitors = visitors.filter(v => {
+            const n = (v.name || '').toLowerCase();
+            return !n.includes('test') && !n.includes('admin') && n !== 'guest' && n.length > 0;
+          });
+        } else if (visitorId || targetName) {
+          visitors = visitors.filter(v => {
+            if (visitorId && v.id === visitorId) return false;
+            if (targetName && (v.name || '').toLowerCase() === targetName && (!v.id || v.id === visitorId)) return false;
+            return true;
+          });
+        }
+
+        await env.DAD_KV.put('visitors', JSON.stringify(visitors));
+        return new Response(JSON.stringify({ success: true, count: visitors.length, visitors }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      } catch (e) {
+        return new Response(JSON.stringify({ success: false, error: e.message }), {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+    }
+
     // Serve static assets directly (index.html, style.css, photos, videos)
     if (env.ASSETS) {
       return env.ASSETS.fetch(request);

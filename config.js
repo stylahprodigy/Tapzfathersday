@@ -198,7 +198,7 @@ window.JOURNAL_CONFIG = {
       { src: "assets/photos/AEC801CA-EFF9-4645-892E-586BEF9E4632.JPG", year: "2023", title: "Precious Memory", tilt: "3deg" },
       { src: "assets/photos/BBBECE25-968A-4821-8063-FA7A2776C0E1.JPEG", year: "2026", title: "Father's Legacy", tilt: "-2deg" },
       { src: "assets/photos/IMG_1908.JPG", year: "2024", title: "Cherished Moments", tilt: "5deg" },
-      { src: "assets/photos/IMG_2138.jpeg", year: "2023", title: "Laughter & Joy", tilt: "-3deg" },
+      { src: "assets/photos/IMG_2138.jpeg", year: "2023", title: "Honoring Nana", caption: "Standing in strength and deep love in memory of his mother", tilt: "-3deg" },
       { src: "assets/photos/IMG_3133.JPEG", year: "2025", title: "Special Gathering", tilt: "2deg" },
       { src: "assets/photos/IMG_3153.JPG", year: "2024", title: "Sunlit Smiles", tilt: "-4deg" },
       { src: "assets/photos/IMG_5429.jpeg", year: "2022", title: "Always Together", tilt: "3deg" },

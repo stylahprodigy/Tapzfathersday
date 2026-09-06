@@ -95,6 +95,11 @@
         <span>Wall of Honor</span>
       </button>
 
+      <button class="nav-view-tab" id="nav-story-studio-btn" title="Create Custom Story Keepsake">
+        <span class="btn-icon">📸</span>
+        <span>Story Studio</span>
+      </button>
+
       <button class="nav-cta-btn" id="nav-add-photo-btn">
         <span class="btn-icon">＋</span>
         <span>Add Your Father</span>
@@ -556,12 +561,12 @@
           <div class="polaroid-year-stamp">2024</div>
         </div>
 
-        <div class="scatter-polaroid-item" style="transform: rotate(3deg);" data-src="assets/photos/IMG_2138.jpeg" data-title="Laughter & Joy">
+        <div class="scatter-polaroid-item" style="transform: rotate(3deg);" data-src="assets/photos/IMG_2138.jpeg" data-title="Honoring Nana" data-caption="Standing in strength and deep love in memory of his mother">
           <div class="scotch-tape"></div>
           <div class="polaroid-photo-box">
-            <img src="assets/photos/IMG_2138.jpeg" alt="Memory" loading="lazy">
+            <img src="assets/photos/IMG_2138.jpeg" alt="Honoring Nana" loading="lazy">
           </div>
-          <div class="polaroid-year-stamp">2023</div>
+          <div class="polaroid-year-stamp">2023 • Honoring Nana</div>
         </div>
 
         <div class="scatter-polaroid-item" style="transform: rotate(-4deg);" data-src="assets/photos/IMG_5429.jpeg" data-title="Always Together">
@@ -645,6 +650,7 @@
           <div class="toast-actions-row">
             <button type="button" class="toast-celebrate-btn" id="confetti-launch-btn">🎉 Celebrate with Confetti</button>
             <button type="button" class="toast-celebrate-btn thirst-trap-btn" id="thirst-trap-launch-btn">🔥 Watch Dad's Edit 🤫</button>
+            <button type="button" class="toast-celebrate-btn open-studio-trigger" id="toast-studio-btn" style="background:linear-gradient(135deg, rgba(223,183,108,0.25), rgba(184,93,25,0.35));border-color:var(--gold-vivid);">📸 Create Keepsake Story</button>
           </div>
         </div>
       </div>
@@ -808,10 +814,159 @@
       <div class="guestbook-toolbar">
         <span class="visitor-count-badge" id="visitor-count-badge">0 Visitors Recorded</span>
         <button class="guestbook-refresh-btn" id="guestbook-refresh-btn">🔄 Refresh</button>
+        <button type="button" class="guestbook-purge-btn" id="guestbook-purge-btn" style="background:rgba(220,53,69,0.25);border:1px solid #ff4444;color:#ff7777;padding:5px 12px;border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:8px;" title="Delete all test visitor records">🗑️ Purge Test Records</button>
       </div>
 
       <div class="guestbook-list" id="guestbook-list">
         <div class="guestbook-empty">No visitors recorded yet.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= FATHER'S DAY POLAROID KEEPSAKE STUDIO MODAL ================= -->
+  <div class="guestbook-modal studio-modal" id="story-studio-modal" role="dialog" aria-hidden="true">
+    <div class="guestbook-backdrop" id="studio-close-backdrop"></div>
+    <div class="guestbook-dialog studio-dialog">
+      <div class="guestbook-header studio-header">
+        <div class="guestbook-title-wrap">
+          <span class="guestbook-badge">INSTAGRAM & FACEBOOK STUDIO</span>
+          <h2>Father's Day Polaroid Keepsake</h2>
+          <p class="studio-subtitle">Customize a high-resolution Polaroid keepsake with your photo, authentic handwritten note, and download for Story or Feed!</p>
+        </div>
+        <button class="guestbook-close" id="studio-close-btn" aria-label="Close">✕</button>
+      </div>
+
+      <!-- Format Toggle Tabs -->
+      <div class="studio-format-bar">
+        <button type="button" class="studio-format-tab active" id="studio-format-story">
+          <span>📱</span>
+          <span>Story (9:16 • 1080×1920)</span>
+        </button>
+        <button type="button" class="studio-format-tab" id="studio-format-post">
+          <span>📷</span>
+          <span>Feed Post (1:1 • 1080×1080)</span>
+        </button>
+      </div>
+
+      <!-- Main Studio Workspace -->
+      <div class="studio-workspace">
+        <!-- Interactive Canvas Preview Side -->
+        <div class="studio-preview-col">
+          <div class="studio-canvas-stage">
+            <canvas id="studio-canvas"></canvas>
+          </div>
+          <div class="studio-canvas-hint">
+            <span>👆 <strong>Drag photo</strong> directly on canvas to reposition • Sliders to zoom & rotate</span>
+          </div>
+        </div>
+
+        <!-- Controls Sidebar -->
+        <div class="studio-controls-col">
+          <!-- Photo Selection -->
+          <div class="studio-group">
+            <label class="studio-group-label">1. Choose Photo</label>
+            <div class="studio-btn-row">
+              <input type="file" id="studio-photo-input" accept="image/*" style="display:none;">
+              <button type="button" class="studio-btn-primary" id="studio-upload-btn">
+                <span>📁</span> Upload Photo
+              </button>
+              <button type="button" class="studio-btn-secondary" id="studio-sample-btn">
+                <span>👑</span> Use Sample Dad Photo
+              </button>
+            </div>
+          </div>
+
+          <!-- Zoom & Rotate Adjustments -->
+          <div class="studio-group">
+            <div class="studio-slider-header">
+              <label class="studio-group-label" for="studio-zoom-slider">2. Zoom & Adjust</label>
+              <span class="studio-slider-val" id="studio-zoom-label">100%</span>
+            </div>
+            <input type="range" id="studio-zoom-slider" min="0.5" max="2.5" step="0.05" value="1.0" class="studio-range-slider">
+
+            <div class="studio-slider-header" style="margin-top:12px;">
+              <label class="studio-group-label" for="studio-rotate-slider">Rotation Angle</label>
+              <span class="studio-slider-val" id="studio-rotate-label">0°</span>
+            </div>
+            <input type="range" id="studio-rotate-slider" min="-25" max="25" step="1" value="0" class="studio-range-slider">
+
+            <button type="button" class="studio-btn-tiny" id="studio-reset-btn" style="margin-top:8px;">
+              ↺ Reset Position & Zoom
+            </button>
+          </div>
+
+          <!-- Polaroid Chin Inscription -->
+          <div class="studio-group">
+            <label class="studio-group-label" for="studio-caption-input">3. Polaroid Chin Message</label>
+            <input type="text" id="studio-caption-input" value="Happy Father's Day, Dad! ❤️" maxlength="45" class="studio-text-input" placeholder="Write a message on the polaroid...">
+
+            <div class="studio-presets-row">
+              <span class="studio-presets-title">Quick Presets:</span>
+              <button type="button" class="studio-preset-chip" data-text="Happy Father's Day, Dad! ❤️">Happy Father's Day ❤️</button>
+              <button type="button" class="studio-preset-chip" data-text="Best Dad in the World 👑">Best Dad in the World 👑</button>
+              <button type="button" class="studio-preset-chip" data-text="My Hero, My Anchor ⚓">My Hero, My Anchor</button>
+              <button type="button" class="studio-preset-chip" data-text="Honoring Nana & Family 🕊️">Honoring Nana & Family</button>
+            </div>
+
+            <!-- Typography Choices -->
+            <div class="studio-typo-grid">
+              <div>
+                <label class="studio-sublabel" for="studio-font-select">Font Style</label>
+                <select id="studio-font-select" class="studio-select">
+                  <option value="'Dancing Script', cursive">✍️ Handwritten Script</option>
+                  <option value="'Cormorant Garamond', serif">📜 Editorial Calligraphy</option>
+                  <option value="'Cinzel', serif">👑 Royal Golden Serif</option>
+                  <option value="'Outfit', sans-serif">✨ Modern Clean Pen</option>
+                </select>
+              </div>
+
+              <div>
+                <div class="studio-slider-header">
+                  <label class="studio-sublabel" for="studio-font-size-slider">Size</label>
+                  <span class="studio-slider-val" id="studio-font-size-label">34px</span>
+                </div>
+                <input type="range" id="studio-font-size-slider" min="20" max="48" step="1" value="34" class="studio-range-slider">
+              </div>
+            </div>
+
+            <!-- Ink Color Selection -->
+            <div style="margin-top:12px;">
+              <label class="studio-sublabel">Ink Color</label>
+              <div class="studio-ink-swatches">
+                <label class="ink-swatch" title="Vintage Dark Pen">
+                  <input type="radio" name="studio-ink-color" value="#23201d" checked>
+                  <span class="swatch-circle" style="background:#23201d;"></span>
+                  <span>Classic Pen</span>
+                </label>
+                <label class="ink-swatch" title="Golden Foil">
+                  <input type="radio" name="studio-ink-color" value="#b38734">
+                  <span class="swatch-circle" style="background:#dfb76c;"></span>
+                  <span>Gold Foil</span>
+                </label>
+                <label class="ink-swatch" title="Sepia Warm Ink">
+                  <input type="radio" name="studio-ink-color" value="#6b3e1b">
+                  <span class="swatch-circle" style="background:#8c532b;"></span>
+                  <span>Sepia Ink</span>
+                </label>
+                <label class="ink-swatch" title="Royal Burgundy">
+                  <input type="radio" name="studio-ink-color" value="#781d1d">
+                  <span class="swatch-circle" style="background:#8b1d1d;"></span>
+                  <span>Burgundy</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Download & Share Actions -->
+          <div class="studio-actions-group">
+            <button type="button" class="studio-download-cta" id="studio-download-btn">
+              📥 Download 1080×1920 Story PNG
+            </button>
+            <button type="button" class="studio-share-cta" id="studio-share-btn">
+              📲 Share to Instagram / Friends
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -823,5 +978,6 @@
   <script src="config.js?v=3.0"></script>
   <script src="security.js?v=3.0"></script>
   <script src="app.js?v=3.0"></script>
+  <script src="studio.js?v=3.0"></script>
 </body>
 </html>
