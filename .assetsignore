@@ -1,0 +1,11 @@
+.git/
+.wrangler/
+launcher/
+*.exe
+__pycache__/
+*.py
+visitors.json
+visitors.txt
+node_modules/
+*.pack
+*.idx
