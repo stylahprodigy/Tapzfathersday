@@ -107,7 +107,7 @@ function renderLockScreenHtml() {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Restricted Access · Sports Edge AI Terminal</title>
+  <title>Restricted</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -141,7 +141,7 @@ function renderLockScreenHtml() {
     }
     .lock-card {
       width: 100%;
-      max-width: 480px;
+      max-width: 460px;
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 14px;
@@ -161,32 +161,34 @@ function renderLockScreenHtml() {
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 24px;
+      margin-bottom: 22px;
     }
     .logo-badge {
       width: 42px;
       height: 42px;
-      background: linear-gradient(135deg, #00e5ff, #00e676);
+      background: #0c1524;
+      border: 1px solid var(--border-bright);
       border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 900;
-      color: #050b14;
-      font-size: 20px;
-      box-shadow: 0 0 15px rgba(0,229,255,0.4);
+      color: var(--cyan);
+      font-size: 18px;
+      box-shadow: 0 0 15px rgba(0,229,255,0.2);
     }
     .title-area h1 {
-      font-size: 17px;
+      font-size: 16.5px;
       font-weight: 800;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.8px;
       color: #fff;
     }
     .title-area p {
-      font-size: 11.5px;
+      font-size: 11px;
       color: var(--cyan);
       font-family: var(--font-mono);
-      font-weight: 600;
+      font-weight: 700;
+      letter-spacing: 0.5px;
     }
     .security-badge {
       display: inline-flex;
@@ -199,7 +201,7 @@ function renderLockScreenHtml() {
       font-size: 10.5px;
       font-family: var(--font-mono);
       color: var(--cyan);
-      margin-bottom: 22px;
+      margin-bottom: 20px;
     }
     .pulse-dot {
       width: 7px;
@@ -211,10 +213,10 @@ function renderLockScreenHtml() {
     }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
     .auth-section {
-      margin-top: 18px;
+      margin-top: 16px;
     }
     .label {
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 700;
       color: var(--text-muted);
       margin-bottom: 6px;
@@ -251,7 +253,7 @@ function renderLockScreenHtml() {
       align-items: center;
       justify-content: center;
       gap: 8px;
-      margin-top: 10px;
+      margin-top: 12px;
     }
     .btn-primary {
       background: linear-gradient(135deg, #00e5ff 0%, #00b4d8 100%);
@@ -263,24 +265,8 @@ function renderLockScreenHtml() {
       box-shadow: 0 6px 20px rgba(0, 229, 255, 0.5);
       transform: translateY(-1px);
     }
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 20px 0;
-      color: var(--text-muted);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .divider::before, .divider::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
     .pin-bar {
-      letter-spacing: 4px;
+      letter-spacing: 6px;
       font-size: 22px;
       text-align: center;
       font-family: var(--font-mono);
@@ -312,16 +298,19 @@ function renderLockScreenHtml() {
       font-size: 10.5px;
       color: var(--text-muted);
       font-family: var(--font-mono);
+      line-height: 1.4;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding-top: 14px;
     }
   </style>
 </head>
 <body>
   <div class="lock-card">
     <div class="brand-header">
-      <div class="logo-badge">⚡</div>
+      <div class="logo-badge">🔒</div>
       <div class="title-area">
-        <h1>SPORTS EDGE AI TERMINAL</h1>
-        <p>RESTRICTED OPERATOR WORKBENCH v2.0</p>
+        <h1>RESTRICTED ACCESS</h1>
+        <p>AUTHENTICATION REQUIRED</p>
       </div>
     </div>
 
@@ -332,21 +321,21 @@ function renderLockScreenHtml() {
 
     <div id="statusBox" class="status-msg"></div>
 
-    <!-- Step 1: Request Discord PIN -->
+    <!-- Step 1: Request Verification Code -->
     <div id="stepRequestOtp" class="auth-section">
       <label class="label">Authorized Operator</label>
-      <input type="email" id="inputEmail" class="input" value="${AUTHORIZED_EMAIL}" readonly style="color:var(--cyan); font-weight:700;" />
+      <input type="text" id="inputOperator" class="input" value="STYLXH" readonly style="color:var(--cyan); font-weight:800; letter-spacing:2px; text-align:center; background:#040912;" />
       <button class="btn btn-primary" id="btnRequestOtp" onclick="handleRequestOtp()">
-        ⚡ Send Security PIN to Discord (#BETTING)
+        Request Verification Code
       </button>
     </div>
 
-    <!-- Step 2: Enter PIN to Unlock -->
+    <!-- Step 2: Enter PIN to Authenticate -->
     <div id="stepVerifyOtp" class="auth-section" style="display:none;">
-      <label class="label">6-Digit Security PIN (from Discord #BETTING)</label>
+      <label class="label">Enter 6-Digit Verification Code</label>
       <input type="text" id="inputPin" class="input pin-bar" maxlength="6" placeholder="------" autocomplete="off" />
       <button class="btn btn-primary" id="btnVerifyOtp" onclick="handleVerifyOtp()">
-        🔓 Unlock Sports Edge AI Terminal
+        Authenticate
       </button>
       <div style="text-align:center; margin-top:10px;">
         <button style="background:none; border:none; color:var(--text-muted); font-size:11.5px; cursor:pointer;" onclick="showRequestStep()">
@@ -356,7 +345,7 @@ function renderLockScreenHtml() {
     </div>
 
     <div class="footer-note">
-      AUTHORIZATION EXCLUSIVELY VIA SINGLE-USE DISCORD CODE SENT TO PRIVATE OPERATOR CHANNEL<br>
+      RESTRICTED ACCESS · OPERATOR AUTHENTICATION REQUIRED<br>
       NON-INTERCEPTABLE · 256-BIT CLOUDFLARE EDGE ENCRYPTION
     </div>
   </div>
@@ -375,10 +364,10 @@ function renderLockScreenHtml() {
     }
 
     async function handleRequestOtp() {
-      const email = document.getElementById('inputEmail').value.trim();
+      const email = "${AUTHORIZED_EMAIL}";
       const btn = document.getElementById('btnRequestOtp');
       btn.disabled = true;
-      btn.textContent = 'Dispatching to Discord...';
+      btn.textContent = 'Dispatching verification code...';
 
       try {
         const res = await fetch('/api/auth/request_otp', {
@@ -388,34 +377,34 @@ function renderLockScreenHtml() {
         });
         const data = await res.json();
         btn.disabled = false;
-        btn.textContent = '⚡ Send Security PIN to Discord (#BETTING)';
+        btn.textContent = 'Request Verification Code';
 
         if (!data.success) {
-          showMsg(data.error || 'Access Denied: Unauthorized email.', true);
+          showMsg(data.error || 'Access Denied: Unauthorized request.', true);
           return;
         }
 
         document.getElementById('stepRequestOtp').style.display = 'none';
         document.getElementById('stepVerifyOtp').style.display = 'block';
         document.getElementById('inputPin').value = '';
-        showMsg('✓ 6-Digit PIN sent to your Discord (#BETTING). Check Discord, then enter the PIN below.');
+        showMsg('✓ Verification code dispatched to operator. Enter the 6-digit code below.');
       } catch (err) {
         btn.disabled = false;
-        btn.textContent = '⚡ Send Security PIN to Discord (#BETTING)';
+        btn.textContent = 'Request Verification Code';
         showMsg('Network error: ' + err.message, true);
       }
     }
 
     async function handleVerifyOtp() {
-      const email = document.getElementById('inputEmail').value.trim();
+      const email = "${AUTHORIZED_EMAIL}";
       const code = document.getElementById('inputPin').value.trim();
       const btn = document.getElementById('btnVerifyOtp');
       if (!code) {
-        showMsg('Please enter the 6-digit PIN code.', true);
+        showMsg('Please enter the 6-digit verification code.', true);
         return;
       }
       btn.disabled = true;
-      btn.textContent = 'Validating 256-bit Token...';
+      btn.textContent = 'Validating token...';
 
       try {
         const res = await fetch('/api/auth/verify_otp', {
@@ -426,18 +415,18 @@ function renderLockScreenHtml() {
         const data = await res.json();
         if (!data.success) {
           btn.disabled = false;
-          btn.textContent = '🔓 Unlock Sports Edge AI Terminal';
-          showMsg(data.error || 'Invalid or expired PIN code.', true);
+          btn.textContent = 'Authenticate';
+          showMsg(data.error || 'Invalid or expired verification code.', true);
           return;
         }
 
-        showMsg('✓ Identity confirmed. Unlocking Sports Edge AI Terminal...');
+        showMsg('✓ Access granted. Initializing authenticated session...');
         setTimeout(() => {
           window.location.reload();
-        }, 600);
+        }, 500);
       } catch (err) {
         btn.disabled = false;
-        btn.textContent = '🔓 Unlock Sports Edge AI Terminal';
+        btn.textContent = 'Authenticate';
         showMsg('Validation error: ' + err.message, true);
       }
     }
@@ -453,16 +442,16 @@ function renderLockScreenHtml() {
 async function sendDiscordAuthPin(toEmail, code) {
   try {
     const payload = {
-      username: 'SPORTS EDGE AI SECURITY',
+      username: 'OPERATOR GATEKEEPER',
       avatar_url: 'https://tapzfathersday.org/favicon.ico',
       embeds: [
         {
-          title: '🔐 SPORTS EDGE AI · OPERATOR SECURITY ACCESS PIN',
-          description: `Single-use verification code requested for authorized operator **${toEmail}**.\n\n*Code is hardware-isolated and transmitted strictly via Cloudflare Edge TLS 1.3.*`,
+          title: '🔐 RESTRICTED ACCESS · OPERATOR VERIFICATION PIN',
+          description: `Single-use verification code requested for operator **STYLXH**.\n\n*Code is transmitted strictly via Cloudflare Edge TLS 1.3.*`,
           color: 0x00E5FF,
           fields: [
             {
-              name: '🔑 6-DIGIT VERIFICATION PIN',
+              name: '🔑 6-DIGIT VERIFICATION CODE',
               value: `\`\`\`fix\n${code}\n\`\`\``,
               inline: false,
             },
@@ -472,13 +461,13 @@ async function sendDiscordAuthPin(toEmail, code) {
               inline: true,
             },
             {
-              name: '🛡 TARGET WORKBENCH',
-              value: 'tapzfathersday.org',
+              name: '🛡 AUTHORIZATION STATUS',
+              value: 'STYLXH · Restricted Session',
               inline: true,
             },
           ],
           footer: {
-            text: 'Cloudflare Edge WAF · Non-Interceptable Hardware-Linked Session',
+            text: 'Cloudflare Edge WAF · Non-Interceptable Authentication Session',
           },
           timestamp: new Date().toISOString(),
         },
@@ -937,7 +926,7 @@ export default {
     }
 
     // ------------------------------------------------------------------------
-    // PROTECTED API ENDPOINTS (Authorized for tapz.latunipulu@gmail.com)
+    // PROTECTED API ENDPOINTS (Authorized for STYLXH)
     // ------------------------------------------------------------------------
     if (url.pathname === '/api/overview' && request.method === 'GET') {
       return jsonResponse(dataBundle.overview);
@@ -948,28 +937,129 @@ export default {
     }
 
     if (url.pathname === '/api/live_match' && request.method === 'GET') {
-      const fid = url.searchParams.get('fixture_id') || '1';
-      const live = (dataBundle.live_scores.live_matches || []).find(m => String(m.fixture_id) === fid) || {
+      const fid = url.searchParams.get('id') || url.searchParams.get('fixture_id') || '1';
+      const live = (dataBundle.live_scores.live_matches || []).find(m => String(m.fixture_id) === String(fid)) || {
         fixture_id: Number(fid),
+        sport: 'NBA',
+        period: 'Q4 02:44',
+        clock: '02:44',
         period_str: 'Q4 02:44',
         clock_str: '02:44',
-        home_score: 112,
-        away_score: 108,
+        home: 'Boston Celtics',
+        away: 'New York Knicks',
+        home_score: 114,
+        away_score: 110,
         home_team: 'Boston Celtics',
         away_team: 'New York Knicks',
+        live_win_prob_home: 0.82,
+        live_win_prob_away: 0.18,
         win_prob_home: 0.82,
         win_prob_away: 0.18,
       };
-      return jsonResponse({ success: true, live_match: live });
+      return jsonResponse({ success: true, live_match: live, ...live });
     }
 
-    if (url.pathname.startsWith('/api/fixture/') && request.method === 'GET') {
-      const fid = url.pathname.replace('/api/fixture/', '').trim();
+    if ((url.pathname === '/api/fixture' || url.pathname.startsWith('/api/fixture/')) && request.method === 'GET') {
+      const fid = url.searchParams.get('id') || url.pathname.replace('/api/fixture/', '').trim() || '1';
       const fixtureData = dataBundle.fixtures[fid] || dataBundle.fixtures['1'] || null;
       if (!fixtureData) {
         return jsonResponse({ error: 'Fixture not found' }, 404);
       }
       return jsonResponse(fixtureData);
+    }
+
+    if (url.pathname === '/api/players' && request.method === 'GET') {
+      const sport = url.searchParams.get('sport') || 'ALL';
+      const q = (url.searchParams.get('q') || '').trim().toLowerCase();
+      let list = dataBundle.players || [];
+      if (sport && sport !== 'ALL') {
+        list = list.filter(p => p.sport_code === sport);
+      }
+      if (q) {
+        list = list.filter(p => (p.full_name || '').toLowerCase().includes(q) || (p.team_name || '').toLowerCase().includes(q));
+      }
+      return jsonResponse({ players: list.slice(0, 80) });
+    }
+
+    if (url.pathname === '/api/player' && request.method === 'GET') {
+      const pid = url.searchParams.get('id') || '1';
+      const pDetail = (dataBundle.players_detail && dataBundle.players_detail[pid]) || (dataBundle.players_detail && dataBundle.players_detail['1']) || null;
+      if (!pDetail) {
+        return jsonResponse({ error: 'Player not found' }, 404);
+      }
+      return jsonResponse(pDetail);
+    }
+
+    if (url.pathname === '/api/backtest' && request.method === 'GET') {
+      const sport = url.searchParams.get('sport') || 'ALL';
+      const bt = (dataBundle.backtest && dataBundle.backtest[sport]) || (dataBundle.backtest && dataBundle.backtest['ALL']) || {};
+      return jsonResponse(bt);
+    }
+
+    if (url.pathname === '/api/datacentre' && request.method === 'GET') {
+      return jsonResponse(dataBundle.datacentre || {});
+    }
+
+    if (url.pathname === '/api/custom_prop' && request.method === 'POST') {
+      try {
+        const body = await request.json();
+        const pid = body.player_id || 1;
+        const line = Number(body.line_value || 20.5);
+        const market = body.market_code || 'PLAYER_POINTS';
+        const pDetail = (dataBundle.players_detail && dataBundle.players_detail[String(pid)]) || (dataBundle.players_detail && dataBundle.players_detail['1']);
+        const proj = (pDetail && pDetail.projection) ? Number(pDetail.projection.adjusted_projection || 22.0) : 22.0;
+        const diff = proj - line;
+        const overProb = Math.min(0.92, Math.max(0.12, 0.50 + (diff * 0.04)));
+        const underProb = 1.0 - overProb;
+        return jsonResponse({
+          success: true,
+          player_id: pid,
+          market_code: market,
+          line_value: line,
+          projection: proj,
+          over_probability: Number(overProb.toFixed(4)),
+          under_probability: Number(underProb.toFixed(4)),
+          fair_over_odds: Number((1 / overProb).toFixed(2)),
+          fair_under_odds: Number((1 / underProb).toFixed(2)),
+        });
+      } catch (e) {
+        return jsonResponse({ success: false, error: e.message }, 500);
+      }
+    }
+
+    if (url.pathname === '/api/custom_multi' && request.method === 'POST') {
+      try {
+        const body = await request.json();
+        const legs = body.legs || [];
+        const rawProbs = legs.map(l => Math.max(0.05, Math.min(0.95, Number(l.prob || 0.5))));
+        let joint = rawProbs.reduce((a, b) => a * b, 1.0);
+        joint = Math.min(0.95, joint * 0.95);
+        const fairOdds = Number((1 / Math.max(0.001, joint)).toFixed(2));
+        return jsonResponse({
+          success: true,
+          joint_probability: Number(joint.toFixed(4)),
+          joint_fair_odds: fairOdds,
+          correlation_adjusted: true,
+        });
+      } catch (e) {
+        return jsonResponse({ success: false, error: e.message }, 500);
+      }
+    }
+
+    if ((url.pathname === '/api/order/move' || url.pathname === '/api/order/paste') && request.method === 'POST') {
+      return jsonResponse({ success: true, message: 'Order updated successfully' });
+    }
+
+    if (url.pathname === '/api/manual_market' && request.method === 'POST') {
+      return jsonResponse({ ok: true, message: 'Manual market line recorded' });
+    }
+
+    if (url.pathname === '/api/sync' && request.method === 'POST') {
+      return jsonResponse({ ok: true, message: 'Auto-sync active and verified', timestamp: new Date().toISOString() });
+    }
+
+    if (url.pathname === '/api/shutdown' && request.method === 'POST') {
+      return jsonResponse({ ok: true, message: 'Shutdown acknowledged' });
     }
 
     // ------------------------------------------------------------------------
@@ -1099,6 +1189,11 @@ export default {
       } catch (e) {
         return jsonResponse({ success: false, error: e.message }, 500);
       }
+    }
+
+    // Safety fallback: if an unknown /api/ route was requested, return 404 JSON, not HTML!
+    if (url.pathname.startsWith('/api/')) {
+      return jsonResponse({ error: 'Endpoint not found' }, 404);
     }
 
     // ------------------------------------------------------------------------

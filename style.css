@@ -292,9 +292,10 @@ body {
 }
 
 .search-box {
-  flex: 1 1 200px;
-  min-width: 170px;
-  max-width: 300px;
+  flex: 0 0 220px;
+  width: 220px;
+  min-width: 220px;
+  max-width: 260px;
   position: relative;
   display: flex;
   align-items: center;
@@ -331,7 +332,7 @@ body {
 }
 
 .search-kbd-hint {
-  display: none;
+  display: none !important;
 }
 
 /* Multi-Select Difficulty Filter Bar (Bet365 / Financial Segment) */
@@ -1418,6 +1419,20 @@ table.data-table tr:hover td {
   transition: background 0.14s ease;
   cursor: pointer;
   gap: 16px;
+  box-sizing: border-box;
+}
+
+.live-match-row.ticker-card {
+  flex: 0 0 280px !important;
+  width: 280px !important;
+  min-width: 280px !important;
+  max-width: 280px !important;
+  flex-shrink: 0 !important;
+  box-sizing: border-box !important;
+  padding: 10px 14px !important;
+  border-radius: 6px !important;
+  border: 1px solid var(--border-bright) !important;
+  margin: 0 !important;
 }
 
 .live-match-row:last-child {

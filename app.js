@@ -268,147 +268,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function checkGatekeeperAuth() {
-  const isCloudHost = window.location.hostname.includes('tapzfathersday.org') || 
-                      window.location.hostname.includes('workers.dev') ||
-                      window.location.hostname.includes('pages.dev');
-  if (!isCloudHost) {
-    // Local developer environment on 127.0.0.1 passes directly
-    const lockModal = document.getElementById('operatorLockModal');
-    if (lockModal) lockModal.style.display = 'none';
-    return true;
-  }
-
-  // Strictly enforce fresh verification code on every single refresh/load:
-  // Immediately revoke any cached session on the server
-  try {
-    await fetch('/api/auth/logout', { method: 'POST' });
-  } catch (e) {}
-
-  // Display exclusive operator gatekeeper modal immediately
-  const lockModal = document.getElementById('operatorLockModal');
-  if (lockModal) {
-    lockModal.style.display = 'flex';
-  }
-  showGateRequestStep();
-  return false;
-}
-
-window.addEventListener('beforeunload', () => {
-  if (navigator.sendBeacon) {
-    navigator.sendBeacon('/api/auth/logout');
-  }
-});
-
-function showGateMsg(msg, isError = false) {
-  const box = document.getElementById('gatekeeperStatusBox');
-  if (!box) return;
-  box.textContent = msg;
-  box.style.display = 'block';
-  box.style.background = isError ? 'rgba(239,68,68,0.12)' : 'rgba(16,185,129,0.12)';
-  box.style.border = isError ? '1px solid rgba(239,68,68,0.3)' : '1px solid rgba(16,185,129,0.3)';
-  box.style.color = isError ? '#fca5a5' : '#a7f3d0';
-}
-
-function showGateRequestStep() {
-  const stepReq = document.getElementById('gateStepRequest');
-  const stepVer = document.getElementById('gateStepVerify');
-  const box = document.getElementById('gatekeeperStatusBox');
-  if (stepReq) stepReq.style.display = 'block';
-  if (stepVer) stepVer.style.display = 'none';
-  if (box) box.style.display = 'none';
-}
-
-async function handleGateRequestOtp() {
-  const emailInput = document.getElementById('gateInputEmail');
-  const email = emailInput ? emailInput.value.trim() : 'tapz.latunipulu@gmail.com';
-  const btn = document.getElementById('btnGateRequestOtp');
-  if (btn) {
-    btn.disabled = true;
-    btn.textContent = '⚡ Dispatching to Discord (#BETTING)...';
-  }
-
-  try {
-    const res = await fetch('/api/auth/request_otp', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email })
-    });
-    const data = await res.json();
-    if (btn) {
-      btn.disabled = false;
-      btn.textContent = '⚡ Send Security PIN to Discord (#BETTING)';
-    }
-
-    if (!data.success) {
-      showGateMsg(data.error || 'Access Denied: Unauthorized email.', true);
-      return;
-    }
-
-    const stepReq = document.getElementById('gateStepRequest');
-    const stepVer = document.getElementById('gateStepVerify');
-    if (stepReq) stepReq.style.display = 'none';
-    if (stepVer) stepVer.style.display = 'block';
-
-    const pinInput = document.getElementById('gateInputPin');
-    if (pinInput) pinInput.value = '';
-    showGateMsg('✓ 6-Digit security PIN sent directly to your Discord channel (#BETTING). Enter the PIN below.');
-  } catch (err) {
-    if (btn) {
-      btn.disabled = false;
-      btn.textContent = '⚡ Send Security PIN to Discord (#BETTING)';
-    }
-    showGateMsg('Network error requesting security PIN: ' + err.message, true);
-  }
-}
-
-async function handleGateVerifyOtp() {
-  const emailInput = document.getElementById('gateInputEmail');
-  const pinInput = document.getElementById('gateInputPin');
-  const email = emailInput ? emailInput.value.trim() : 'tapz.latunipulu@gmail.com';
-  const code = pinInput ? pinInput.value.trim() : '';
-  const btn = document.getElementById('btnGateVerifyOtp');
-
-  if (!code) {
-    showGateMsg('Please enter the 6-digit verification code.', true);
-    return;
-  }
-
-  if (btn) {
-    btn.disabled = true;
-    btn.textContent = 'Validating 256-bit Token...';
-  }
-
-  try {
-    const res = await fetch('/api/auth/verify_otp', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, code })
-    });
-    const data = await res.json();
-
-    if (!data.success) {
-      if (btn) {
-        btn.disabled = false;
-        btn.textContent = '🔓 Unlock Sports Edge AI Terminal';
-      }
-      showGateMsg(data.error || 'Invalid or expired code.', true);
-      return;
-    }
-
-    showGateMsg('✓ Identity confirmed. Unlocking Sports Edge AI Terminal...');
-    setTimeout(async () => {
-      const lockModal = document.getElementById('operatorLockModal');
-      if (lockModal) lockModal.style.display = 'none';
-      await loadOverviewData();
-      renderSlipUI();
-    }, 500);
-  } catch (err) {
-    if (btn) {
-      btn.disabled = false;
-      btn.textContent = '🔓 Unlock Sports Edge AI Terminal';
-    }
-    showGateMsg('Verification error: ' + err.message, true);
-  }
+  return true;
 }
 
 async function loadOverviewData() {
@@ -501,12 +361,12 @@ async function renderCurrentPage() {
 
 function renderOverviewLiveScoresStrip(liveMatches) {
   if (!liveMatches || liveMatches.length === 0) return '';
-  const cardsHtml = liveMatches.slice(0, 6).map((m) => {
+  const cardsHtml = liveMatches.map((m) => {
     const hLead = m.home_score >= m.away_score;
     const aLead = m.away_score >= m.home_score;
     return `
-      <div class="live-match-row" style="flex:1; min-width:280px; padding:10px 14px; border-radius:6px; border:1px solid var(--border-bright);" onclick="selectLiveScoreMatch(${m.fixture_id}); switchPage('livescores');">
-        <div class="live-clock-cell mono" style="width:80px; min-width:80px;">
+      <div class="live-match-row ticker-card" onclick="selectLiveScoreMatch(${m.fixture_id}); switchPage('livescores');">
+        <div class="live-clock-cell mono" style="width:78px; min-width:78px; flex-shrink:0;">
           <div class="live-clock-time" style="font-size:12px;">
             <span class="live-pulse-red"></span>
             <span>${m.clock || m.period || 'LIVE'}</span>
@@ -515,17 +375,17 @@ function renderOverviewLiveScoresStrip(liveMatches) {
             <span class="live-sport-tag">${m.sport}</span>
           </div>
         </div>
-        <div class="live-teams-cell" style="gap:4px;">
-          <div class="live-team-line ${hLead ? 'leader' : ''}" style="font-size:12.5px;">
-            <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:130px;">${m.home}</span>
+        <div class="live-teams-cell" style="gap:4px; min-width:0; overflow:hidden;">
+          <div class="live-team-line ${hLead ? 'leader' : ''}" style="font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+            <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${m.home}</span>
           </div>
-          <div class="live-team-line ${aLead ? 'leader' : ''}" style="font-size:12.5px;">
-            <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:130px;">${m.away}</span>
+          <div class="live-team-line ${aLead ? 'leader' : ''}" style="font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+            <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${m.away}</span>
           </div>
         </div>
-        <div class="live-scores-cell mono">
-          <div class="live-score-box ${hLead ? 'leader' : ''}" style="width:38px; font-size:13px; padding:2px 0;">${m.home_score}</div>
-          <div class="live-score-box ${aLead ? 'leader' : ''}" style="width:38px; font-size:13px; padding:2px 0;">${m.away_score}</div>
+        <div class="live-scores-cell mono" style="display:flex; flex-direction:column; gap:4px; flex-shrink:0; min-width:38px;">
+          <div class="live-score-box ${hLead ? 'leader' : ''}" style="width:36px; min-width:36px; font-size:13px; padding:2px 0; text-align:center;">${m.home_score}</div>
+          <div class="live-score-box ${aLead ? 'leader' : ''}" style="width:36px; min-width:36px; font-size:13px; padding:2px 0; text-align:center;">${m.away_score}</div>
         </div>
       </div>
     `;
@@ -540,7 +400,7 @@ function renderOverviewLiveScoresStrip(liveMatches) {
         </div>
         <button class="btn" style="color:var(--emerald-text); border-color:var(--emerald);" onclick="switchPage('livescores')">View Full Scoreboard →</button>
       </div>
-      <div style="display:flex; gap:10px; overflow-x:auto; padding-bottom:4px;">
+      <div style="display:flex; gap:12px; overflow-x:auto; padding:4px 2px 8px 2px; flex-wrap:nowrap; align-items:stretch;">
         ${cardsHtml}
       </div>
     </div>
