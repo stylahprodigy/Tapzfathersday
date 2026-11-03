@@ -1354,6 +1354,16 @@ table.data-table tr:hover td {
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
 }
 
+.modal-card.modal-card-lg {
+  width: 920px !important;
+  max-width: 96vw !important;
+  max-height: 90vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+}
+
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;

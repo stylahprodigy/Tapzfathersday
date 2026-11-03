@@ -360,18 +360,28 @@ async function renderCurrentPage() {
 }
 
 function renderOverviewLiveScoresStrip(liveMatches) {
-  if (!liveMatches || liveMatches.length === 0) return '';
-  const now = Date.now();
-  const activeMatches = liveMatches.filter((m) => {
+  const activeMatches = (liveMatches || []).filter((m) => {
     if (m.is_final) {
       const startTime = m.start_utc ? new Date(m.start_utc).getTime() : 0;
       const durationMs = 150 * 60 * 1000;
       const finishTime = m.finish_utc ? new Date(m.finish_utc).getTime() : (startTime + durationMs);
-      return (now - finishTime) <= (60 * 60 * 1000);
+      return (Date.now() - finishTime) <= (60 * 60 * 1000);
     }
     return true;
   });
-  if (activeMatches.length === 0) return '';
+
+  if (activeMatches.length === 0) {
+    return `
+      <div class="card" style="padding:12px 18px; display:flex; align-items:center; justify-content:space-between; background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:8px; margin-bottom:18px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="width:8px; height:8px; border-radius:50%; background:var(--emerald); display:inline-block;"></span>
+          <span style="font-size:12px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.5px;">Live In-Play Scores</span>
+          <span style="font-size:12px; color:var(--text-secondary);">— All games currently scheduled. Next kickoff: <b style="color:var(--cyan);">Thu 05 Nov 11:00 AM AEDT</b> (Detroit Pistons vs Philadelphia 76ers)</span>
+        </div>
+        <button class="btn" style="font-size:11.5px; padding:4px 12px;" onclick="switchPage('livescores')">View In-Play Scoreboard →</button>
+      </div>
+    `;
+  }
   const cardsHtml = activeMatches.map((m) => {
     const hLead = m.home_score >= m.away_score;
     const aLead = m.away_score >= m.home_score;
@@ -2997,23 +3007,23 @@ function renderGeminiAuditReport(audit) {
       <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:var(--text-secondary); letter-spacing:0.5px; margin-bottom:8px;">
         Candidate Legs Stress-Test Matrix (${audit.n_legs} Active Selections)
       </div>
-      <div style="overflow-x:auto;">
-        <table class="data-table" style="font-size:12px;">
+      <div style="overflow-x:auto; border:1px solid var(--border-subtle); border-radius:8px; margin-bottom:18px;">
+        <table class="data-table" style="font-size:12px; margin:0; width:100%; border-collapse:collapse;">
           <thead>
             <tr>
-              <th style="width:40px;">#</th>
-              <th>Matchup / Sport</th>
-              <th>Market &amp; Selection</th>
-              <th style="text-align:right;">Model Win Prob</th>
-              <th style="text-align:right;">Fair Odds</th>
-              <th>Volatility</th>
-              <th>Correlation Synergy</th>
+              <th style="width:36px; text-align:center;">#</th>
+              <th style="min-width:180px;">Matchup / Sport</th>
+              <th style="min-width:170px;">Market &amp; Selection</th>
+              <th style="min-width:100px; text-align:right;">Model Win Prob</th>
+              <th style="min-width:90px; text-align:right;">Fair Odds</th>
+              <th style="min-width:90px; text-align:center;">Volatility</th>
+              <th style="min-width:130px;">Correlation Synergy</th>
             </tr>
           </thead>
           <tbody>
             ${(audit.leg_audits || []).map(l => `
               <tr>
-                <td class="mono" style="font-weight:700;">${l.leg_number}</td>
+                <td class="mono" style="font-weight:700; text-align:center;">${l.leg_number}</td>
                 <td>
                   <div style="font-weight:700; color:var(--text-main);">${l.matchup}</div>
                   <div style="font-size:10.5px; color:var(--text-secondary);">${l.sport}</div>
@@ -3024,7 +3034,7 @@ function renderGeminiAuditReport(audit) {
                 </td>
                 <td class="mono" style="text-align:right; font-weight:700; color:var(--emerald);">${l.fair_probability}</td>
                 <td class="mono" style="text-align:right; font-weight:700;">${l.fair_odds}</td>
-                <td>
+                <td style="text-align:center;">
                   <span class="badge ${l.status === 'STABLE' ? 'badge-easy' : (l.status === 'BALANCED' ? 'badge-mid' : 'badge-close')}" style="font-size:10px;">
                     ${l.status}
                   </span>
@@ -3064,7 +3074,7 @@ function renderGeminiAuditReport(audit) {
         <span>Gemini 3.8 High-Reasoning Executive Breakdown</span>
         <span class="badge" style="background:rgba(0,229,255,0.1); color:var(--cyan); font-size:9.5px;">MONTE CARLO SYNTHESIS</span>
       </div>
-      <div class="mono" style="background:#030712; border:1px solid var(--border-bright); border-radius:8px; padding:14px 16px; font-size:11.5px; line-height:1.55; color:#d1d5db; white-space:pre-wrap; max-height:220px; overflow-y:auto;">${audit.gemini_reasoning}</div>
+      <div class="mono" style="background:#030712; border:1px solid var(--border-bright); border-radius:8px; padding:18px 20px; font-size:12px; line-height:1.65; color:#d1d5db; white-space:pre-wrap; max-height:420px; overflow-y:auto;">${audit.gemini_reasoning}</div>
     </div>
   `;
 }
