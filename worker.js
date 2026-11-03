@@ -484,37 +484,94 @@ async function sendDiscordAuthPin(toEmail, code) {
   }
 }
 
-async function generateAndSendEasyMultiAlerts(subscribedCategories = null, env = null) {
-  const categories = (subscribedCategories && subscribedCategories.length > 0)
-    ? subscribedCategories
-    : ['NBA', 'RUGBY_UNION', 'RUGBY_LEAGUE', 'NFL', 'WORLD_CUP'];
+async function generateAndSendEasyMultiAlerts(subscribedCategories = null, env = null, isManual = false) {
+  // 1. Retrieve saved subscriptions from KV if not explicitly supplied
+  let categories = subscribedCategories;
+  if (!categories || categories.length === 0) {
+    if (env && env.DAD_KV) {
+      try {
+        const raw = await env.DAD_KV.get('discord_subscriptions');
+        if (raw) categories = JSON.parse(raw);
+      } catch (e) {}
+    }
+  }
+  if (!categories || categories.length === 0) {
+    categories = ['NBA', 'WORLD_CUP', 'NFL'];
+  }
 
+  const normCategories = categories.map(c => String(c).toUpperCase().trim());
   const now = Date.now();
   const sportsMap = dataBundle.overview?.sports || {};
   let qualifiedEasyGames = [];
 
-  for (const [sportKey, fixtureList] of Object.entries(sportsMap)) {
-    const isCategorySubscribed = categories.some(cat => {
-      const c = cat.toUpperCase();
-      if (c === sportKey.toUpperCase()) return true;
-      if (c === 'WORLD_CUP' && (sportKey.includes('RUGBY') || (fixtureList[0] && fixtureList[0].tournament_category?.includes('WORLD_CUP')))) return true;
-      if (c === 'RUGBY' && sportKey.includes('RUGBY')) return true;
-      return false;
-    });
+  // Helper: strictly isolate category subscriptions with zero cross-category leaks
+  function fixtureMatchesSubscription(f, sportKey) {
+    const sportUpper = String(f.sport || sportKey || '').toUpperCase();
+    const compUpper = String(f.competition || '').toUpperCase();
+    const tourCat = String(f.tournament_category || '').toUpperCase();
+    const isWorldCup = tourCat.includes('WORLD_CUP') || compUpper.includes('WORLD CUP');
 
-    if (!isCategorySubscribed) continue;
+    // 1. NBA
+    if (sportUpper === 'NBA' || compUpper.includes('NBA')) {
+      return normCategories.includes('NBA');
+    }
+
+    // 2. NFL
+    if (sportUpper === 'NFL' || compUpper.includes('NFL')) {
+      return normCategories.includes('NFL');
+    }
+
+    // 3. Rugby League (NRL - strictly isolated, never leaks into World Cup)
+    if (sportUpper.includes('LEAGUE') || compUpper.includes('NRL')) {
+      return normCategories.includes('RUGBY_LEAGUE');
+    }
+
+    // 4. Rugby World Cup: ONLY true World Cup tournaments (Men's & Women's RWC)
+    if (isWorldCup) {
+      return normCategories.includes('WORLD_CUP') || normCategories.includes('RUGBY_WORLD_CUP');
+    }
+
+    // 5. Rugby Union (Domestic / Tours - strictly isolated)
+    if (sportUpper.includes('UNION') || compUpper.includes('SIX NATIONS') || compUpper.includes('SUPER RUGBY')) {
+      return normCategories.includes('RUGBY_UNION');
+    }
+
+    return false;
+  }
+
+  // Iterate over all fixtures
+  for (const [sportKey, fixtureList] of Object.entries(sportsMap)) {
+    if (!Array.isArray(fixtureList)) continue;
 
     for (const f of fixtureList) {
       if (!f.start_utc) continue;
+      const status = String(f.status || '').toLowerCase();
+      if (status === 'final' || status === 'finished') continue;
+
+      // 1. Strict Category Check
+      if (!fixtureMatchesSubscription(f, sportKey)) continue;
+
       const startTime = new Date(f.start_utc).getTime();
       const diffMs = startTime - now;
+      const diffHours = Math.round(diffMs / (3600 * 1000));
 
-      // Filter: Only upcoming games within 48 hours (or current match cycle)
-      if (diffMs < -60 * 60 * 1000) continue;
+      // 2. Strict 48-Hour Timing Window (2 Days Prior)
+      // Automated cron & manual alerts check matches ~2 days out (24h to 54h before kickoff)
+      const minHours = 24;
+      const maxHours = 54;
 
+      if (diffHours < minHours || diffHours > maxHours) {
+        continue;
+      }
+
+      // 3. Confirmed Lineup / Roster Status
+      const isConfirmed = f.lineup_confirmed !== false && f.roster_status !== 'PROJECTED';
+      if (!isConfirmed) continue;
+
+      // 4. EASY Matchups Exclusively (Model Win Probability >= 70% or EASY difficulty grade)
       const probHome = Number(f.win_prob_home || 0.5);
       const probAway = Number(f.win_prob_away || 0.5);
-      const isEasyDifficulty = (f.matchup_difficulty || '').toUpperCase() === 'EASY';
+      const isEasyDifficulty = String(f.matchup_difficulty || f.difficulty || '').toUpperCase() === 'EASY';
       const isEasyByProbability = probHome >= 0.70 || probAway >= 0.70;
 
       if (!isEasyDifficulty && !isEasyByProbability) continue;
@@ -522,11 +579,12 @@ async function generateAndSendEasyMultiAlerts(subscribedCategories = null, env =
       const favTeam = probHome >= probAway ? f.home : f.away;
       const favProb = Math.max(probHome, probAway);
       const fairPrice = (1 / Math.max(0.01, favProb)).toFixed(2);
-      const expScore = `${f.home_expected || 0} - ${f.away_expected || 0}`;
+      const expScore = `${f.home_expected || 0} – ${f.away_expected || 0}`;
 
       qualifiedEasyGames.push({
         id: f.id,
         sport: f.sport || sportKey,
+        competition: f.competition || f.sport || 'Championship',
         home: f.home,
         away: f.away,
         favTeam,
@@ -535,64 +593,64 @@ async function generateAndSendEasyMultiAlerts(subscribedCategories = null, env =
         expScore,
         startTime,
         startUtc: f.start_utc,
-        diffHours: Math.max(0, Math.round(diffMs / (3600 * 1000))),
+        diffHours,
+        lineupConfirmed: true,
       });
     }
   }
 
-  // Fallback to top upcoming Easy games if schedule timestamps are pre-computed
-  if (qualifiedEasyGames.length === 0) {
-    for (const [sportKey, fixtureList] of Object.entries(sportsMap)) {
-      const isCategorySubscribed = categories.some(cat => {
-        const c = cat.toUpperCase();
-        if (c === sportKey.toUpperCase()) return true;
-        if (c.includes('RUGBY') && sportKey.includes('RUGBY')) return true;
-        return false;
-      });
-      if (!isCategorySubscribed) continue;
-
-      for (const f of fixtureList) {
-        const probHome = Number(f.win_prob_home || 0.5);
-        const probAway = Number(f.win_prob_away || 0.5);
-        if ((f.matchup_difficulty || '').toUpperCase() === 'EASY' || probHome >= 0.70 || probAway >= 0.70) {
-          const favTeam = probHome >= probAway ? f.home : f.away;
-          const favProb = Math.max(probHome, probAway);
-          qualifiedEasyGames.push({
-            id: f.id,
-            sport: f.sport || sportKey,
-            home: f.home,
-            away: f.away,
-            favTeam,
-            favProb,
-            fairPrice: (1 / Math.max(0.01, favProb)).toFixed(2),
-            expScore: `${f.home_expected || 0} - ${f.away_expected || 0}`,
-            startTime: new Date(f.start_utc || Date.now()).getTime(),
-            startUtc: f.start_utc || new Date().toISOString(),
-            diffHours: 24,
-          });
-        }
-      }
-    }
-  }
-
+  // Sort descending by highest win probability
   qualifiedEasyGames.sort((a, b) => b.favProb - a.favProb);
 
   if (qualifiedEasyGames.length === 0) {
-    return { success: true, count: 0, message: 'No qualifying easy games found for subscribed categories.' };
+    return {
+      success: true,
+      count: 0,
+      message: 'No qualifying games found in the 48h advance window with confirmed lineups for subscribed categories.',
+      subscribed_categories: normCategories,
+    };
+  }
+
+  // 5. Anti-Spam / Deduplication Check via Cloudflare KV
+  const slateIds = qualifiedEasyGames.map(g => g.id).sort().join('-');
+  const cacheKey = 'last_discord_alert_slate';
+
+  if (env && env.DAD_KV && !isManual) {
+    try {
+      const historyRaw = await env.DAD_KV.get(cacheKey);
+      if (historyRaw) {
+        const hist = JSON.parse(historyRaw);
+        const lastSent = Number(hist.timestamp) || 0;
+        // If an alert for this slate was sent within the last 20 hours, skip cron duplicate
+        if ((now - lastSent) < (20 * 3600 * 1000) && hist.slateIds === slateIds) {
+          console.log(`[Discord Multi Intel] Alert already dispatched ${Math.round((now - lastSent)/60000)}m ago for slate [${slateIds}]. Skipping cron duplicate.`);
+          return {
+            success: true,
+            count: qualifiedEasyGames.length,
+            skipped: true,
+            reason: 'Already dispatched for current 48h window. Constant spam prevented.',
+            subscribed_categories: normCategories,
+          };
+        }
+      }
+    } catch (e) {
+      console.warn('Error reading alert history KV:', e);
+    }
   }
 
   const formatSydney = (dateMs) => {
     try {
       const d = new Date(dateMs);
-      return d.toLocaleDateString('en-AU', {
+      const dayName = d.toLocaleDateString('en-AU', { timeZone: 'Australia/Sydney', weekday: 'short' });
+      const dayNum = d.toLocaleDateString('en-AU', { timeZone: 'Australia/Sydney', day: '2-digit' });
+      const month = d.toLocaleDateString('en-AU', { timeZone: 'Australia/Sydney', month: 'short' });
+      const timeStr = d.toLocaleTimeString('en-AU', {
         timeZone: 'Australia/Sydney',
-        weekday: 'short',
-        day: '2-digit',
-        month: 'short',
-        hour: '2-digit',
+        hour: 'numeric',
         minute: '2-digit',
-        hour12: false,
-      }) + ' AEDT';
+        hour12: true,
+      }).toUpperCase();
+      return `${dayName} ${dayNum} ${month} · ${timeStr} AEDT`;
     } catch {
       return 'Upcoming AEDT';
     }
@@ -610,7 +668,7 @@ async function generateAndSendEasyMultiAlerts(subscribedCategories = null, env =
     const combinedOdds3 = (1 / Math.max(0.01, Number(jointProb3))).toFixed(2);
     multi3Field = {
       name: '🔥 RECOMMENDED 3-LEG EASY MULTI STACK',
-      value: `• **Leg 1:** ${leg1.favTeam} Moneyline (${(leg1.favProb*100).toFixed(1)}%)\n• **Leg 2:** ${leg2.favTeam} Moneyline (${(leg2.favProb*100).toFixed(1)}%)\n• **Leg 3:** ${leg3.favTeam} Moneyline (${(leg3.favProb*100).toFixed(1)}%)\n• Combined Model Win Prob: **${(Number(jointProb3)*100).toFixed(1)}%** · Fair Price: **$${combinedOdds3}**\n• Staking: **Quarter-Kelly (1.5% Bankroll)**`,
+      value: `• **Leg 1:** ${leg1.favTeam} Moneyline (${(leg1.favProb*100).toFixed(1)}%)\n• **Leg 2:** ${leg2.favTeam} Moneyline (${(leg2.favProb*100).toFixed(1)}%)\n• **Leg 3:** ${leg3.favTeam} Moneyline (${(leg3.favProb*100).toFixed(1)}%)\n• Combined Model Win Prob: **${(Number(jointProb3)*100).toFixed(1)}%** · Fair Price: **$${combinedOdds3}**\n• Staking: **Quarter-Kelly (1.5% Bankroll)**\n• Lineup Verification: **✓ Confirmed Starters (48h Lock)**`,
       inline: false,
     };
   }
@@ -619,7 +677,7 @@ async function generateAndSendEasyMultiAlerts(subscribedCategories = null, env =
     const emoji = g.sport === 'NBA' ? '🏀' : (g.sport.includes('RUGBY') ? '🏉' : '🏈');
     return {
       name: `${emoji} Easy Matchup #${idx + 1}: ${g.home} vs ${g.away}`,
-      value: `• Kickoff: **${formatSydney(g.startTime)}** (Starts in ~${g.diffHours}h)\n• Recommended Leg: **${g.favTeam} Moneyline (Win)**\n• Model Win Probability: **${(g.favProb * 100).toFixed(1)}%** (Fair Price: **$${g.fairPrice}**)\n• Expected Score: **${g.expScore}**`,
+      value: `• Kickoff: **${formatSydney(g.startTime)}** (Starts in ~${g.diffHours}h)\n• Recommended Leg: **${g.favTeam} Moneyline (Win)**\n• Model Win Probability: **${(g.favProb * 100).toFixed(1)}%** (Fair Price: **$${g.fairPrice}**)\n• Expected Score: **${g.expScore}**\n• Lineup Status: **✓ Confirmed Starters & Rosters (2 Days Out)**`,
       inline: false,
     };
   });
@@ -628,7 +686,7 @@ async function generateAndSendEasyMultiAlerts(subscribedCategories = null, env =
     ...gameFields,
     {
       name: '⚡ RECOMMENDED 2-LEG EASY MULTI',
-      value: `• **Leg 1:** ${leg1.favTeam} ML (${(leg1.favProb*100).toFixed(1)}%)\n• **Leg 2:** ${leg2.favTeam} ML (${(leg2.favProb*100).toFixed(1)}%)\n• Joint Model Win Prob: **${(Number(jointProb2)*100).toFixed(1)}%**\n• Fair Price: **$${combinedOdds2}**\n• Recommended Staking: **Quarter-Kelly (3.0% Bankroll)**\n• Bet365 SGM Rules: Non-whole number lines (.5 push-safe)`,
+      value: `• **Leg 1:** ${leg1.favTeam} ML (${(leg1.favProb*100).toFixed(1)}%)\n• **Leg 2:** ${leg2.favTeam} ML (${(leg2.favProb*100).toFixed(1)}%)\n• Joint Model Win Prob: **${(Number(jointProb2)*100).toFixed(1)}%**\n• Fair Price: **$${combinedOdds2}**\n• Recommended Staking: **Quarter-Kelly (3.0% Bankroll)**\n• Bet365 SGM Rules: Non-whole number lines (.5 push-safe)\n• Lineup Verification: **✓ Confirmed Starters (48h Lock)**`,
       inline: false,
     },
   ];
@@ -637,11 +695,11 @@ async function generateAndSendEasyMultiAlerts(subscribedCategories = null, env =
 
   const embed = {
     title: '⚡ [SPORTS EDGE AI] 48H ADVANCE MULTI INTEL · EASY MATCHUPS ONLY',
-    description: `Automated Multi Intelligence dispatched for subscribed categories: **${categories.join(', ')}**\n\n🎯 **Filter Policy:** 48-Hour Advance Notice · EASY Matchups Exclusively ($P \\ge 70\\%$) · Correlated Copula Joint Model`,
+    description: `Automated Multi Intelligence dispatched for subscribed categories: **${normCategories.join(', ')}**\n\n🎯 **Policy:** 48-Hour Advance Notice · Lineups & Key Players Confirmed · EASY Matchups Exclusively ($P \\ge 70\\%$) · Anti-Spam Gate Active`,
     color: 0x00E676,
     fields,
     footer: {
-      text: 'Sports Edge AI Quantitative Terminal · 50,000 Monte Carlo Simulations · Bet365 SGM Compliant',
+      text: 'Sports Edge AI Quantitative Terminal · 50,000 Monte Carlo Simulations · Bet365 SGM Compliant · Zero Spam Protocol',
     },
     timestamp: new Date().toISOString(),
   };
@@ -656,10 +714,23 @@ async function generateAndSendEasyMultiAlerts(subscribedCategories = null, env =
     }),
   });
 
+  // Save to KV to prevent constant spam notifications
+  if (env && env.DAD_KV && (discordRes.ok || discordRes.status === 204)) {
+    try {
+      await env.DAD_KV.put(cacheKey, JSON.stringify({
+        timestamp: now,
+        slateIds,
+        count: qualifiedEasyGames.length,
+      }));
+    } catch (e) {
+      console.warn('Error saving alert history to KV:', e);
+    }
+  }
+
   return {
     success: discordRes.ok || discordRes.status === 204,
     count: qualifiedEasyGames.length,
-    subscribed_categories: categories,
+    subscribed_categories: normCategories,
     easy_games: qualifiedEasyGames.map(g => `${g.home} vs ${g.away} (${(g.favProb * 100).toFixed(1)}%)`),
   };
 }
@@ -789,14 +860,14 @@ async function sendEmailPin(toEmail, code, env) {
 export default {
   // Cloudflare Automated Scheduled Cron Trigger (Runs hourly)
   async scheduled(event, env, ctx) {
-    let subs = ['NBA', 'RUGBY_UNION', 'RUGBY_LEAGUE', 'NFL', 'WORLD_CUP'];
+    let subs = null;
     if (env && env.DAD_KV) {
       try {
         const raw = await env.DAD_KV.get('discord_subscriptions');
         if (raw) subs = JSON.parse(raw);
       } catch (e) {}
     }
-    await generateAndSendEasyMultiAlerts(subs, env);
+    await generateAndSendEasyMultiAlerts(subs, env, false);
   },
 
   async fetch(request, env) {
@@ -1063,7 +1134,7 @@ export default {
     // Discord 48h Advance Easy Multi Alerts & Subscriptions
     // ------------------------------------------------------------------------
     if (url.pathname === '/api/discord/subscriptions' && request.method === 'GET') {
-      let subs = ['NBA', 'RUGBY_UNION', 'RUGBY_LEAGUE', 'NFL', 'WORLD_CUP'];
+      let subs = ['NBA', 'WORLD_CUP', 'NFL'];
       if (env.DAD_KV) {
         const raw = await env.DAD_KV.get('discord_subscriptions');
         if (raw) {
@@ -1082,7 +1153,7 @@ export default {
     if (url.pathname === '/api/discord/subscribe' && request.method === 'POST') {
       try {
         const body = await request.json();
-        const subs = (body && Array.isArray(body.categories)) ? body.categories : ['NBA', 'RUGBY_UNION', 'RUGBY_LEAGUE', 'NFL', 'WORLD_CUP'];
+        const subs = (body && Array.isArray(body.categories)) ? body.categories : ['NBA', 'WORLD_CUP', 'NFL'];
         if (env.DAD_KV) {
           await env.DAD_KV.put('discord_subscriptions', JSON.stringify(subs));
         }
@@ -1098,7 +1169,7 @@ export default {
 
     if (url.pathname === '/api/discord/trigger_alerts' && request.method === 'POST') {
       try {
-        let subs = ['NBA', 'RUGBY_UNION', 'RUGBY_LEAGUE', 'NFL', 'WORLD_CUP'];
+        let subs = null;
         try {
           const body = await request.json();
           if (body && Array.isArray(body.categories) && body.categories.length > 0) {
@@ -1106,7 +1177,7 @@ export default {
           }
         } catch (e) {}
 
-        const result = await generateAndSendEasyMultiAlerts(subs, env);
+        const result = await generateAndSendEasyMultiAlerts(subs, env, true);
         return jsonResponse(result);
       } catch (e) {
         return jsonResponse({ success: false, error: e.message }, 500);

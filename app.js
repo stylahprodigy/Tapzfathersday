@@ -3111,7 +3111,7 @@ async function loadDiscordSubscriptions() {
     const res = await fetch('/api/discord/subscriptions');
     if (!res.ok) return;
     const data = await res.json();
-    const subs = data.subscriptions || ['NBA', 'RUGBY_UNION', 'RUGBY_LEAGUE', 'NFL', 'WORLD_CUP'];
+    const subs = data.subscriptions || ['NBA', 'WORLD_CUP', 'NFL'];
     
     const checkboxes = {
       NBA: document.getElementById('sub_NBA'),
