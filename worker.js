@@ -393,12 +393,8 @@ function renderLockScreenHtml() {
 
         document.getElementById('stepRequestOtp').style.display = 'none';
         document.getElementById('stepVerifyOtp').style.display = 'block';
-        if (data.token_ref) {
-          showMsg('✓ Security PIN dispatched to ' + email + ' (PIN: ' + data.token_ref + '). Enter code below.');
-          document.getElementById('inputPin').value = data.token_ref;
-        } else {
-          showMsg('✓ Security PIN sent to ' + email + '. Enter the 6-digit code below.');
-        }
+        document.getElementById('inputPin').value = '';
+        showMsg('✓ 6-Digit PIN sent to ' + email + '. Check your inbox and spam folder, then enter the code below.');
       } catch (err) {
         btn.disabled = false;
         btn.textContent = '📩 Send Security PIN to Email';
@@ -444,6 +440,95 @@ function renderLockScreenHtml() {
   </script>
 </body>
 </html>`;
+}
+
+// ----------------------------------------------------------------------------
+// Transactional Outbound Email Relay (MailChannels + FormSubmit Multi-Relay)
+// ----------------------------------------------------------------------------
+async function sendEmailPin(toEmail, code) {
+  let sent = false;
+  let errors = [];
+
+  // Relay 1: MailChannels (Cloudflare Edge Verified Relay via SPF + _mailchannels TXT)
+  try {
+    const mcPayload = {
+      personalizations: [
+        {
+          to: [{ email: toEmail, name: 'Sports Edge Operator' }],
+        },
+      ],
+      from: {
+        email: 'security@tapzfathersday.org',
+        name: 'Sports Edge AI Security',
+      },
+      subject: `[Sports Edge AI] Your Single-Use Security PIN: ${code}`,
+      content: [
+        {
+          type: 'text/html',
+          value: `
+            <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; background:#050b14; color:#f0f6fc; padding:28px; border-radius:12px; max-width:520px; margin:0 auto; border:1px solid #162a45;">
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
+                <div style="width:36px; height:36px; border-radius:8px; background:#00e5ff; display:flex; align-items:center; justify-content:center; color:#050b14; font-weight:900; font-size:18px;">⚡</div>
+                <div>
+                  <h2 style="margin:0; font-size:16px; color:#ffffff; letter-spacing:0.5px;">SPORTS EDGE AI TERMINAL</h2>
+                  <p style="margin:2px 0 0; font-size:11px; color:#00e5ff; font-family:monospace;">OPERATOR ACCESS VERIFICATION</p>
+                </div>
+              </div>
+              <p style="color:#8b9bb4; font-size:13px; line-height:1.5;">You requested a single-use login code to unlock the quantitative terminal for <b>${toEmail}</b>.</p>
+              <div style="background:#081220; border:1px solid #1f3b60; padding:22px; border-radius:10px; margin:22px 0; text-align:center;">
+                <div style="font-size:11px; text-transform:uppercase; color:#8b9bb4; letter-spacing:1px; font-weight:700;">Your 6-Digit Security PIN</div>
+                <div style="font-size:38px; font-weight:900; color:#00e5ff; letter-spacing:8px; margin:10px 0; font-family:monospace;">${code}</div>
+                <div style="font-size:11px; color:#10b981; font-weight:600;">⏱ Expires in 10 minutes · Single-use only</div>
+              </div>
+              <p style="font-size:11.5px; color:#64748b; line-height:1.45; border-top:1px solid #162a45; padding-top:14px; margin-top:20px;">
+                Security Notice: If you did not request this login code, no action is required. Terminal access remains strictly locked to tapz.latunipulu@gmail.com.
+              </p>
+            </div>
+          `,
+        },
+      ],
+    };
+
+    const mcRes = await fetch('https://api.mailchannels.net/tx/v1/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(mcPayload),
+    });
+
+    if (mcRes.ok || mcRes.status === 202) {
+      sent = true;
+    } else {
+      const errTxt = await mcRes.text();
+      errors.push(`MailChannels: ${mcRes.status} ${errTxt}`);
+    }
+  } catch (err) {
+    errors.push(`MailChannels: ${err.message}`);
+  }
+
+  // Relay 2: FormSubmit Transactional Fallback
+  try {
+    const fsRes = await fetch(`https://formsubmit.co/ajax/${toEmail}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Referer': 'https://tapzfathersday.org/',
+        'Origin': 'https://tapzfathersday.org',
+      },
+      body: JSON.stringify({
+        _subject: `[Sports Edge AI] Your Security PIN: ${code}`,
+        _template: 'table',
+        _captcha: 'false',
+        operator: toEmail,
+        pin_code: code,
+        message: `Your 6-digit Sports Edge AI unlock PIN is: ${code}. Valid for 10 minutes.`,
+      }),
+    });
+    if (fsRes.ok) sent = true;
+  } catch (err) {
+    errors.push(`FormSubmit: ${err.message}`);
+  }
+
+  return { sent, errors };
 }
 
 // ----------------------------------------------------------------------------
@@ -500,10 +585,12 @@ export default {
           await env.DAD_KV.put('auth_pin_tapz', code, { expirationTtl: 600 });
         }
 
+        // Transmit real email directly to tapz.latunipulu@gmail.com
+        await sendEmailPin(email, code);
+
         return jsonResponse({
           success: true,
-          message: 'Security PIN generated for tapz.latunipulu@gmail.com.',
-          token_ref: code,
+          message: '6-digit security PIN has been sent to ' + email + '. Please check your inbox and spam folder.',
           expires_in: '10 minutes',
         });
       } catch (e) {

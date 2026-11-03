@@ -346,13 +346,9 @@ async function handleGateRequestOtp() {
     if (stepReq) stepReq.style.display = 'none';
     if (stepVer) stepVer.style.display = 'block';
 
-    if (data.token_ref) {
-      showGateMsg(`✓ Security PIN dispatched to ${email} (PIN: ${data.token_ref}). Enter PIN to unlock.`);
-      const pinInput = document.getElementById('gateInputPin');
-      if (pinInput) pinInput.value = data.token_ref;
-    } else {
-      showGateMsg(`✓ Security PIN sent to ${email}. Check your email.`);
-    }
+    const pinInput = document.getElementById('gateInputPin');
+    if (pinInput) pinInput.value = '';
+    showGateMsg(`✓ 6-Digit security PIN sent to ${email}. Check your inbox and spam folder, then enter the PIN below.`);
   } catch (err) {
     if (btn) {
       btn.disabled = false;
