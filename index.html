@@ -68,6 +68,10 @@
         <span>💾 Data &amp; Auto-Sync</span>
         <span class="nav-pill">SQLITE</span>
       </button>
+      <button class="nav-btn" id="nav-btn-discord-alerts" onclick="openDiscordAlertsModal()" style="border-left:2px solid #5865f2;">
+        <span>💬 Discord 48h Multis</span>
+        <span class="nav-pill" style="background:#5865f2; color:#fff;">EASY</span>
+      </button>
 
       <div class="sidebar-footer">
         <div style="font-weight:700; color:var(--cyan); margin-bottom:4px;">● ZERO-TOUCH AUTO-SYNC</div>
@@ -105,6 +109,9 @@
 
         <button class="btn" onclick="openManualMarketModal()">+ Enter Bookmaker Line</button>
         <button class="btn btn-primary" onclick="triggerAutoSync()">⟳ Auto-Sync</button>
+        <button class="btn" id="btnDiscordMultiAlerts" onclick="openDiscordAlertsModal()" style="background:rgba(88,101,242,0.15); border:1px solid #5865f2; color:#fff; display:inline-flex; align-items:center; gap:6px;" title="Discord 48h Advance Easy Multi Alerts">
+          <span>💬 Discord 48h Multis</span>
+        </button>
         <button class="btn" id="btnToggleSlip" onclick="toggleSlipDrawer()" title="Expand table width / collapse slip panel">⇥ Slip</button>
         <span class="status-pill mono" id="topStatusBadge"><span class="live-pulse-dot"></span> 50K SIMS</span>
         <button class="btn btn-danger" onclick="shutdownWebServer()" title="Stop local web server and close workbench">⏻ Stop &amp; Close</button>
@@ -331,6 +338,70 @@
     </div>
   </div>
 
+  <!-- Modal: Discord Multi Alerts & 48h Advance Subscriptions -->
+  <div class="modal-backdrop" id="discordAlertsModal" style="display:none; z-index:99999; backdrop-filter:blur(10px); background:rgba(3,7,18,0.88); align-items:center; justify-content:center;">
+    <div class="modal-card" style="max-width:540px; border:1px solid #5865f2; box-shadow:0 25px 60px rgba(0,0,0,0.8), 0 0 40px rgba(88,101,242,0.25); padding:26px 22px; position:relative;">
+      <div style="position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg, #5865f2, #00e5ff, #00e676);"></div>
+      
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div style="width:36px; height:36px; border-radius:8px; background:#5865f2; display:flex; align-items:center; justify-content:center; font-size:18px; color:#fff;">💬</div>
+          <div>
+            <div style="font-size:15px; font-weight:800; color:#fff; letter-spacing:0.5px;">DISCORD 48H MULTI ALERTS</div>
+            <div style="font-size:11px; color:#a5b4fc; font-family:var(--font-mono);">CHANNEL: #MULTI SUGGESTIONS</div>
+          </div>
+        </div>
+        <button class="btn btn-sm" onclick="closeDiscordAlertsModal()" style="padding:4px 8px;">✕</button>
+      </div>
+
+      <div style="background:rgba(88,101,242,0.1); border:1px solid rgba(88,101,242,0.3); border-radius:8px; padding:12px; font-size:12px; color:#e0e7ff; margin-bottom:16px; line-height:1.5;">
+        ⚡ <b>Automated Rule Activated:</b> Whenever a game is scheduled within <b>48 hours (2 days)</b> in your subscribed categories, the engine extracts strictly <b>EASY matchups (Win Prob ≥ 70%)</b> and compiles correlated 2-leg and 3-leg multi slips directly to Discord.
+      </div>
+
+      <div style="font-size:12px; font-weight:700; text-transform:uppercase; color:var(--text-secondary); margin-bottom:8px; letter-spacing:0.5px;">
+        Select Categories to Subscribe:
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:18px;">
+        <label style="display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.03); border:1px solid var(--border); padding:10px; border-radius:6px; cursor:pointer;">
+          <input type="checkbox" id="sub_NBA" checked style="accent-color:#5865f2;" />
+          <span style="font-size:12.5px; font-weight:600;">🏀 NBA Basketball</span>
+        </label>
+        <label style="display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.03); border:1px solid var(--border); padding:10px; border-radius:6px; cursor:pointer;">
+          <input type="checkbox" id="sub_RUGBY_UNION" checked style="accent-color:#5865f2;" />
+          <span style="font-size:12.5px; font-weight:600;">🏉 Rugby Union</span>
+        </label>
+        <label style="display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.03); border:1px solid var(--border); padding:10px; border-radius:6px; cursor:pointer;">
+          <input type="checkbox" id="sub_RUGBY_LEAGUE" checked style="accent-color:#5865f2;" />
+          <span style="font-size:12.5px; font-weight:600;">🏉 Rugby League</span>
+        </label>
+        <label style="display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.03); border:1px solid var(--border); padding:10px; border-radius:6px; cursor:pointer;">
+          <input type="checkbox" id="sub_WORLD_CUP" checked style="accent-color:#5865f2;" />
+          <span style="font-size:12.5px; font-weight:600;">🏆 Rugby World Cup</span>
+        </label>
+        <label style="display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.03); border:1px solid var(--border); padding:10px; border-radius:6px; cursor:pointer; grid-column: span 2;">
+          <input type="checkbox" id="sub_NFL" checked style="accent-color:#5865f2;" />
+          <span style="font-size:12.5px; font-weight:600;">🏈 NFL Football</span>
+        </label>
+      </div>
+
+      <div id="discordAlertFeedback" style="display:none; font-size:12px; padding:10px 12px; border-radius:6px; margin-bottom:14px;"></div>
+
+      <div style="display:flex; gap:10px;">
+        <button class="btn btn-primary" id="btnSaveDiscordSubs" style="flex:1; background:#5865f2; border-color:#5865f2; color:#fff; font-weight:700;" onclick="saveDiscordSubscriptions()">
+          💾 Save Subscriptions
+        </button>
+        <button class="btn btn-emerald" id="btnTriggerDiscordAlertNow" style="flex:1; font-weight:800;" onclick="triggerDiscordAlertsNow()">
+          ⚡ Push 48h Easy Multis Now
+        </button>
+      </div>
+
+      <div style="margin-top:14px; text-align:center; font-size:11px; color:var(--text-secondary);">
+        Webhook linked: <code>MULTI SUGGESTIONS</code> · Cloudflare Cron triggers hourly checks.
+      </div>
+    </div>
+  </div>
+
   <!-- Modal: Exclusive Operator Authentication Gate (tapz.latunipulu@gmail.com) -->
   <div class="modal-backdrop" id="operatorLockModal" style="display:flex; z-index:999999; backdrop-filter:blur(14px); background:rgba(3,7,18,0.92); align-items:center; justify-content:center;">
     <div class="modal-card" style="max-width:460px; border:1px solid #1e3a5f; box-shadow:0 25px 60px rgba(0,0,0,0.8), 0 0 40px rgba(0,229,255,0.12); padding:28px 24px; position:relative; overflow:hidden;">
@@ -353,16 +424,16 @@
 
       <!-- Step 1: Request Email Code -->
       <div id="gateStepRequest" style="display:block;">
-        <label class="form-label" style="font-size:11.5px;">Operator Email Address</label>
+        <label class="form-label" style="font-size:11.5px;">Authorized Operator</label>
         <input type="email" id="gateInputEmail" class="input-field" value="tapz.latunipulu@gmail.com" readonly style="background:#030712; color:var(--cyan); font-family:var(--font-mono); font-weight:700;" />
         <button class="btn btn-primary" id="btnGateRequestOtp" style="width:100%; margin-top:12px; font-weight:800; padding:11px;" onclick="handleGateRequestOtp()">
-          📩 Send 6-Digit Security PIN to Email
+          ⚡ Send Security PIN to Discord (#BETTING)
         </button>
       </div>
 
       <!-- Step 2: Enter PIN to Unlock -->
       <div id="gateStepVerify" style="display:none;">
-        <label class="form-label" style="font-size:11.5px;">Enter 6-Digit Verification Code</label>
+        <label class="form-label" style="font-size:11.5px;">Enter 6-Digit Security PIN (from Discord #BETTING)</label>
         <input type="text" id="gateInputPin" maxlength="6" class="input-field mono" placeholder="------" style="text-align:center; font-size:24px; letter-spacing:6px; font-weight:900; color:var(--cyan);" />
         <button class="btn btn-emerald" id="btnGateVerifyOtp" style="width:100%; margin-top:12px; font-weight:800; padding:11px;" onclick="handleGateVerifyOtp()">
           🔓 Unlock Sports Edge AI Terminal
@@ -375,8 +446,8 @@
       </div>
 
       <div style="margin-top:20px; text-align:center; font-size:10.5px; color:var(--text-secondary); line-height:1.4; border-top:1px solid var(--border-subtle); padding-top:12px;">
-        Gated exclusively via single-use email code. No Google Sign-In.<br>
-        256-bit encrypted session issued upon PIN verification.
+        Single-use code dispatched strictly to private operator Discord channel.<br>
+        Non-interceptable · 256-bit Cloudflare Edge WAF Protected.
       </div>
     </div>
   </div>

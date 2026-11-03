@@ -324,7 +324,7 @@ async function handleGateRequestOtp() {
   const btn = document.getElementById('btnGateRequestOtp');
   if (btn) {
     btn.disabled = true;
-    btn.textContent = 'Generating 6-digit PIN...';
+    btn.textContent = '⚡ Dispatching to Discord (#BETTING)...';
   }
 
   try {
@@ -336,7 +336,7 @@ async function handleGateRequestOtp() {
     const data = await res.json();
     if (btn) {
       btn.disabled = false;
-      btn.textContent = '📩 Send 6-Digit Security PIN to Email';
+      btn.textContent = '⚡ Send Security PIN to Discord (#BETTING)';
     }
 
     if (!data.success) {
@@ -351,11 +351,11 @@ async function handleGateRequestOtp() {
 
     const pinInput = document.getElementById('gateInputPin');
     if (pinInput) pinInput.value = '';
-    showGateMsg(`✓ 6-Digit security PIN sent to ${email}. Check your inbox and spam folder, then enter the PIN below.`);
+    showGateMsg('✓ 6-Digit security PIN sent directly to your Discord channel (#BETTING). Enter the PIN below.');
   } catch (err) {
     if (btn) {
       btn.disabled = false;
-      btn.textContent = '📩 Send 6-Digit Security PIN to Email';
+      btn.textContent = '⚡ Send Security PIN to Discord (#BETTING)';
     }
     showGateMsg('Network error requesting security PIN: ' + err.message, true);
   }
@@ -3194,6 +3194,132 @@ function renderGeminiAuditReport(audit) {
       <div class="mono" style="background:#030712; border:1px solid var(--border-bright); border-radius:8px; padding:14px 16px; font-size:11.5px; line-height:1.55; color:#d1d5db; white-space:pre-wrap; max-height:220px; overflow-y:auto;">${audit.gemini_reasoning}</div>
     </div>
   `;
+}
+
+// ============================================================================
+// DISCORD 48H ADVANCE EASY MULTI ALERTS & SUBSCRIPTIONS
+// ============================================================================
+
+async function openDiscordAlertsModal() {
+  const modal = document.getElementById('discordAlertsModal');
+  if (modal) modal.style.display = 'flex';
+  await loadDiscordSubscriptions();
+}
+
+function closeDiscordAlertsModal() {
+  const modal = document.getElementById('discordAlertsModal');
+  if (modal) modal.style.display = 'none';
+  const fb = document.getElementById('discordAlertFeedback');
+  if (fb) fb.style.display = 'none';
+}
+
+function showDiscordFeedback(msg, isError = false) {
+  const fb = document.getElementById('discordAlertFeedback');
+  if (!fb) return;
+  fb.innerHTML = msg;
+  fb.style.display = 'block';
+  fb.style.background = isError ? 'rgba(239,68,68,0.12)' : 'rgba(16,185,129,0.12)';
+  fb.style.border = isError ? '1px solid rgba(239,68,68,0.3)' : '1px solid rgba(16,185,129,0.3)';
+  fb.style.color = isError ? '#fca5a5' : '#a7f3d0';
+}
+
+async function loadDiscordSubscriptions() {
+  try {
+    const res = await fetch('/api/discord/subscriptions');
+    if (!res.ok) return;
+    const data = await res.json();
+    const subs = data.subscriptions || ['NBA', 'RUGBY_UNION', 'RUGBY_LEAGUE', 'NFL', 'WORLD_CUP'];
+    
+    const checkboxes = {
+      NBA: document.getElementById('sub_NBA'),
+      RUGBY_UNION: document.getElementById('sub_RUGBY_UNION'),
+      RUGBY_LEAGUE: document.getElementById('sub_RUGBY_LEAGUE'),
+      WORLD_CUP: document.getElementById('sub_WORLD_CUP'),
+      NFL: document.getElementById('sub_NFL'),
+    };
+    for (const [key, el] of Object.entries(checkboxes)) {
+      if (el) el.checked = subs.includes(key);
+    }
+  } catch (e) {
+    console.error('Error loading Discord subscriptions:', e);
+  }
+}
+
+function getSelectedSubscriptionCategories() {
+  const keys = ['NBA', 'RUGBY_UNION', 'RUGBY_LEAGUE', 'WORLD_CUP', 'NFL'];
+  const selected = [];
+  for (const k of keys) {
+    const el = document.getElementById(`sub_${k}`);
+    if (el && el.checked) selected.push(k);
+  }
+  return selected;
+}
+
+async function saveDiscordSubscriptions() {
+  const categories = getSelectedSubscriptionCategories();
+  const btn = document.getElementById('btnSaveDiscordSubs');
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
+  }
+  try {
+    const res = await fetch('/api/discord/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ categories }),
+    });
+    const data = await res.json();
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = '💾 Save Subscriptions';
+    }
+    if (data.success) {
+      showDiscordFeedback(`✓ Subscriptions saved: <b>${categories.join(', ')}</b>. 48h advance rule active for EASY matchups.`);
+    } else {
+      showDiscordFeedback(data.error || 'Failed to save subscriptions.', true);
+    }
+  } catch (err) {
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = '💾 Save Subscriptions';
+    }
+    showDiscordFeedback('Network error: ' + err.message, true);
+  }
+}
+
+async function triggerDiscordAlertsNow() {
+  const categories = getSelectedSubscriptionCategories();
+  const btn = document.getElementById('btnTriggerDiscordAlertNow');
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = '⚡ Compiling & Dispatching to Discord...';
+  }
+
+  try {
+    const res = await fetch('/api/discord/trigger_alerts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ categories }),
+    });
+    const data = await res.json();
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = '⚡ Push 48h Easy Multis Now';
+    }
+
+    if (data.success) {
+      const gameList = (data.easy_games || []).slice(0, 3).join(', ');
+      showDiscordFeedback(`✓ <b>48h Advance Easy Multis dispatched to Discord (#MULTI SUGGESTIONS)!</b><br>Qualified Games (${data.count}): ${gameList}...<br>Check your Discord channel.`);
+    } else {
+      showDiscordFeedback(data.error || 'Failed to dispatch alerts.', true);
+    }
+  } catch (err) {
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = '⚡ Push 48h Easy Multis Now';
+    }
+    showDiscordFeedback('Network error triggering alert: ' + err.message, true);
+  }
 }
 
 

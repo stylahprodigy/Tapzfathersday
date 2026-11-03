@@ -13,5 +13,8 @@
       "binding": "DAD_KV",
       "id": "c8d47fd7980048f393f030c84048ef96"
     }
-  ]
+  ],
+  "triggers": {
+    "crons": ["0 * * * *"]
+  }
 }
