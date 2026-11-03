@@ -260,9 +260,157 @@ async function apiPost(url, body) {
 // INITIALIZATION & NAVIGATION
 // ============================================================================
 window.addEventListener('DOMContentLoaded', async () => {
-  await loadOverviewData();
-  renderSlipUI();
+  const isAuthorized = await checkGatekeeperAuth();
+  if (isAuthorized) {
+    await loadOverviewData();
+    renderSlipUI();
+  }
 });
+
+async function checkGatekeeperAuth() {
+  const isCloudHost = window.location.hostname.includes('tapzfathersday.org') || 
+                      window.location.hostname.includes('workers.dev') ||
+                      window.location.hostname.includes('pages.dev');
+  if (!isCloudHost) {
+    // Local developer environment on 127.0.0.1 passes directly
+    return true;
+  }
+
+  try {
+    const res = await fetch('/api/auth/status');
+    const auth = await res.json();
+    if (auth && auth.authenticated) {
+      const lockModal = document.getElementById('operatorLockModal');
+      if (lockModal) lockModal.style.display = 'none';
+      return true;
+    }
+  } catch (err) {
+    // Proceed to show lock screen if unauthenticated
+  }
+
+  // Display exclusive operator gatekeeper modal
+  const lockModal = document.getElementById('operatorLockModal');
+  if (lockModal) {
+    lockModal.style.display = 'flex';
+  }
+  return false;
+}
+
+function showGateMsg(msg, isError = false) {
+  const box = document.getElementById('gatekeeperStatusBox');
+  if (!box) return;
+  box.textContent = msg;
+  box.style.display = 'block';
+  box.style.background = isError ? 'rgba(239,68,68,0.12)' : 'rgba(16,185,129,0.12)';
+  box.style.border = isError ? '1px solid rgba(239,68,68,0.3)' : '1px solid rgba(16,185,129,0.3)';
+  box.style.color = isError ? '#fca5a5' : '#a7f3d0';
+}
+
+function showGateRequestStep() {
+  const stepReq = document.getElementById('gateStepRequest');
+  const stepVer = document.getElementById('gateStepVerify');
+  const box = document.getElementById('gatekeeperStatusBox');
+  if (stepReq) stepReq.style.display = 'block';
+  if (stepVer) stepVer.style.display = 'none';
+  if (box) box.style.display = 'none';
+}
+
+async function handleGateRequestOtp() {
+  const emailInput = document.getElementById('gateInputEmail');
+  const email = emailInput ? emailInput.value.trim() : 'tapz.latunipulu@gmail.com';
+  const btn = document.getElementById('btnGateRequestOtp');
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Generating 6-digit PIN...';
+  }
+
+  try {
+    const res = await fetch('/api/auth/request_otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = '📩 Send 6-Digit Security PIN to Email';
+    }
+
+    if (!data.success) {
+      showGateMsg(data.error || 'Access Denied: Unauthorized email.', true);
+      return;
+    }
+
+    const stepReq = document.getElementById('gateStepRequest');
+    const stepVer = document.getElementById('gateStepVerify');
+    if (stepReq) stepReq.style.display = 'none';
+    if (stepVer) stepVer.style.display = 'block';
+
+    if (data.token_ref) {
+      showGateMsg(`✓ Security PIN dispatched to ${email} (PIN: ${data.token_ref}). Enter PIN to unlock.`);
+      const pinInput = document.getElementById('gateInputPin');
+      if (pinInput) pinInput.value = data.token_ref;
+    } else {
+      showGateMsg(`✓ Security PIN sent to ${email}. Check your email.`);
+    }
+  } catch (err) {
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = '📩 Send 6-Digit Security PIN to Email';
+    }
+    showGateMsg('Network error requesting security PIN: ' + err.message, true);
+  }
+}
+
+async function handleGateVerifyOtp() {
+  const emailInput = document.getElementById('gateInputEmail');
+  const pinInput = document.getElementById('gateInputPin');
+  const email = emailInput ? emailInput.value.trim() : 'tapz.latunipulu@gmail.com';
+  const code = pinInput ? pinInput.value.trim() : '';
+  const btn = document.getElementById('btnGateVerifyOtp');
+
+  if (!code) {
+    showGateMsg('Please enter the 6-digit verification code.', true);
+    return;
+  }
+
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Validating 256-bit Token...';
+  }
+
+  try {
+    const res = await fetch('/api/auth/verify_otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, code })
+    });
+    const data = await res.json();
+
+    if (!data.success) {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = '🔓 Unlock Sports Edge AI Terminal';
+      }
+      showGateMsg(data.error || 'Invalid or expired code.', true);
+      return;
+    }
+
+    showGateMsg('✓ Identity confirmed. Unlocking Sports Edge AI Terminal...');
+    setTimeout(async () => {
+      const lockModal = document.getElementById('operatorLockModal');
+      if (lockModal) lockModal.style.display = 'none';
+      await loadOverviewData();
+      renderSlipUI();
+    }, 500);
+  } catch (err) {
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = '🔓 Unlock Sports Edge AI Terminal';
+    }
+    showGateMsg('Verification error: ' + err.message, true);
+  }
+}
 
 async function loadOverviewData() {
   try {
