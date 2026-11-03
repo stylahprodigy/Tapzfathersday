@@ -69,16 +69,16 @@ function isFixtureActiveOrRecent(f) {
   else if (sport.includes('RUGBY')) durationMs = 120 * 60 * 1000;
   else if (sport === 'NFL') durationMs = 195 * 60 * 1000;
 
-  const gracePeriodMs = 30 * 60 * 1000; // 30 minutes after conclusion
+  const gracePeriodMs = 60 * 60 * 1000; // 1 hour after conclusion
 
   const status = (f.status || '').toLowerCase();
   if (status === 'final' || status === 'finished') {
     const finishTime = f.finish_utc ? new Date(f.finish_utc).getTime() : (startTime + durationMs);
-    // If finished more than 30 minutes ago, hide it
+    // If finished more than 1 hour ago, hide it
     return (now - finishTime) <= gracePeriodMs;
   }
 
-  // If match kickoff was longer than estimated duration + 30 mins ago, prune
+  // If match kickoff was longer than estimated duration + 1 hr ago, prune
   if (now > (startTime + durationMs + gracePeriodMs)) {
     return false;
   }
@@ -93,7 +93,7 @@ function toggleFinishedGamesFilter() {
     btn.classList.toggle('active', !STATE.showFinishedGames);
     btn.innerHTML = STATE.showFinishedGames
       ? '<span>📋 Showing All (Inc. Past)</span>'
-      : '<span>✓ Hide Finished (&gt;30m)</span>';
+      : '<span>✓ Hide Finished (&gt;1h)</span>';
   }
   renderCurrentPage();
 }
@@ -118,10 +118,10 @@ function formatSydneyDateTime(utcStr) {
 
     const timeStr = d.toLocaleTimeString('en-AU', {
       timeZone: 'Australia/Sydney',
-      hour: '2-digit',
+      hour: 'numeric',
       minute: '2-digit',
-      hour12: false,
-    }); // e.g. "12:15"
+      hour12: true,
+    }).toUpperCase(); // e.g. "11:00 AM", "1:30 PM"
 
     const parts = new Intl.DateTimeFormat('en-CA', {
       timeZone: 'Australia/Sydney',
@@ -361,7 +361,18 @@ async function renderCurrentPage() {
 
 function renderOverviewLiveScoresStrip(liveMatches) {
   if (!liveMatches || liveMatches.length === 0) return '';
-  const cardsHtml = liveMatches.map((m) => {
+  const now = Date.now();
+  const activeMatches = liveMatches.filter((m) => {
+    if (m.is_final) {
+      const startTime = m.start_utc ? new Date(m.start_utc).getTime() : 0;
+      const durationMs = 150 * 60 * 1000;
+      const finishTime = m.finish_utc ? new Date(m.finish_utc).getTime() : (startTime + durationMs);
+      return (now - finishTime) <= (60 * 60 * 1000);
+    }
+    return true;
+  });
+  if (activeMatches.length === 0) return '';
+  const cardsHtml = activeMatches.map((m) => {
     const hLead = m.home_score >= m.away_score;
     const aLead = m.away_score >= m.home_score;
     return `
@@ -396,7 +407,7 @@ function renderOverviewLiveScoresStrip(liveMatches) {
       <div class="card-header" style="margin-bottom:10px;">
         <div class="card-title">
           <span>🔴 Live In-Play Scores (Real-Time In-Game Ticker)</span>
-          <span class="live-badge-pulse"><span class="live-pulse-red"></span> ${liveMatches.length} IN-PLAY</span>
+          <span class="live-badge-pulse"><span class="live-pulse-red"></span> ${activeMatches.length} IN-PLAY</span>
         </div>
         <button class="btn" style="color:var(--emerald-text); border-color:var(--emerald);" onclick="switchPage('livescores')">View Full Scoreboard →</button>
       </div>
@@ -1556,10 +1567,12 @@ async function renderMultiStudioPage() {
   let teamCardsHtml = '';
   if (sortedDays.length > 0) {
     teamCardsHtml = sortedDays.map((day) => {
-      // Sort entries within the day by kickoff time, then win probability
+      // Sort entries within the day chronologically by kickoff timestamp, then win probability
       day.entries.sort((a, b) => {
-        if (a.syd.timeStr !== b.syd.timeStr) {
-          return a.syd.timeStr.localeCompare(b.syd.timeStr);
+        const timeA = (a.syd.rawDate ? a.syd.rawDate.getTime() : 0) || (a.startUtc ? new Date(a.startUtc).getTime() : 0);
+        const timeB = (b.syd.rawDate ? b.syd.rawDate.getTime() : 0) || (b.startUtc ? new Date(b.startUtc).getTime() : 0);
+        if (timeA !== timeB) {
+          return timeA - timeB;
         }
         return b.winProb - a.winProb;
       });
