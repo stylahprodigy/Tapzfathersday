@@ -1,983 +1,337 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  
-  <!-- Privacy & Static Hosting Meta -->
-  <meta name="referrer" content="no-referrer">
-  <meta name="robots" content="noindex, nofollow, noarchive">
-  <meta name="description" content="A living keepsake journal honoring Ratu Nautu Latunipulu — Father's Day 2026.">
-  
-  <title>The Journal of Him — Ratu Nautu Latunipulu</title>
-
-  <!-- Google Fonts: Editorial High-Contrast Serif, Cormorant, Cursive & Modern Clean UI -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=Dancing+Script:wght@600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,600;1,6..72,400;1,6..72,600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="style.css?v=3.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SPORTS EDGE AI v2.0 — Institutional Sports Intelligence &amp; Quantitative Bet Workbench</title>
+  <link rel="stylesheet" href="/styles.css" />
 </head>
-<body class="editorial-body">
-
-  <!-- Fullscreen Confetti Particle Canvas -->
-  <canvas id="confetti-canvas"></canvas>
-
-  <!-- Ambient Golden Island Dust Canvas -->
-  <canvas id="ambient-canvas"></canvas>
-
-  <!-- Left-Rail Timeline Progress Rail -->
-  <nav class="timeline-rail" id="timeline-rail" aria-label="Timeline Navigation">
-    <div class="rail-track" id="rail-track">
-      <div class="rail-progress-bar" id="rail-progress-bar"></div>
-      <div class="rail-active-bead" id="rail-active-bead"></div>
-    </div>
-    <div class="rail-nodes">
-      <button class="rail-node active" data-target="hero-section" title="The Story & Cover">
-        <span class="node-dot"></span>
-        <span class="node-label">Story</span>
-      </button>
-      <button class="rail-node" data-target="entry-1" title="Entry I: Faith & Integrity">
-        <span class="node-dot"></span>
-        <span class="node-label">Entry I</span>
-      </button>
-      <button class="rail-node" data-target="entry-2" title="Entry II: The Dedication">
-        <span class="node-dot"></span>
-        <span class="node-label">Entry II</span>
-      </button>
-      <button class="rail-node" data-target="entry-3" title="Entry III: A Reel of the Years">
-        <span class="node-dot"></span>
-        <span class="node-label">Entry III</span>
-      </button>
-      <button class="rail-node" data-target="entry-4" title="Entry IV: Loose Polaroids">
-        <span class="node-dot"></span>
-        <span class="node-label">Entry IV</span>
-      </button>
-      <button class="rail-node" data-target="entry-5" title="Entry V: Wisdom & Toast">
-        <span class="node-dot"></span>
-        <span class="node-label">Entry V</span>
-      </button>
-      <button class="rail-node" data-target="community-wall-section" title="Wall of Honor">
-        <span class="node-dot"></span>
-        <span class="node-label">Community</span>
-      </button>
-    </div>
-  </nav>
-
-  <!-- Top Pinned Controls Bar -->
-  <header class="top-nav">
-    <div class="brand" id="brand-crest-btn" title="Dad's Keepsake">
-      <span class="brand-crest-icon">👑</span>
-      <span class="brand-text" id="nav-brand-title">Ratu Nautu Latunipulu</span>
-    </div>
-
-    <div class="nav-center-cluster">
-      <!-- Visitor Identity Pill & Name Switcher (Placed right next to Journal button) -->
-      <div class="nav-visitor-pill" id="nav-visitor-pill" style="display: none;">
-        <span class="visitor-avatar">👋</span>
-        <span class="visitor-greeting">Welcome, <strong id="nav-visitor-display-name">Guest</strong></span>
-        <button class="nav-change-name-btn" id="nav-change-name-btn" title="Change your visitor name">Change</button>
+<body>
+  <div class="app-shell">
+    <!-- Left Navigation Rail -->
+    <aside class="sidebar">
+      <div class="brand-box">
+        <div class="brand-title">
+          <span class="brand-dot"></span>
+          <span>SPORTS EDGE AI</span>
+        </div>
+        <div class="brand-sub">
+          <span>QUANTITATIVE TERMINAL</span>
+          <span class="brand-badge">v2.0 PRO</span>
+        </div>
       </div>
 
-      <button class="nav-view-tab" id="nav-intro-replay-btn" title="Watch Intro Showcase">
-        <span class="btn-icon">🎬</span>
-        <span>Intro Show</span>
+      <div class="nav-section-label">Intelligence Command</div>
+      <button class="nav-btn active" data-page="overview" onclick="switchPage('overview')">
+        <span>📊 Executive Overview</span>
+        <span class="nav-pill" id="nav-count-all">LIVE</span>
+      </button>
+      <button class="nav-btn" data-page="livescores" onclick="switchPage('livescores')">
+        <span>🔴 Live Scores &amp; In-Play</span>
+        <span class="nav-pill" style="background:#10b981; color:#0b0e14; font-weight:800;" id="nav-count-live">LIVE</span>
+      </button>
+      <button class="nav-btn" data-page="NBA" onclick="switchPage('NBA')">
+        <span>🏀 1 · NBA Basketball</span>
+        <span class="nav-pill" id="nav-count-nba">0</span>
+      </button>
+      <button class="nav-btn" data-page="RUGBY" onclick="switchPage('RUGBY')">
+        <span>🏉 2 · Rugby (Union &amp; League)</span>
+        <span class="nav-pill" id="nav-count-rugby">0</span>
+      </button>
+      <button class="nav-btn nav-sub-btn" data-page="RUGBY_MWC" onclick="openRugbyTournamentTab('MENS_WORLD_CUP')">
+        <span>↳ 🏆 Men's World Cup</span>
+        <span class="nav-pill" id="nav-count-mwc">RWC</span>
+      </button>
+      <button class="nav-btn nav-sub-btn" data-page="RUGBY_WWC" onclick="openRugbyTournamentTab('WOMENS_WORLD_CUP')">
+        <span>↳ 🏆 Women's World Cup</span>
+        <span class="nav-pill" id="nav-count-wwc">WRWC</span>
+      </button>
+      <button class="nav-btn" data-page="NFL" onclick="switchPage('NFL')">
+        <span>🏈 3 · NFL Football</span>
+        <span class="nav-pill" id="nav-count-nfl">0</span>
       </button>
 
-      <button class="nav-view-tab active" id="nav-journal-btn">
-        <span class="btn-icon">📖</span>
-        <span>The Journal</span>
+      <div class="nav-section-label">Quantitative Tools</div>
+      <button class="nav-btn" data-page="multis" onclick="switchPage('multis')">
+        <span>⚡ Multi &amp; SGM Studio</span>
+        <span class="nav-pill">CORR</span>
+      </button>
+      <button class="nav-btn" data-page="players" onclick="switchPage('players')">
+        <span>🎯 Player Prop Simulator</span>
+        <span class="nav-pill">PROPS</span>
+      </button>
+      <button class="nav-btn" data-page="backtest" onclick="switchPage('backtest')">
+        <span>📈 Walk-Forward Accuracy</span>
+        <span class="nav-pill">80.8%</span>
+      </button>
+      <button class="nav-btn" data-page="datacentre" onclick="switchPage('datacentre')">
+        <span>💾 Data &amp; Auto-Sync</span>
+        <span class="nav-pill">SQLITE</span>
       </button>
 
-      <button class="nav-view-tab" id="nav-community-btn">
-        <span class="btn-icon">🌴</span>
-        <span>Wall of Honor</span>
-      </button>
+      <div class="sidebar-footer">
+        <div style="font-weight:700; color:var(--cyan); margin-bottom:4px;">● ZERO-TOUCH AUTO-SYNC</div>
+        <div>50,000-Run Correlated Monte Carlo · Independent Probabilities · Zero Bookmaker Scraping</div>
+      </div>
+    </aside>
 
-      <button class="nav-view-tab" id="nav-story-studio-btn" title="Create Custom Story Keepsake">
-        <span class="btn-icon">📸</span>
-        <span>Story Studio</span>
-      </button>
+    <!-- Center Workspace -->
+    <main class="center-pane">
+      <header class="topbar">
+        <div class="search-box">
+          <span class="search-icon-inside">🔍</span>
+          <input
+            type="text"
+            id="globalSearchInput"
+            class="search-input"
+            placeholder="Search teams, players, matchups..."
+            onkeydown="if(event.key==='Enter') handleGlobalSearch()"
+          />
+          <span class="search-kbd-hint">↵ Enter</span>
+        </div>
 
-      <button class="nav-cta-btn" id="nav-add-photo-btn">
-        <span class="btn-icon">＋</span>
-        <span>Add Your Father</span>
-      </button>
-    </div>
+        <!-- Multi-Select Matchup Difficulty Filter Bar -->
+        <div class="diff-filter-bar" id="globalDiffFilterBar" title="Click one or multiple difficulty tiers to filter matchups, teams, and props">
+          <span class="diff-filter-label">Filter:</span>
+          <button class="diff-chip active-easy" id="chipDiffEasy" onclick="toggleDifficultyFilter('EASY')">✓ EASY</button>
+          <button class="diff-chip active-mid" id="chipDiffMid" onclick="toggleDifficultyFilter('MID')">✓ MID</button>
+          <button class="diff-chip active-close" id="chipDiffClose" onclick="toggleDifficultyFilter('CLOSE')">✓ CLOSE</button>
+          <button class="diff-preset-btn" onclick="setDifficultyPreset(['EASY'])">Easy Only</button>
+          <button class="diff-preset-btn" onclick="setDifficultyPreset(['MID'])">Mid Only</button>
+          <button class="diff-preset-btn" onclick="setDifficultyPreset(['EASY','MID'])">Easy+Mid</button>
+          <button class="diff-preset-btn" onclick="setDifficultyPreset(['EASY','MID','CLOSE'])">All</button>
+          <button class="diff-preset-btn active" id="btnToggleFinished" onclick="toggleFinishedGamesFilter()" title="Hide matches that concluded more than 30 minutes ago">✓ Hide Finished (&gt;30m)</button>
+        </div>
 
-    <div class="nav-actions">
-      <!-- Music Player Bar -->
-      <div class="audio-player-cluster" id="audio-player-cluster">
-        <button class="nav-btn-mini" id="audio-prev-btn" title="Previous Song" aria-label="Previous Song">⏮</button>
-        <button class="nav-btn" id="audio-toggle-btn" title="Play / Pause Song" aria-label="Ambience Music">
-          <span class="btn-icon" id="audio-icon">🎵</span>
-          <span class="btn-label" id="audio-label">Music: Off</span>
+        <button class="btn" onclick="openManualMarketModal()">+ Enter Bookmaker Line</button>
+        <button class="btn btn-primary" onclick="triggerAutoSync()">⟳ Auto-Sync</button>
+        <button class="btn" id="btnToggleSlip" onclick="toggleSlipDrawer()" title="Expand table width / collapse slip panel">⇥ Slip</button>
+        <span class="status-pill mono" id="topStatusBadge"><span class="live-pulse-dot"></span> 50K SIMS</span>
+        <button class="btn btn-danger" onclick="shutdownWebServer()" title="Stop local web server and close workbench">⏻ Stop &amp; Close</button>
+      </header>
+
+      <section class="workspace-scroll" id="workspaceContent">
+        <!-- Populated dynamically by app.js -->
+      </section>
+    </main>
+
+    <!-- Right-Hand Persistent Interactive Bet Slip & Multi Studio -->
+    <aside class="slip-drawer">
+      <div class="slip-header">
+        <div>
+          <div class="slip-title">Interactive Edge &amp; Multi Slip</div>
+          <div style="font-size:11px; color:var(--text-secondary);">Correlated Joint Prob · EV% · Fractional Kelly</div>
+        </div>
+        <div style="display:flex; gap:6px; align-items:center;">
+          <button class="btn" style="padding:4px 8px; font-size:11px;" onclick="clearSlip()">Clear</button>
+          <button class="btn" style="padding:4px 8px; font-size:11px;" onclick="toggleSlipDrawer()" title="Collapse slip panel">⇥</button>
+        </div>
+      </div>
+
+      <div class="slip-body" id="slipLegsContainer">
+        <!-- Slip legs rendered here -->
+      </div>
+
+      <div class="slip-analytics-panel">
+        <div class="form-grid" style="margin-top:0; gap:8px;">
+          <div class="form-group">
+            <label class="form-label">Bookmaker Combined Odds</label>
+            <input
+              type="number"
+              step="0.01"
+              id="slipUserOdds"
+              class="input-field mono"
+              placeholder="e.g. 3.60"
+              oninput="recalculateSlip()"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Bankroll ($)</label>
+            <input
+              type="number"
+              step="50"
+              id="slipBankroll"
+              class="input-field mono"
+              value="1000"
+              oninput="recalculateSlip()"
+            />
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Risk Sizing Model</label>
+            <select id="slipKellyFraction" class="select-field" onchange="recalculateSlip()">
+              <option value="0.25" selected>Quarter Kelly (0.25x — Institutional Conservative)</option>
+              <option value="0.50">Half Kelly (0.50x — Balanced Growth)</option>
+              <option value="1.00">Full Kelly (1.00x — Aggressive Variance)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="slip-metric-row">
+          <span style="color:var(--text-secondary);">Active Legs</span>
+          <span class="mono" style="font-weight:700;" id="slipCountVal">0 Legs</span>
+        </div>
+        <div class="slip-metric-row">
+          <span style="color:var(--text-secondary);">Correlated Win Prob</span>
+          <span class="mono" style="font-weight:800; color:var(--cyan);" id="slipJointProbVal">—</span>
+        </div>
+        <div class="slip-metric-row">
+          <span style="color:var(--text-secondary);">90% Confidence Interval</span>
+          <span class="mono" style="color:var(--text-secondary);" id="slipRangeVal">—</span>
+        </div>
+        <div class="slip-metric-row">
+          <span style="color:var(--text-secondary);">Model Fair Decimal Price</span>
+          <span class="mono" style="font-weight:800; color:var(--text-main);" id="slipFairOddsVal">—</span>
+        </div>
+        <div class="slip-metric-row">
+          <span style="color:var(--text-secondary);">Implied Bookmaker Prob</span>
+          <span class="mono" id="slipImpliedVal">—</span>
+        </div>
+
+        <div class="ev-box" id="slipEvBox">
+          <div>
+            <div style="font-size:10.5px; text-transform:uppercase; font-weight:700; color:var(--text-secondary);">
+              Net Edge / Expected Value
+            </div>
+            <div class="mono" style="font-size:16px; font-weight:800;" id="slipEvVal">Enter Bookmaker Odds</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:10.5px; text-transform:uppercase; font-weight:700; color:var(--text-secondary);">
+              Recommended Stake
+            </div>
+            <div class="mono" style="font-size:16px; font-weight:800; color:var(--cyan);" id="slipStakeVal">$0.00</div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" id="btnGeminiAudit" style="width:100%; margin-top:8px; display:flex; align-items:center; justify-content:center; gap:8px; font-weight:800; background:linear-gradient(135deg, #00e5ff 0%, #3b82f6 50%, #8b5cf6 100%); color:#040914; border:none; box-shadow:0 0 16px rgba(0,229,255,0.35); padding:10px 12px;" onclick="runGeminiMultiAudit()">
+          <span>🤖 Gemini 3.8 AI Multi Audit</span>
+          <span style="font-size:10px; background:rgba(0,0,0,0.25); color:#fff; padding:2px 6px; border-radius:4px; font-weight:800; letter-spacing:0.5px;">HIGH REASONING</span>
         </button>
-        <button class="nav-btn-mini" id="audio-next-btn" title="Next Song" aria-label="Next Song">⏭</button>
-        
-        <!-- Volume Control Slider -->
-        <div class="audio-volume-control" title="Music Volume">
-          <span class="volume-icon" id="volume-icon">🔉</span>
-          <input type="range" id="audio-volume-slider" min="0" max="100" value="20" class="volume-slider" aria-label="Volume Slider">
-          <span class="volume-label" id="volume-label">20%</span>
+
+        <button class="btn btn-emerald" style="width:100%; margin-top:6px;" onclick="copySlipForBet365()">
+          📋 Copy Selections for Bet365
+        </button>
+
+        <div id="slipCorrelationNotes" style="font-size:11px; color:var(--text-secondary); line-height:1.35;">
+          Click <b>+ Slip</b> on any team, total band, race threshold, or player prop to build a correlated combination.
         </div>
       </div>
-
-      <!-- Guestbook Ledger Button (Admin Only) -->
-      <button class="nav-btn" id="guestbook-open-btn" style="display: none;" title="View Visitors List">
-        <span class="btn-icon">📋</span>
-        <span class="btn-label">Visitors</span>
-      </button>
-
-      <!-- Fullscreen Toggle -->
-      <button class="nav-btn" id="fullscreen-btn" title="Toggle Fullscreen">
-        <span class="btn-icon">⛶</span>
-      </button>
-    </div>
-  </header>
-
-  <!-- ================= SCROLLING JOURNAL CONTAINER ================= -->
-  <main class="journal-scroll-container" id="journal-scroll-container">
-
-    <!-- ================= SECTION 0: CELESTIAL STORYTELLING HERO ================= -->
-    <section class="journal-section hero-cover-section celestial-story-stage" id="hero-section" data-section-idx="0">
-      
-      <!-- Imaginary Sky, Stars & Drifting Clouds Layers -->
-      <div class="celestial-sky-backdrop">
-        <div class="stars-particle-layer" id="stars-particle-layer"></div>
-        <div class="cloud-drift-layer cloud-layer-back"></div>
-        <div class="cloud-drift-layer cloud-layer-mid"></div>
-        <div class="cloud-drift-layer cloud-layer-front"></div>
-        <div class="cloud-burst-forward" id="cloud-burst-forward"></div>
-      </div>
-
-      <div class="tongan-tapa-border top"></div>
-
-      <div class="storytelling-hero-content">
-        <!-- Story Show Intro Header -->
-        <div class="story-show-header" id="story-show-header">
-          <div class="hero-badge-tag" id="story-show-badge">✨ NEVER THE SAME GIFT TWICE • A TRADITION OF ORIGINALITY</div>
-          <h1 class="story-main-title">
-            Every Year, <br>
-            <span class="title-cursive-accent">Something Completely Different</span>
-          </h1>
-          <p class="story-intro-sub">
-            Every time I give a gift, I make sure it is completely unique — never repeating, always one of a kind. Step into our journey through the years to see how each gift pushed creativity in a brand new way!
-          </p>
-        </div>
-
-        <!-- Interactive Gift Showcase Showcase Carousel (Cinematic Big Focus Mode) -->
-        <div class="gift-showcase-stage" id="gift-showcase-stage">
-
-          <!-- Golden Circular Close / Exit Button (Matches Screenshot 1 & 3) -->
-          <button class="theater-close-btn" id="theater-close-btn" onclick="window.exitTheaterIntroMode && window.exitTheaterIntroMode()" title="Exit Intro to Journal" aria-label="Exit Intro">✕</button>
-          
-          <!-- Slide 1: The Mum Heritage Jumper -->
-          <div class="gift-slide active" data-slide-idx="0">
-            <div class="gift-card-media-wrap photo-focus-wrap" title="Click to View Full Size">
-              <img src="assets/photos/mums_jumper.png" alt="Mohenoa Family Jumper" class="gift-media-img photo-zoomable" data-src="assets/photos/mums_jumper.png" data-title="The Mohenoa Family Jumper">
-              <span class="gift-type-pill">🧥 Custom Wearable Heritage</span>
-            </div>
-            <div class="gift-card-details">
-              <span class="gift-step-badge">✨ 2023 • SOMETHING NEW: CUSTOM WEARABLE HERITAGE</span>
-              <h2 class="gift-title">The Mohenoa Family Jumper</h2>
-              
-              <!-- Highlight Text Telling What I Did For The Jumper -->
-              <div class="gift-highlight-callout">
-                <div class="callout-heading">
-                  <span class="callout-icon">💡</span>
-                  <span class="callout-label">WHAT I DID FOR THIS GIFT:</span>
-                </div>
-                <p class="callout-body">
-                  I custom-designed an exclusive tribute hoodie from scratch for Mum — featuring her parents, her beloved family, and our sacred Mohenoa heritage, so she can always wear her family close to her heart wherever she goes.
-                </p>
-              </div>
-
-              <!-- Action button telling user to click or tap next to continue -->
-              <div class="slide-interactive-cta">
-                <button class="cinematic-primary-btn" onclick="window.storyGoToNext && window.storyGoToNext()" title="Advance to Next Gift">
-                  <span>👉 Click or Tap 'Next' to Continue</span>
-                  <span class="btn-arrow">➔</span>
-                </button>
-                <div class="cta-sub-hint">Step 1 of 5 • Take your time to read and explore</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Slide 2: UniqueWishes African Dance Greeting Video -->
-          <div class="gift-slide" data-slide-idx="1">
-            <div class="gift-card-media-wrap video-preview-wrap" data-video-slide="true" title="Click Video to Play or Pause">
-              <video src="assets/videos/82566.mp4" playsinline muted class="gift-media-video" preload="auto"></video>
-              <div class="gift-play-overlay">
-                <span class="play-triangle">▶</span>
-                <span class="play-label">Play Video</span>
-              </div>
-              <button type="button" class="video-sound-toggle-btn" title="Toggle Video Audio">🔇 Sound: Off (Tap to Unmute)</button>
-              <div class="video-progress-tracker"><div class="video-progress-fill"></div></div>
-              <span class="gift-type-pill">💃 African Dance Greeting</span>
-              <button type="button" class="video-skip-overlay-btn" onclick="event.stopPropagation(); window.storyGoToNext && window.storyGoToNext()" title="Skip Video">⏭ Skip / Next</button>
-            </div>
-            <div class="gift-card-details">
-              <span class="gift-step-badge">✨ 2024 • SOMETHING NEW: VIRAL INTERNATIONAL COMEDY & DANCE</span>
-              <h2 class="gift-title">African Dance Birthday Greeting</h2>
-              
-              <div class="gift-highlight-callout">
-                <div class="callout-heading">
-                  <span class="callout-icon">💃</span>
-                  <span class="callout-label">DOING SOMETHING TOTALLY DIFFERENT:</span>
-                </div>
-                <p class="callout-body">
-                  Switching it up completely: A personalized celebration from a viral African dance troupe bringing explosive laughter, high-energy dancing, and infectious joy to our whole home.
-                </p>
-              </div>
-
-              <div class="slide-interactive-cta video-cta-row">
-                <a href="https://uniquewishes.shop/pages/african-dance-greeting?srsltid=AfmBOopKzY7F-230uTEelE8JQVRpaw8mDCj2vu64CKlQkui9HEz0_REQ" target="_blank" rel="noopener noreferrer" class="gift-external-link">
-                  🔗 View UniqueWishes Dance Page ↗
-                </a>
-                <button class="cinematic-skip-btn" onclick="window.storyGoToNext && window.storyGoToNext()" title="Skip to Next Gift">
-                  <span>⏭ Skip / Next Gift</span>
-                  <span class="btn-arrow">➔</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Slide 3: Mum's AI Animated Birthday Film -->
-          <div class="gift-slide" data-slide-idx="2">
-            <div class="gift-card-media-wrap video-preview-wrap" data-video-slide="true" title="Click Video to Play or Pause">
-              <video src="assets/videos/mums ai video.mp4" playsinline muted class="gift-media-video" preload="auto"></video>
-              <div class="gift-play-overlay">
-                <span class="play-triangle">▶</span>
-                <span class="play-label">Play Video</span>
-              </div>
-              <button type="button" class="video-sound-toggle-btn" title="Toggle Video Audio">🔇 Sound: Off (Tap to Unmute)</button>
-              <div class="video-progress-tracker"><div class="video-progress-fill"></div></div>
-              <span class="gift-type-pill">✨ AI Living Cinema</span>
-              <button type="button" class="video-skip-overlay-btn" onclick="event.stopPropagation(); window.storyGoToNext && window.storyGoToNext()" title="Skip Video">⏭ Skip / Next</button>
-            </div>
-            <div class="gift-card-details">
-              <span class="gift-step-badge">✨ 2024 • SOMETHING NEW: LIVING AI CINEMATOGRAPHY</span>
-              <h2 class="gift-title">Mum's Animated Birthday Film</h2>
-              
-              <div class="gift-highlight-callout">
-                <div class="callout-heading">
-                  <span class="callout-icon">🎬</span>
-                  <span class="callout-label">PUSHING TECHNOLOGY & CREATIVITY:</span>
-                </div>
-                <p class="callout-body">
-                  Transforming old static family photographs and bringing them to life into an animated, cinematic living movie — blending cherished memories with cutting-edge AI visual storytelling.
-                </p>
-              </div>
-
-              <div class="slide-interactive-cta">
-                <button class="cinematic-skip-btn" onclick="window.storyGoToNext && window.storyGoToNext()" title="Skip to Next Gift">
-                  <span>⏭ Skip / Next Gift</span>
-                  <span class="btn-arrow">➔</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Slide 4: Dad's Prime Years Aura Edit -->
-          <div class="gift-slide" data-slide-idx="3">
-            <div class="gift-card-media-wrap video-preview-wrap" data-video-slide="true" title="Click Video to Play or Pause">
-              <video src="assets/videos/thirst trap edit of my dad.mp4" playsinline muted class="gift-media-video" preload="auto"></video>
-              <div class="gift-play-overlay">
-                <span class="play-triangle">▶</span>
-                <span class="play-label">Play Video</span>
-              </div>
-              <button type="button" class="video-sound-toggle-btn" title="Toggle Video Audio">🔇 Sound: Off (Tap to Unmute)</button>
-              <div class="video-progress-tracker"><div class="video-progress-fill"></div></div>
-              <span class="gift-type-pill">🔥 Prime Years Edit</span>
-              <button type="button" class="video-skip-overlay-btn" onclick="event.stopPropagation(); window.storyGoToNext && window.storyGoToNext()" title="Skip Video">⏭ Skip Video</button>
-            </div>
-            <div class="gift-card-details">
-              <span class="gift-step-badge">✨ 2025 • SOMETHING NEW: THE HIGH-AURA PRIME YEARS EDIT</span>
-              <h2 class="gift-title">Dad's Prime Years 'Aura' Edit</h2>
-              
-              <div class="gift-highlight-callout">
-                <div class="callout-heading">
-                  <span class="callout-icon">🔥</span>
-                  <span class="callout-label">A WHOLE NEW TRIBUTE FOR DAD:</span>
-                </div>
-                <p class="callout-body">
-                  An electrifying, throwback aura edit honoring Dad's swagger, effortless island style, and unmistakable presence back in his prime glory days.
-                </p>
-              </div>
-
-              <div class="slide-interactive-cta">
-                <button class="cinematic-skip-btn" onclick="window.storyGoToNext && window.storyGoToNext()" title="Skip to Next Gift">
-                  <span>⏭ Skip / Next Gift</span>
-                  <span class="btn-arrow">➔</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Slide 5: The Grand 2026 Keepsake Website (The Journal of Him) -->
-          <div class="gift-slide" data-slide-idx="4">
-            <div class="gift-card-media-wrap journal-tribute-media photo-focus-wrap" title="Click to View Full Size">
-              <img src="assets/photos/IMG_9293.JPG" alt="The Journal of Him" class="gift-media-img photo-zoomable" data-src="assets/photos/IMG_9293.JPG" data-title="The Journal of Him">
-              <span class="gift-type-pill">👑 2026 Grand Keepsake</span>
-            </div>
-            <div class="gift-card-details">
-              <span class="gift-step-badge">👑 2026 • THE ULTIMATE EVOLUTION: AN INTERACTIVE LIVING ARCHIVE</span>
-              <h2 class="gift-title">The Journal of Him</h2>
-              
-              <div class="gift-highlight-callout grand-evolution">
-                <div class="callout-heading">
-                  <span class="callout-icon">🌟</span>
-                  <span class="callout-label">ONLINE FOR THE ENTIRE YEAR:</span>
-                </div>
-                <p class="callout-body">
-                  Every year, I strive to create something truly unforgettable when giving gifts — and this is my 2026 Father’s Day tribute. Kept live online for the entire year so our family can forever revisit these memories, this archive is a window into the life of my father: a man whose easy humor, calm mannerisms, and gentle wisdom taught us to always smile and laugh things off, knowing that no storm lasts forever.
-                </p>
-              </div>
-
-              <div class="slide-interactive-cta">
-                <button class="hero-open-journal-cta grand-entry-btn" id="hero-open-btn">
-                  <span class="btn-book-icon">📖</span>
-                  <span>OPEN THE JOURNAL & READ HIS STORY</span>
-                  <span class="btn-arrow">➔</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- Slide Stepper & Controls -->
-        <div class="story-stepper-row">
-          <button class="story-nav-btn prev" id="story-prev-btn" aria-label="Previous Gift">‹ Prev</button>
-          
-          <div class="story-dots-cluster" id="story-dots-cluster">
-            <button class="story-dot active" data-goto="0" title="Gift 1: Jumper"><span>1</span></button>
-            <button class="story-dot" data-goto="1" title="Gift 2: African Dance"><span>2</span></button>
-            <button class="story-dot" data-goto="2" title="Gift 3: AI Film"><span>3</span></button>
-            <button class="story-dot" data-goto="3" title="Gift 4: Prime Edit"><span>4</span></button>
-            <button class="story-dot" data-goto="4" title="Gift 5: The Journal"><span>5</span></button>
-          </div>
-
-          <button class="story-nav-btn next" id="story-next-btn" aria-label="Next Gift">Next ›</button>
-
-          <!-- Skip / Next Gift Fast Button for iPad & Phone -->
-          <button class="story-fast-skip-btn" id="story-fast-skip-btn" onclick="window.storyGoToNext && window.storyGoToNext()" title="Skip to Next Gift">
-            <span>⏭ Skip / Next</span>
-          </button>
-        </div>
-
-        <div class="hero-scroll-cue" id="hero-scroll-cue">
-          <span class="cue-mouse"></span>
-          <span class="cue-label">SCROLL TO EXPLORE JOURNAL</span>
-        </div>
-
-      </div>
-
-      <div class="tongan-tapa-border bottom"></div>
-    </section>
-
-    <!-- ================= ENTRY I: FAITH & EARLY INTEGRITY ================= -->
-    <section class="journal-section entry-section island-bg-cream" id="entry-1" data-section-idx="1">
-      <div class="section-watermark-tapa"></div>
-      <div class="entry-grid-container">
-        
-        <!-- Left Editorial Text -->
-        <div class="entry-text-col">
-          <div class="entry-header-tag" id="entry1-tag">ENTRY I • FAITH & INTEGRITY</div>
-          
-          <h2 class="entry-display-headline" id="entry1-headline">A Man Who <br>Showed Up,</h2>
-          <div class="entry-gold-divider"></div>
-          
-          <p class="entry-narrative-body" id="entry1-body">
-            People knew my dad for many things — builder, mechanic, comedian, gardener. But above all, he was first and foremost a man who showed up: a father who was always there whenever we needed him most. This journal is a token of my deepest appreciation for the man he has always been.
-          </p>
-
-          <!-- Heartfelt Appreciation & Spiritual Accountability Card with Proverbs 20:7 underneath -->
-          <div class="spiritual-gratitude-card">
-            <div class="spiritual-card-crest">🕊️</div>
-            <h3 class="spiritual-card-title">A Foundation of Faith & Example</h3>
-            <p class="spiritual-card-p">
-              Thank you, Dad, for always keeping us accountable, guiding us to church, and helping build a foundation of morals and faith that shape who we are today.
-            </p>
-            <p class="spiritual-card-p">
-              Thank you for always leading by example — staying behind to clean up at church functions, standing as a true pioneer in our community, and watching over us through every spiritual battle.
-            </p>
-
-            <!-- Proverbs 20:7 Scripture Quote positioned under gratitude text -->
-            <div class="scripture-highlight-subcard">
-              <blockquote class="scripture-quote-text">
-                “The righteous man walks in his integrity; his children are blessed after him.”
-              </blockquote>
-              <div class="scripture-ref-tag">— Proverbs 20:7</div>
-            </div>
-
-            <div class="entry-anchor-date" id="entry1-anchor">ANCHORED IN FAITH • 2001 — 2026</div>
-          </div>
-        </div>
-
-        <!-- Right Hero Photo -->
-        <div class="entry-photo-col">
-          <div class="editorial-photo-mount">
-            <div class="editorial-frame photo-zoomable" id="entry1-photo-frame" data-src="assets/photos/IMG_9293.JPG" data-title="A Lifetime of Integrity">
-              <img src="assets/photos/IMG_9293.JPG" alt="Ratu Nautu Latunipulu" class="editorial-img" id="entry1-img">
-              <div class="photo-bottom-stamp" id="entry1-photo-stamp">2001 — A LIFETIME OF INTEGRITY</div>
-            </div>
-            <div class="island-palm-accent"></div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- ================= ENTRY II: DEDICATION & THE PILLAR ================= -->
-    <section class="journal-section entry-section island-bg-sand" id="entry-2" data-section-idx="2">
-      <div class="tongan-kupesi-fata-pattern"></div>
-      <div class="dedication-container">
-
-        <div class="entry-header-tag">ENTRY II • THE PILLAR & GUIDE</div>
-        <h2 class="entry-display-headline serif-italic">The Hands That Held Us</h2>
-        <div class="entry-gold-divider centered"></div>
-
-        <div class="dedication-parchment-card">
-          <div class="letter-salutation" id="dedication-salutation">Dear Dad,</div>
-          <div class="letter-paragraphs" id="dedication-paragraphs">
-            <p>Thank you for being our constant anchor, our loudest supporter, and the greatest example of what it means to lead with love, integrity, and quiet strength.</p>
-            <p>Every sacrifice you made, every lesson you taught, and every laugh we shared has shaped who we are today.</p>
-            <p>This living archive is our tribute to your life, your heritage, and the priceless moments we carry in our hearts forever.</p>
-          </div>
-
-          <div class="letter-signature-area">
-            <div class="sig-script" id="dedication-signature">With endless love & gratitude,</div>
-            <div class="sig-family" id="dedication-family">— Latunipulu Family</div>
-            <div class="wax-seal-tongan" title="Coat of Arms of Tonga Stamp">
-              <img src="assets/photos/Coat_of_arms_of_Tonga.svg.webp" alt="Coat of Arms of Tonga Stamp" class="tongan-wax-seal-img">
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- ================= ENTRY III: THE TIMELINE ("a reel of the years") ================= -->
-    <section class="journal-section entry-section island-bg-dusk" id="entry-3" data-section-idx="3">
-      <div class="section-title-wrap">
-        <div class="entry-header-tag" id="entry3-tag">ENTRY III • THE TIMELINE</div>
-        <h2 class="entry-display-headline cursive-accent-headline">a reel of the years</h2>
-        <div class="entry-gold-divider centered"></div>
-      </div>
-
-      <div class="timeline-reels-container" id="timeline-reels-container">
-        
-        <!-- Reel Item 1: Photo with sister-in-law (Making friends anywhere) -->
-        <div class="film-reel-row layout-left">
-          <div class="film-strip-frame photo-zoomable" data-src="assets/photos/465422921_10225469982327035_8577979762292632392_n.jpg" data-title="Island Warmth & Kinship">
-            <div class="sprockets top"></div>
-            <div class="film-image-target">
-              <img src="assets/photos/465422921_10225469982327035_8577979762292632392_n.jpg" alt="Island Warmth & Kinship" class="film-img">
-            </div>
-            <div class="sprockets bottom"></div>
-          </div>
-          <div class="film-reel-meta">
-            <span class="film-year-badge">2005</span>
-            <h3 class="film-title">Island Warmth & Kinship</h3>
-            <p class="film-caption">Captured in genuine company with his sister-in-law — a true testament to his natural warmth. Dad has that rare gift of getting along with everyone he meets, turning strangers into lifelong friends anywhere he goes.</p>
-            <div class="film-meta-divider"></div>
-          </div>
-        </div>
-
-        <!-- Reel Item 2: Shared Laughs & Grace (Always smiling & laughing) -->
-        <div class="film-reel-row layout-right">
-          <div class="film-reel-meta">
-            <span class="film-year-badge">2007</span>
-            <h3 class="film-title">Shared Laughs & Grace</h3>
-            <p class="film-caption">Every memory of Dad is filled with laughter. He was always the first to smile, finding joy in the simplest moments and lifting every room with his contagious, easygoing laughter.</p>
-            <div class="film-meta-divider"></div>
-          </div>
-          <div class="film-strip-frame photo-zoomable" data-src="assets/photos/465561133_10225469980846998_5089765502435108626_n.jpg" data-title="Shared Laughs & Grace">
-            <div class="sprockets top"></div>
-            <div class="film-image-target">
-              <img src="assets/photos/465561133_10225469980846998_5089765502435108626_n.jpg" alt="Shared Laughs & Grace" class="film-img">
-            </div>
-            <div class="sprockets bottom"></div>
-          </div>
-        </div>
-
-        <!-- Reel Item 3: The Glow Between Them -->
-        <div class="film-reel-row layout-left">
-          <div class="film-strip-frame photo-zoomable" data-src="assets/photos/465367677_10225469988487189_8635519669333974068_n.jpg" data-title="The Glow Between Them">
-            <div class="sprockets top"></div>
-            <div class="film-image-target">
-              <img src="assets/photos/465367677_10225469988487189_8635519669333974068_n.jpg" alt="The Glow Between Them" class="film-img">
-            </div>
-            <div class="sprockets bottom"></div>
-          </div>
-          <div class="film-reel-meta">
-            <span class="film-year-badge">2009</span>
-            <h3 class="film-title">The Glow Between Them</h3>
-            <p class="film-caption">Two people who had learned, over years, to live in each other's light. The flare in the lens was only the sun doing what their faces had already done — refusing to let us tell where one ended and the other began.</p>
-            <div class="film-meta-divider"></div>
-          </div>
-        </div>
-
-        <!-- Reel Item 4: What He Grew -->
-        <div class="film-reel-row layout-right">
-          <div class="film-reel-meta">
-            <span class="film-year-badge">2014</span>
-            <h3 class="film-title">What He Grew</h3>
-            <p class="film-caption">Not crops, not wealth — people. A girl who learned to run in his shadow, a child who learned to sit on his shoulders. The tattoo told of where he'd been; the children told of where he stayed.</p>
-            <div class="film-meta-divider"></div>
-          </div>
-          <div class="film-strip-frame photo-zoomable" data-src="assets/photos/465114369_10225469983567066_8602633835982269215_n.jpg" data-title="What He Grew">
-            <div class="sprockets top"></div>
-            <div class="film-image-target">
-              <img src="assets/photos/465114369_10225469983567066_8602633835982269215_n.jpg" alt="What He Grew" class="film-img">
-            </div>
-            <div class="sprockets bottom"></div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- ================= ENTRY IV: POLAROIDS ("a few polaroids, kept loose") ================= -->
-    <section class="journal-section entry-section island-bg-botanical" id="entry-4" data-section-idx="4">
-      <div class="section-title-wrap">
-        <div class="entry-header-tag" id="entry4-tag">ENTRY IV • POLAROIDS</div>
-        <h2 class="entry-display-headline polaroid-headline">a few <span class="gold-italic">polaroids</span>, kept loose</h2>
-        <p class="section-sub-desc" id="entry4-sub">Memories that didn't ask to be framed, just remembered.</p>
-        <div class="entry-gold-divider centered"></div>
-      </div>
-
-      <!-- Organic Floating Polaroid Constellation (1 removed as requested) -->
-      <div class="polaroid-scatter-constellation" id="polaroid-scatter-constellation">
-        
-        <div class="scatter-polaroid-item" style="transform: rotate(-5deg);" data-src="assets/photos/IMG_1908.JPG" data-title="Cherished Moments">
-          <div class="scotch-tape"></div>
-          <div class="polaroid-photo-box">
-            <img src="assets/photos/IMG_1908.JPG" alt="Memory" loading="lazy">
-          </div>
-          <div class="polaroid-year-stamp">2024</div>
-        </div>
-
-        <div class="scatter-polaroid-item" style="transform: rotate(3deg);" data-src="assets/photos/IMG_2138.jpeg" data-title="Honoring Nana" data-caption="Standing in strength and deep love in memory of his mother">
-          <div class="scotch-tape"></div>
-          <div class="polaroid-photo-box">
-            <img src="assets/photos/IMG_2138.jpeg" alt="Honoring Nana" loading="lazy">
-          </div>
-          <div class="polaroid-year-stamp">2023 • Honoring Nana</div>
-        </div>
-
-        <div class="scatter-polaroid-item" style="transform: rotate(-4deg);" data-src="assets/photos/IMG_5429.jpeg" data-title="Always Together">
-          <div class="scotch-tape"></div>
-          <div class="polaroid-photo-box">
-            <img src="assets/photos/IMG_5429.jpeg" alt="Memory" loading="lazy">
-          </div>
-          <div class="polaroid-year-stamp">2022</div>
-        </div>
-
-        <div class="scatter-polaroid-item" style="transform: rotate(5deg);" data-src="assets/photos/THAT_KINDA_GUY.JPG" data-title="That Kinda Guy">
-          <div class="scotch-tape"></div>
-          <div class="polaroid-photo-box">
-            <img src="assets/photos/THAT_KINDA_GUY.JPG" alt="Memory" loading="lazy">
-          </div>
-          <div class="polaroid-year-stamp">2021</div>
-        </div>
-
-        <div class="scatter-polaroid-item" style="transform: rotate(-3deg);" data-src="assets/photos/464825450_10225438053368831_2504579000914362514_n.jpg" data-title="The Pillar - 2000">
-          <div class="scotch-tape"></div>
-          <div class="polaroid-photo-box">
-            <img src="assets/photos/464825450_10225438053368831_2504579000914362514_n.jpg" alt="Memory" loading="lazy">
-          </div>
-          <div class="polaroid-year-stamp">2000</div>
-        </div>
-
-        <div class="scatter-polaroid-item" style="transform: rotate(4deg);" data-src="assets/photos/465424263_10225469984807097_4500748773571450173_n.jpg" data-title="Family Moments - 2012">
-          <div class="scotch-tape"></div>
-          <div class="polaroid-photo-box">
-            <img src="assets/photos/465424263_10225469984807097_4500748773571450173_n.jpg" alt="Memory" loading="lazy">
-          </div>
-          <div class="polaroid-year-stamp">2012</div>
-        </div>
-
-        <div class="scatter-polaroid-item" style="transform: rotate(-2deg);" data-src="assets/photos/465288379_10225469987007152_6407773295642653158_n.jpg" data-title="Quiet Strength - 2009">
-          <div class="scotch-tape"></div>
-          <div class="polaroid-photo-box">
-            <img src="assets/photos/465288379_10225469987007152_6407773295642653158_n.jpg" alt="Memory" loading="lazy">
-          </div>
-          <div class="polaroid-year-stamp">2009</div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- ================= ENTRY V: WORDS OF WISDOM & TOAST ================= -->
-    <section class="journal-section entry-section island-bg-ocean" id="entry-5" data-section-idx="5">
-      <div class="tongan-kupesi-ocean-overlay"></div>
-      
-      <div class="wisdom-container">
-        <div class="entry-header-tag">ENTRY V • WORDS OF WISDOM</div>
-        <h2 class="entry-display-headline">Wisdom Carved in Calm Waters</h2>
-        <div class="entry-gold-divider centered"></div>
-
-        <div class="quotes-editorial-grid" id="quotes-editorial-grid">
-          <!-- Quote 1: Funny / Daily wisdom -->
-          <div class="wisdom-quote-card">
-            <div class="quote-text">“If you don't know, try to know.”</div>
-            <div class="quote-meta">— Funniest quote</div>
-          </div>
-
-          <!-- Quote 2: Determination & Hard work for our success -->
-          <div class="wisdom-quote-card">
-            <div class="quote-text">“Work hard in silence with relentless determination; everything I build is for your success.”</div>
-            <div class="quote-meta">— ON HARD WORK & DETERMINATION</div>
-          </div>
-
-          <!-- Quote 3: Family prayer foundation -->
-          <div class="wisdom-quote-card">
-            <div class="quote-text">“The family that prays together stays together.”</div>
-            <div class="quote-meta">— FAITH & FAMILY FOUNDATION</div>
-          </div>
-        </div>
-
-        <!-- Epilogue Toast Box -->
-        <div class="epilogue-toast-box">
-          <div class="toast-badge">HAPPY FATHER'S DAY 2026</div>
-          <h3 class="toast-title">A Toast to You, Dad!</h3>
-          <p class="toast-message">May the years ahead bring you robust health, great joy, endless laughter, and many new adventures. We love you more than words can express.</p>
-          <div class="toast-signoff">Here's to the legend himself! 🥂</div>
-          <div class="toast-actions-row">
-            <button type="button" class="toast-celebrate-btn" id="confetti-launch-btn">🎉 Celebrate with Confetti</button>
-            <button type="button" class="toast-celebrate-btn thirst-trap-btn" id="thirst-trap-launch-btn">🔥 Watch Dad's Edit 🤫</button>
-            <button type="button" class="toast-celebrate-btn open-studio-trigger" id="toast-studio-btn" style="background:linear-gradient(135deg, rgba(223,183,108,0.25), rgba(184,93,25,0.35));border-color:var(--gold-vivid);">📸 Create Keepsake Story</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= SECTION VI: COMMUNITY WALL OF HONOR ================= -->
-    <section class="journal-section community-wall-section island-bg-lagoon" id="community-wall-section" data-section-idx="6">
-      <div class="community-wall-header">
-        <div class="community-wall-badge">COMMUNITY FATHERS MONTAGE & TRIBUTE</div>
-        <h2 class="community-wall-title">Fathers of Our Community — Wall of Honor</h2>
-        <p class="community-wall-sub">Upload a photo of your father to join the community wall and celebrate all great fathers!</p>
-        
-        <div class="community-wall-toolbar">
-          <button class="wall-btn highlight" id="open-upload-modal-btn">
-            <span>👨‍👦</span>
-            <span>Upload Your Father to Join</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Dynamic Infinite Expansion Polaroid Wall (up to 100) -->
-      <div class="community-collage-board" id="community-collage-board">
-        <!-- Rendered dynamically by app.js with Admin delete controls and "+ Add Your Father" slot -->
-      </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="journal-footer">
-      <div class="tongan-tapa-footer-line"></div>
-      <div class="footer-text">
-        <span>Created with love for <strong>Ratu Nautu Latunipulu</strong> & Fathers Everywhere</span>
-        <span class="footer-year">2026 Edition • Online for the Whole Year</span>
-      </div>
-    </footer>
-
-  </main>
-
-  <!-- ================= MEDIA LIGHTBOX MODAL ================= -->
-  <div class="media-lightbox" id="media-lightbox" role="dialog" aria-hidden="true">
-    <div class="lightbox-backdrop" id="lightbox-close-backdrop"></div>
-    <div class="lightbox-dialog">
-      <button class="lightbox-close" id="lightbox-close-btn" aria-label="Close Lightbox">✕</button>
-      <div class="lightbox-media-target" id="lightbox-media-target"></div>
-      <div class="lightbox-details">
-        <h3 class="lightbox-title" id="lightbox-title"></h3>
-        <p class="lightbox-caption" id="lightbox-caption"></p>
-      </div>
-    </div>
+    </aside>
   </div>
 
-  <!-- ================= PHOTO UPLOAD MODAL ================= -->
-  <div class="upload-modal" id="upload-photo-modal" role="dialog" aria-hidden="true">
-    <div class="upload-backdrop" id="upload-close-backdrop"></div>
-    <div class="upload-dialog">
-      <button class="upload-close" id="upload-close-btn" aria-label="Close Modal">✕</button>
-      
-      <div class="upload-header">
-        <span class="upload-badge">COMMUNITY TRIBUTE</span>
-        <h2>Add a Father to the Wall of Honor</h2>
-        <p>Honor your father, uncle, or mentor by adding their memory to the community keepsake.</p>
+  <!-- Modal: Add User-Confirmed Bookmaker Market Line -->
+  <div class="modal-backdrop" id="manualMarketModal">
+    <div class="modal-card">
+      <div class="card-header">
+        <div class="card-title">Add Manual Bookmaker Market Reference (Bet365 / Local)</div>
+        <button class="btn" onclick="closeManualMarketModal()">✕</button>
       </div>
-
-      <form id="photo-upload-form" class="upload-form">
-        <div class="upload-dropzone" id="upload-dropzone">
-          <input type="file" id="photo-file-input" accept="image/*" style="display: none;">
-          <div class="dropzone-prompt" id="dropzone-prompt">
-            <span class="drop-icon">📸</span>
-            <div class="drop-title">Drag & Drop Father's Photo Here</div>
-            <div class="drop-sub">or click to browse from your device</div>
-          </div>
-          <div class="dropzone-preview" id="dropzone-preview" style="display: none;">
-            <img id="preview-img" alt="Preview">
-            <button type="button" class="remove-preview-btn" id="remove-preview-btn">✕ Change Photo</button>
-          </div>
+      <p style="font-size:12px; color:var(--text-secondary); margin-bottom:10px;">
+        Compare a line &amp; decimal price you have confirmed on your bookmaker against the independent 50,000-run Monte Carlo model.
+      </p>
+      <div class="form-grid">
+        <div class="form-group full">
+          <label class="form-label">Select Match / Fixture</label>
+          <select id="mmFixtureSelect" class="select-field"></select>
         </div>
-
         <div class="form-group">
-          <label for="father-name-input">Father's Full Name *</label>
-          <input type="text" id="father-name-input" placeholder="e.g. Sione Latunipulu" required>
+          <label class="form-label">Market Type</label>
+          <select id="mmMarketCode" class="select-field">
+            <option value="MATCH_WINNER">Match Winner (Moneyline)</option>
+            <option value="TOTAL_POINTS">Game Total Points (Over/Under)</option>
+            <option value="HANDICAP_SPREAD">Handicap / Line Spread</option>
+            <option value="PLAYER_POINTS">Player Points Over/Under</option>
+            <option value="PLAYER_REBOUNDS">Player Rebounds Over/Under</option>
+            <option value="PLAYER_ASSISTS">Player Assists Over/Under</option>
+            <option value="ANYTIME_TRY">Anytime Try Scorer</option>
+            <option value="PASSING_YARDS">NFL Passing Yards</option>
+            <option value="RUSHING_YARDS">NFL Rushing Yards</option>
+            <option value="RECEIVING_YARDS">NFL Receiving Yards</option>
+          </select>
         </div>
-
         <div class="form-group">
-          <label for="uploader-name-input">Your Name / Family Name *</label>
-          <input type="text" id="uploader-name-input" placeholder="e.g. Latunipulu Family" required>
+          <label class="form-label">Bookmaker Reference</label>
+          <input type="text" id="mmBookmaker" class="input-field" value="bet365.com.au" />
         </div>
-
+        <div class="form-group full">
+          <label class="form-label">Player or Team Selection Label</label>
+          <input type="text" id="mmSelection" class="input-field" placeholder="e.g. Boston Celtics / Jayson Tatum Over / Over Total" />
+        </div>
         <div class="form-group">
-          <label for="uploader-caption-input">Special Message or Caption</label>
-          <input type="text" id="uploader-caption-input" placeholder="e.g. A lifetime of quiet strength and love">
+          <label class="form-label">Line / Handicap (Optional for Winner)</label>
+          <input type="number" step="0.5" id="mmLine" class="input-field mono" placeholder="e.g. 26.5 or 224.5" />
         </div>
-
-        <div class="upload-error-msg" id="upload-error-msg">Please select a photo and enter both names.</div>
-
-        <button type="submit" class="submit-upload-btn" id="submit-upload-btn">
-          <span>✨ Add Photo to Wall of Honor</span>
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- ================= VISITOR NAME GATEKEEPER MODAL ================= -->
-  <!-- Passcode completely removed. Only asks "Who is visiting?" and remembers permanently -->
-  <div class="passcode-gate" id="passcode-gate">
-    <div class="gate-overlay"></div>
-    <div class="gate-card-wrapper">
-      
-      <div class="gate-card" id="gate-visitor-card">
-        <div class="gate-crest">🌴</div>
-        <h2 class="gate-title">Welcome to the Celebration!</h2>
-        <p class="gate-sub">Who is visiting today? Please share your name to enter the keepsake.</p>
-
-        <form id="visitor-form" class="gate-form">
-          <div class="input-wrap">
-            <label for="visitor-name-input" class="visually-hidden" style="display:none;">Your Name</label>
-            <input type="text" id="visitor-name-input" placeholder="Your Name / Family Name *" required autocomplete="name" autofocus>
-          </div>
-          <div class="input-wrap">
-            <label for="visitor-note-input" class="visually-hidden" style="display:none;">A wish or note</label>
-            <input type="text" id="visitor-note-input" placeholder="A brief wish or note for Dad (optional)">
-          </div>
-          <div class="gate-error" id="visitor-error-msg">Please enter your name to enter.</div>
-          <button type="submit" class="gate-btn" id="visitor-submit-btn">✨ Enter The Journal</button>
-        </form>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ================= CHANGE VISITOR NAME MODAL ================= -->
-  <div class="guestbook-modal" id="change-name-modal" role="dialog" aria-hidden="true">
-    <div class="guestbook-backdrop" id="change-name-backdrop"></div>
-    <div class="guestbook-dialog" style="max-width: 440px;">
-      <div class="guestbook-header">
-        <div class="guestbook-title-wrap">
-          <span class="guestbook-badge">VISITOR SETTINGS</span>
-          <h2>Update Your Name</h2>
+        <div class="form-group">
+          <label class="form-label">Bookmaker Decimal Odds</label>
+          <input type="number" step="0.01" id="mmOdds" class="input-field mono" placeholder="e.g. 1.91" />
         </div>
-        <button class="guestbook-close" id="change-name-close-btn" aria-label="Close">✕</button>
       </div>
-      <form id="change-name-form" class="gate-form" style="margin-top: 18px;">
-        <div class="input-wrap">
-          <input type="text" id="change-name-input" placeholder="Enter New Name / Family Name" required>
-        </div>
-        <button type="submit" class="gate-btn" style="margin-top: 14px;">Save & Update</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- ================= GUESTBOOK LEDGER MODAL (ADMIN ONLY) ================= -->
-  <div class="guestbook-modal" id="guestbook-modal" role="dialog" aria-hidden="true">
-    <div class="guestbook-backdrop" id="guestbook-close-backdrop"></div>
-    <div class="guestbook-dialog">
-      <div class="guestbook-header">
-        <div class="guestbook-title-wrap">
-          <span class="guestbook-badge">ADMINISTRATION VAULT (Admin134434)</span>
-          <h2>Visitor Guestbook & Activity</h2>
-        </div>
-        <button class="guestbook-close" id="guestbook-close-btn" aria-label="Close">✕</button>
-      </div>
-
-      <div class="guestbook-toolbar">
-        <span class="visitor-count-badge" id="visitor-count-badge">0 Visitors Recorded</span>
-        <button class="guestbook-refresh-btn" id="guestbook-refresh-btn">🔄 Refresh</button>
-        <button type="button" class="guestbook-purge-btn" id="guestbook-purge-btn" style="background:rgba(220,53,69,0.25);border:1px solid #ff4444;color:#ff7777;padding:5px 12px;border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:8px;" title="Delete all test visitor records">🗑️ Purge Test Records</button>
-      </div>
-
-      <div class="guestbook-list" id="guestbook-list">
-        <div class="guestbook-empty">No visitors recorded yet.</div>
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:18px;">
+        <button class="btn" onclick="closeManualMarketModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="submitManualMarket()">Save &amp; Calculate Edge</button>
       </div>
     </div>
   </div>
 
-  <!-- ================= FATHER'S DAY POLAROID KEEPSAKE STUDIO MODAL ================= -->
-  <div class="guestbook-modal studio-modal" id="story-studio-modal" role="dialog" aria-hidden="true">
-    <div class="guestbook-backdrop" id="studio-close-backdrop"></div>
-    <div class="guestbook-dialog studio-dialog">
-      <div class="guestbook-header studio-header">
-        <div class="guestbook-title-wrap">
-          <span class="guestbook-badge">INSTAGRAM & FACEBOOK STUDIO</span>
-          <h2>Father's Day Polaroid Keepsake</h2>
-          <p class="studio-subtitle">Customize a high-resolution Polaroid keepsake with your photo, authentic handwritten note, and download for Story or Feed!</p>
+  <!-- Modal: Paste Custom Fixture Order -->
+  <div class="modal-backdrop" id="pasteOrderModal">
+    <div class="modal-card">
+      <div class="card-header">
+        <div class="card-title">Arrange Manual Event Order</div>
+        <button class="btn" onclick="closePasteOrderModal()">✕</button>
+      </div>
+      <p style="font-size:12px; color:var(--text-secondary); margin-bottom:10px;">
+        Paste one matchup per line (e.g. <code>Boston Celtics vs NY Knicks</code>) to lock the display sequence to your preferred slip order.
+      </p>
+      <textarea
+        id="pasteOrderTextarea"
+        class="input-field mono"
+        style="width:100%; height:150px; resize:vertical;"
+        placeholder="Boston Celtics vs NY Knicks&#10;Los Angeles Lakers vs Golden State Warriors"
+      ></textarea>
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:14px;">
+        <button class="btn" onclick="closePasteOrderModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="submitPasteOrder()">Apply Fixture Order</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Gemini 3.8 High-Reasoning AI Multi Audit -->
+  <div class="modal-backdrop" id="geminiAuditModal" style="display:none;">
+    <div class="modal-card" style="max-width:820px; max-height:90vh; display:flex; flex-direction:column; overflow:hidden;">
+      <div class="card-header" style="border-bottom:1px solid var(--border-subtle); padding-bottom:14px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div style="width:34px; height:34px; border-radius:8px; background:linear-gradient(135deg, #00e5ff 0%, #3b82f6 50%, #8b5cf6 100%); display:flex; align-items:center; justify-content:center; font-size:18px;">🤖</div>
+          <div>
+            <div class="card-title" style="display:flex; align-items:center; gap:8px;">
+              <span>Gemini 3.8 High-Reasoning Multi Audit</span>
+              <span class="badge" style="background:rgba(0,229,255,0.15); color:var(--cyan); border:1px solid rgba(0,229,255,0.3); font-size:10px;">THINKING: HIGH</span>
+              <span class="badge" id="auditBet365Badge" style="font-size:10px;">✓ BET365 SGM VERIFIED</span>
+            </div>
+            <div style="font-size:11.5px; color:var(--text-secondary);">
+              Institutional stress testing · Correlation covariance · Game-script plausibility · Bet365 placement rules
+            </div>
+          </div>
         </div>
-        <button class="guestbook-close" id="studio-close-btn" aria-label="Close">✕</button>
+        <button class="btn" onclick="closeGeminiAuditModal()">✕</button>
       </div>
 
-      <!-- Format Toggle Tabs -->
-      <div class="studio-format-bar">
-        <button type="button" class="studio-format-tab active" id="studio-format-story">
-          <span>📱</span>
-          <span>Story (9:16 • 1080×1920)</span>
-        </button>
-        <button type="button" class="studio-format-tab" id="studio-format-post">
-          <span>📷</span>
-          <span>Feed Post (1:1 • 1080×1080)</span>
-        </button>
+      <div style="padding:16px 20px; overflow-y:auto; flex:1;" id="geminiAuditModalBody">
+        <!-- Rendered dynamically -->
       </div>
 
-      <!-- Main Studio Workspace -->
-      <div class="studio-workspace">
-        <!-- Interactive Canvas Preview Side -->
-        <div class="studio-preview-col">
-          <div class="studio-canvas-stage">
-            <canvas id="studio-canvas"></canvas>
-          </div>
-          <div class="studio-canvas-hint">
-            <span>👆 <strong>Drag photo</strong> directly on canvas to reposition • Sliders to zoom & rotate</span>
-          </div>
+      <div style="padding:12px 20px; border-top:1px solid var(--border-subtle); background:rgba(0,0,0,0.2); display:flex; justify-content:space-between; align-items:center;">
+        <div style="font-size:11px; color:var(--text-secondary);" id="auditFooterNote">
+          Audit powered by Gemini 3.8 &amp; 50,000-run Monte Carlo Copula Matrix
         </div>
-
-        <!-- Controls Sidebar -->
-        <div class="studio-controls-col">
-          <!-- Photo Selection -->
-          <div class="studio-group">
-            <label class="studio-group-label">1. Choose Photo</label>
-            <div class="studio-btn-row">
-              <input type="file" id="studio-photo-input" accept="image/*" style="display:none;">
-              <button type="button" class="studio-btn-primary" id="studio-upload-btn">
-                <span>📁</span> Upload Photo
-              </button>
-              <button type="button" class="studio-btn-secondary" id="studio-sample-btn">
-                <span>👑</span> Use Sample Dad Photo
-              </button>
-            </div>
-          </div>
-
-          <!-- Zoom & Rotate Adjustments -->
-          <div class="studio-group">
-            <div class="studio-slider-header">
-              <label class="studio-group-label" for="studio-zoom-slider">2. Zoom & Adjust</label>
-              <span class="studio-slider-val" id="studio-zoom-label">100%</span>
-            </div>
-            <input type="range" id="studio-zoom-slider" min="0.5" max="2.5" step="0.05" value="1.0" class="studio-range-slider">
-
-            <div class="studio-slider-header" style="margin-top:12px;">
-              <label class="studio-group-label" for="studio-rotate-slider">Rotation Angle</label>
-              <span class="studio-slider-val" id="studio-rotate-label">0°</span>
-            </div>
-            <input type="range" id="studio-rotate-slider" min="-25" max="25" step="1" value="0" class="studio-range-slider">
-
-            <button type="button" class="studio-btn-tiny" id="studio-reset-btn" style="margin-top:8px;">
-              ↺ Reset Position & Zoom
-            </button>
-          </div>
-
-          <!-- Polaroid Chin Inscription -->
-          <div class="studio-group">
-            <label class="studio-group-label" for="studio-caption-input">3. Polaroid Chin Message</label>
-            <input type="text" id="studio-caption-input" value="Happy Father's Day, Dad! ❤️" maxlength="45" class="studio-text-input" placeholder="Write a message on the polaroid...">
-
-            <div class="studio-presets-row">
-              <span class="studio-presets-title">Quick Presets:</span>
-              <button type="button" class="studio-preset-chip" data-text="Happy Father's Day, Dad! ❤️">Happy Father's Day ❤️</button>
-              <button type="button" class="studio-preset-chip" data-text="Best Dad in the World 👑">Best Dad in the World 👑</button>
-              <button type="button" class="studio-preset-chip" data-text="My Hero, My Anchor ⚓">My Hero, My Anchor</button>
-              <button type="button" class="studio-preset-chip" data-text="Honoring Nana & Family 🕊️">Honoring Nana & Family</button>
-            </div>
-
-            <!-- Typography Choices -->
-            <div class="studio-typo-grid">
-              <div>
-                <label class="studio-sublabel" for="studio-font-select">Font Style</label>
-                <select id="studio-font-select" class="studio-select">
-                  <option value="'Dancing Script', cursive">✍️ Handwritten Script</option>
-                  <option value="'Cormorant Garamond', serif">📜 Editorial Calligraphy</option>
-                  <option value="'Cinzel', serif">👑 Royal Golden Serif</option>
-                  <option value="'Outfit', sans-serif">✨ Modern Clean Pen</option>
-                </select>
-              </div>
-
-              <div>
-                <div class="studio-slider-header">
-                  <label class="studio-sublabel" for="studio-font-size-slider">Size</label>
-                  <span class="studio-slider-val" id="studio-font-size-label">34px</span>
-                </div>
-                <input type="range" id="studio-font-size-slider" min="20" max="48" step="1" value="34" class="studio-range-slider">
-              </div>
-            </div>
-
-            <!-- Ink Color Selection -->
-            <div style="margin-top:12px;">
-              <label class="studio-sublabel">Ink Color</label>
-              <div class="studio-ink-swatches">
-                <label class="ink-swatch" title="Vintage Dark Pen">
-                  <input type="radio" name="studio-ink-color" value="#23201d" checked>
-                  <span class="swatch-circle" style="background:#23201d;"></span>
-                  <span>Classic Pen</span>
-                </label>
-                <label class="ink-swatch" title="Golden Foil">
-                  <input type="radio" name="studio-ink-color" value="#b38734">
-                  <span class="swatch-circle" style="background:#dfb76c;"></span>
-                  <span>Gold Foil</span>
-                </label>
-                <label class="ink-swatch" title="Sepia Warm Ink">
-                  <input type="radio" name="studio-ink-color" value="#6b3e1b">
-                  <span class="swatch-circle" style="background:#8c532b;"></span>
-                  <span>Sepia Ink</span>
-                </label>
-                <label class="ink-swatch" title="Royal Burgundy">
-                  <input type="radio" name="studio-ink-color" value="#781d1d">
-                  <span class="swatch-circle" style="background:#8b1d1d;"></span>
-                  <span>Burgundy</span>
-                </label>
-              </div>
-            </div>
-          </div>
-
-          <!-- Download & Share Actions -->
-          <div class="studio-actions-group">
-            <button type="button" class="studio-download-cta" id="studio-download-btn">
-              📥 Download 1080×1920 Story PNG
-            </button>
-            <button type="button" class="studio-share-cta" id="studio-share-btn">
-              📲 Share to Instagram / Friends
-            </button>
-          </div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-emerald" onclick="copySlipForBet365()">📋 Copy Bet365 Slip</button>
+          <button class="btn" onclick="closeGeminiAuditModal()">Close</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Security / General Toast Notification -->
-  <div class="security-toast" id="security-toast"></div>
-
-  <!-- Scripts -->
-  <script src="config.js?v=3.0"></script>
-  <script src="security.js?v=3.0"></script>
-  <script src="app.js?v=3.0"></script>
-  <script src="studio.js?v=3.0"></script>
+  <script src="/app.js"></script>
 </body>
 </html>
+
