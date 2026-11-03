@@ -10,7 +10,7 @@ const AUTHORIZED_EMAIL = 'tapz.latunipulu@gmail.com';
 const AUTH_SECRET = 'seai_tapz_production_quantum_salt_2026';
 
 const SECURITY_HEADERS = {
-  'Content-Security-Policy': "default-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://apis.google.com https://cdnjs.cloudflare.com https://fonts.googleapis.com https://fonts.gstatic.com; connect-src 'self' https://accounts.google.com https://generativelanguage.googleapis.com https://tapzfathersday.org https://tapzfathersday.anonymousofmrgs.workers.dev; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; img-src 'self' data: https:;",
+  'Content-Security-Policy': "default-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://fonts.gstatic.com; connect-src 'self' https://generativelanguage.googleapis.com https://tapzfathersday.org https://tapzfathersday.anonymousofmrgs.workers.dev; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; img-src 'self' data: https:;",
   'X-Content-Type-Options': 'nosniff',
   'X-Frame-Options': 'DENY',
   'Referrer-Policy': 'strict-origin-when-cross-origin',
@@ -107,7 +107,6 @@ function renderLockScreenHtml() {
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
     :root {
       --bg: #050b14;
@@ -352,30 +351,9 @@ function renderLockScreenHtml() {
       </div>
     </div>
 
-    <div class="divider">or quick authorize with google</div>
-
-    <!-- Google One-Tap Sign In -->
-    <div style="display:flex; justify-content:center;">
-      <div id="g_id_onload"
-           data-client_id="846549247653-625o354t9978g64p0p5g0q4b09m3t494.apps.googleusercontent.com"
-           data-context="signin"
-           data-ux_mode="popup"
-           data-callback="handleGoogleCredentialResponse"
-           data-auto_prompt="false">
-      </div>
-      <div class="g_id_signin"
-           data-type="standard"
-           data-shape="rectangular"
-           data-theme="filled_black"
-           data-text="signin_with"
-           data-size="large"
-           data-logo_alignment="left">
-      </div>
-    </div>
-
     <div class="footer-note">
-      AUTHORIZATION BOUND EXCLUSIVELY TO TAPZ.LATUNIPULU@GMAIL.COM<br>
-      ALL ACCESS ATTEMPTS LOGGED BY CLOUDFLARE EDGE
+      AUTHORIZATION EXCLUSIVELY VIA ONE-TIME CODE SENT TO TAPZ.LATUNIPULU@GMAIL.COM<br>
+      ALL ACCESS ATTEMPTS MONITORED BY CLOUDFLARE EDGE WAF
     </div>
   </div>
 
@@ -461,28 +439,6 @@ function renderLockScreenHtml() {
         btn.disabled = false;
         btn.textContent = '🔓 Unlock Sports Edge AI Terminal';
         showMsg('Validation error: ' + err.message, true);
-      }
-    }
-
-    async function handleGoogleCredentialResponse(response) {
-      showMsg('Authenticating with Google Account...');
-      try {
-        const res = await fetch('/api/auth/google', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ credential: response.credential })
-        });
-        const data = await res.json();
-        if (!data.success) {
-          showMsg(data.error || 'Unauthorized Google account. Access restricted to tapz.latunipulu@gmail.com.', true);
-          return;
-        }
-        showMsg('✓ Google Identity Verified. Loading terminal...');
-        setTimeout(() => {
-          window.location.reload();
-        }, 600);
-      } catch (err) {
-        showMsg('Google sign-in error: ' + err.message, true);
       }
     }
   </script>
@@ -581,36 +537,6 @@ export default {
         // Clean up code after successful verification
         if (env.DAD_KV) await env.DAD_KV.delete('auth_pin_tapz');
         MEM_OTP.delete('auth_pin_tapz');
-
-        const sessionToken = await generateSessionToken(email);
-        const cookie = `seai_session=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=2592000`;
-        return jsonResponse({ success: true, email }, 200, { 'Set-Cookie': cookie });
-      } catch (e) {
-        return jsonResponse({ success: false, error: e.message }, 500);
-      }
-    }
-
-    if (url.pathname === '/api/auth/google' && request.method === 'POST') {
-      try {
-        const body = await request.json();
-        const credential = body.credential;
-        if (!credential) {
-          return jsonResponse({ success: false, error: 'Missing Google credential.' }, 400);
-        }
-
-        // Parse Google JWT ID token payload (part 2)
-        const parts = credential.split('.');
-        if (parts.length < 2) return jsonResponse({ success: false, error: 'Malformed token.' }, 400);
-        const payloadStr = atob(parts[1].replace(/-/g, '+').replace(/_/g, '/'));
-        const googleUser = JSON.parse(payloadStr);
-
-        const email = (googleUser.email || '').trim().toLowerCase();
-        if (email !== AUTHORIZED_EMAIL) {
-          return jsonResponse({
-            success: false,
-            error: `Access Denied: Google account (${email}) is not authorized. Required: ${AUTHORIZED_EMAIL}`,
-          }, 403);
-        }
 
         const sessionToken = await generateSessionToken(email);
         const cookie = `seai_session=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=2592000`;
