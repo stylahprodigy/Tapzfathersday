@@ -364,7 +364,6 @@ function renderLockScreenHtml() {
     }
 
     async function handleRequestOtp() {
-      const email = "${AUTHORIZED_EMAIL}";
       const btn = document.getElementById('btnRequestOtp');
       btn.disabled = true;
       btn.textContent = 'Dispatching verification code...';
@@ -373,7 +372,7 @@ function renderLockScreenHtml() {
         const res = await fetch('/api/auth/request_otp', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email })
+          body: JSON.stringify({ operator: 'STYLXH' })
         });
         const data = await res.json();
         btn.disabled = false;
@@ -396,7 +395,6 @@ function renderLockScreenHtml() {
     }
 
     async function handleVerifyOtp() {
-      const email = "${AUTHORIZED_EMAIL}";
       const code = document.getElementById('inputPin').value.trim();
       const btn = document.getElementById('btnVerifyOtp');
       if (!code) {
@@ -410,7 +408,7 @@ function renderLockScreenHtml() {
         const res = await fetch('/api/auth/verify_otp', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, code })
+          body: JSON.stringify({ code })
         });
         const data = await res.json();
         if (!data.success) {
@@ -836,12 +834,12 @@ export default {
 
     if (url.pathname === '/api/auth/request_otp' && request.method === 'POST') {
       try {
-        const body = await request.json();
-        const email = (body.email || '').trim().toLowerCase();
+        const body = await request.json().catch(() => ({}));
+        const email = (body.email || AUTHORIZED_EMAIL).trim().toLowerCase();
         if (email !== AUTHORIZED_EMAIL) {
           return jsonResponse({
             success: false,
-            error: 'Access Denied: Operator email unauthorized. Only tapz.latunipulu@gmail.com is permitted.',
+            error: 'Access Denied: Unauthorized request.',
           }, 403);
         }
 
@@ -859,8 +857,7 @@ export default {
 
         return jsonResponse({
           success: true,
-          message: '6-digit security PIN dispatched instantly to your Discord channel (#BETTING). Enter PIN to unlock.',
-          channel: 'discord',
+          message: '6-digit verification code dispatched to operator.',
           expires_in: '10 minutes',
         });
       } catch (e) {
@@ -870,12 +867,12 @@ export default {
 
     if (url.pathname === '/api/auth/verify_otp' && request.method === 'POST') {
       try {
-        const body = await request.json();
-        const email = (body.email || '').trim().toLowerCase();
+        const body = await request.json().catch(() => ({}));
+        const email = (body.email || AUTHORIZED_EMAIL).trim().toLowerCase();
         const code = (body.code || '').trim();
 
         if (email !== AUTHORIZED_EMAIL) {
-          return jsonResponse({ success: false, error: 'Unauthorized operator email.' }, 403);
+          return jsonResponse({ success: false, error: 'Unauthorized operator.' }, 403);
         }
 
         let validCode = null;
@@ -888,7 +885,7 @@ export default {
         }
 
         if (!validCode || validCode !== code) {
-          return jsonResponse({ success: false, error: 'Invalid or expired verification PIN.' }, 401);
+          return jsonResponse({ success: false, error: 'Invalid or expired verification code.' }, 401);
         }
 
         // Clean up code after successful verification
@@ -897,7 +894,7 @@ export default {
 
         const sessionToken = await generateSessionToken(email);
         const cookie = `seai_session=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Strict`;
-        return jsonResponse({ success: true, email }, 200, { 'Set-Cookie': cookie });
+        return jsonResponse({ success: true, operator: 'STYLXH' }, 200, { 'Set-Cookie': cookie });
       } catch (e) {
         return jsonResponse({ success: false, error: e.message }, 500);
       }
