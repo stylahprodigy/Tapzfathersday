@@ -4,3 +4,5 @@ visitors.json
 visitors.txt
 .env
 .DS_Store
+.wrangler/
+worker-configuration.d.ts

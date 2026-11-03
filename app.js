@@ -273,10 +273,13 @@ async function checkGatekeeperAuth() {
                       window.location.hostname.includes('pages.dev');
   if (!isCloudHost) {
     // Local developer environment on 127.0.0.1 passes directly
+    const lockModal = document.getElementById('operatorLockModal');
+    if (lockModal) lockModal.style.display = 'none';
     return true;
   }
 
-  // Per user specification: Always demand a fresh email code on every single refresh/visit
+  // Strictly enforce fresh verification code on every single refresh/load:
+  // Immediately revoke any cached session on the server
   try {
     await fetch('/api/auth/logout', { method: 'POST' });
   } catch (e) {}
@@ -289,6 +292,12 @@ async function checkGatekeeperAuth() {
   showGateRequestStep();
   return false;
 }
+
+window.addEventListener('beforeunload', () => {
+  if (navigator.sendBeacon) {
+    navigator.sendBeacon('/api/auth/logout');
+  }
+});
 
 function showGateMsg(msg, isError = false) {
   const box = document.getElementById('gatekeeperStatusBox');
