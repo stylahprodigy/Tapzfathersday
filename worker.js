@@ -64,7 +64,7 @@ async function createHmacSignature(data, secret) {
 }
 
 async function generateSessionToken(email) {
-  const exp = Date.now() + 30 * 24 * 3600 * 1000; // 30 days
+  const exp = Date.now() + 60 * 60 * 1000; // 1 hour max
   const payload = JSON.stringify({ email: email.toLowerCase(), exp });
   const b64Payload = btoa(payload).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   const sig = await createHmacSignature(b64Payload, AUTH_SECRET);
@@ -626,7 +626,7 @@ export default {
         MEM_OTP.delete('auth_pin_tapz');
 
         const sessionToken = await generateSessionToken(email);
-        const cookie = `seai_session=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=2592000`;
+        const cookie = `seai_session=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Strict`;
         return jsonResponse({ success: true, email }, 200, { 'Set-Cookie': cookie });
       } catch (e) {
         return jsonResponse({ success: false, error: e.message }, 500);

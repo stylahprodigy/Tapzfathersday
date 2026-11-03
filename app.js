@@ -276,23 +276,17 @@ async function checkGatekeeperAuth() {
     return true;
   }
 
+  // Per user specification: Always demand a fresh email code on every single refresh/visit
   try {
-    const res = await fetch('/api/auth/status');
-    const auth = await res.json();
-    if (auth && auth.authenticated) {
-      const lockModal = document.getElementById('operatorLockModal');
-      if (lockModal) lockModal.style.display = 'none';
-      return true;
-    }
-  } catch (err) {
-    // Proceed to show lock screen if unauthenticated
-  }
+    await fetch('/api/auth/logout', { method: 'POST' });
+  } catch (e) {}
 
-  // Display exclusive operator gatekeeper modal
+  // Display exclusive operator gatekeeper modal immediately
   const lockModal = document.getElementById('operatorLockModal');
   if (lockModal) {
     lockModal.style.display = 'flex';
   }
+  showGateRequestStep();
   return false;
 }
 
