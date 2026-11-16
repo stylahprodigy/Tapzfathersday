@@ -291,8 +291,6 @@ function seekTimeline(event) {
   syncKineticCaptions();
   syncBrollOverlay();
 }
-  video.currentTime = newTime;
-}
 
 function updatePlayheadUI() {
   const video = document.getElementById('mainVideoPlayer');
