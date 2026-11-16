@@ -14,7 +14,7 @@ const DISCORD_AUTH_WEBHOOK = 'https://discord.com/api/webhooks/15671264724965172
 const DISCORD_MULTI_WEBHOOK = 'https://discord.com/api/webhooks/1567126799555502153/2-9ZvxJ_mndfPzTbSrfqmA_ybil9ivEUmt9BeBjjDWWK-JyIEiTxache-ZKIbHKG7KNF';
 
 const SECURITY_HEADERS = {
-  'Content-Security-Policy': "default-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://fonts.gstatic.com; connect-src 'self' https://generativelanguage.googleapis.com https://tapzfathersday.org https://tapzfathersday.anonymousofmrgs.workers.dev; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; img-src 'self' data: https:;",
+  'Content-Security-Policy': "default-src 'self' 'unsafe-inline' 'unsafe-eval' https: blob: data:; media-src 'self' https: blob: data:; img-src 'self' https: blob: data:; font-src 'self' https: data:; connect-src 'self' https: blob: data:;",
   'X-Content-Type-Options': 'nosniff',
   'X-Frame-Options': 'DENY',
   'Referrer-Policy': 'strict-origin-when-cross-origin',

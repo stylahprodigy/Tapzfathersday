@@ -224,7 +224,21 @@
               <span class="vx-res-badge">1080 ×<br>1920</span>
             </div>
             <div class="vx-viewport" id="canvasWrapper">
-              <video id="mainVideoPlayer" playsinline loop></video>
+              <video id="mainVideoPlayer" playsinline loop muted></video>
+
+              <!-- Animated Studio Visual Backdrop (Active whenever video has not yet loaded) -->
+              <div class="vx-preview-backdrop" id="previewBackdrop">
+                <div class="vx-mic-halo"></div>
+                <div class="vx-mic-icon">🎙️</div>
+                <div class="vx-soundwaves" id="soundWaves">
+                  <div class="vx-soundbar"></div>
+                  <div class="vx-soundbar"></div>
+                  <div class="vx-soundbar"></div>
+                  <div class="vx-soundbar"></div>
+                  <div class="vx-soundbar"></div>
+                </div>
+              </div>
+
               <!-- B-Roll Layer -->
               <div class="vx-broll-layer" id="brollLayer">
                 <img id="brollOverlayImg" class="vx-broll-img" src="" alt="B-roll" />
@@ -239,7 +253,6 @@
                   THIS IS THE<br><span class="vx-caption-highlight">SECRET</span> 🔥
                 </span>
               </div>
-              <div class="vx-canvas-brand">VORTEX AI</div>
             </div>
 
             <!-- Transport Controls -->

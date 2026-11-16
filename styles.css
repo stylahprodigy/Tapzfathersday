@@ -792,6 +792,76 @@ html, body {
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 24px rgba(99, 102, 241, 0.2);
 }
 
+.vx-preview-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 50% 38%, #2e264a 0%, #10111a 75%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  pointer-events: none;
+}
+.vx-preview-backdrop.has-video {
+  display: none;
+}
+.vx-mic-halo {
+  position: absolute;
+  top: 24%;
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.4) 0%, transparent 70%);
+  animation: pulseGlow 2.5s ease-in-out infinite;
+}
+.vx-mic-icon {
+  font-size: 52px;
+  z-index: 3;
+  filter: drop-shadow(0 0 18px rgba(168, 85, 247, 0.7));
+  margin-top: -60px;
+  animation: floatMic 3s ease-in-out infinite;
+}
+.vx-soundwaves {
+  position: absolute;
+  top: 48%;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  z-index: 3;
+}
+.vx-soundbar {
+  width: 4px;
+  height: 10px;
+  background: #c084fc;
+  border-radius: 4px;
+  transition: height 0.15s ease;
+}
+.vx-soundbar.active {
+  animation: wavePulse 0.35s ease-in-out infinite alternate;
+}
+.vx-soundbar:nth-child(1) { animation-delay: 0.0s; }
+.vx-soundbar:nth-child(2) { animation-delay: 0.1s; }
+.vx-soundbar:nth-child(3) { animation-delay: 0.2s; }
+.vx-soundbar:nth-child(4) { animation-delay: 0.15s; }
+.vx-soundbar:nth-child(5) { animation-delay: 0.25s; }
+
+@keyframes pulseGlow {
+  0%, 100% { transform: scale(0.9); opacity: 0.4; }
+  50% { transform: scale(1.15); opacity: 0.85; }
+}
+@keyframes floatMic {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+@keyframes wavePulse {
+  0% { height: 6px; }
+  100% { height: 26px; }
+}
+
 #mainVideoPlayer {
   width: 100%;
   height: 100%;

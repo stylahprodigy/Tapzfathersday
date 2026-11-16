@@ -178,17 +178,32 @@ function switchTab(tabId) {
 // ============================================================================
 // VIDEO PLAYER & 9:16 ENGINE
 // ============================================================================
+let playbackTimer = null;
+let isPlaying = false;
+
 function initPlayer() {
   const video = document.getElementById('mainVideoPlayer');
+  const backdrop = document.getElementById('previewBackdrop');
   if (!video) return;
 
   video.src = state.currentProject.videoUrl;
 
+  video.addEventListener('loadeddata', () => {
+    if (backdrop) backdrop.classList.add('has-video');
+  });
+
+  video.addEventListener('error', () => {
+    // If remote sample fails to load, gracefully fallback to podcast studio backdrop
+    if (backdrop) backdrop.classList.remove('has-video');
+  });
+
   video.addEventListener('timeupdate', () => {
-    state.currentProject.currentTime = video.currentTime;
-    updatePlayheadUI();
-    syncKineticCaptions();
-    syncBrollOverlay();
+    if (!video.paused) {
+      state.currentProject.currentTime = video.currentTime;
+      updatePlayheadUI();
+      syncKineticCaptions();
+      syncBrollOverlay();
+    }
   });
 
   video.addEventListener('loadedmetadata', () => {
@@ -202,32 +217,80 @@ function initPlayer() {
 function togglePlayPause() {
   const video = document.getElementById('mainVideoPlayer');
   const btn = document.getElementById('btnPlayPause');
-  if (!video) return;
+  const soundbars = document.querySelectorAll('.vx-soundbar');
+  
+  isPlaying = !isPlaying;
 
-  if (video.paused) {
-    video.play();
+  if (isPlaying) {
     if (btn) btn.innerHTML = '⏸ Pause preview';
+    soundbars.forEach(b => b.classList.add('active'));
+    
+    // Play video element if available
+    if (video && video.src && !video.error) {
+      video.play().catch(() => {});
+    }
+    
+    // Universal ticker driving playhead, captions, scrubber, and soundbars
+    if (playbackTimer) clearInterval(playbackTimer);
+    playbackTimer = setInterval(() => {
+      const dur = (video && video.duration && !isNaN(video.duration) && video.duration > 0)
+        ? video.duration
+        : (state.currentProject.duration || 42);
+
+      let cur = (video && !video.paused && !video.ended && video.currentTime > 0)
+        ? video.currentTime
+        : (state.currentProject.currentTime + 0.1);
+
+      if (cur >= dur) {
+        cur = 0;
+        if (video) video.currentTime = 0;
+      }
+
+      state.currentProject.currentTime = cur;
+      updatePlayheadUI();
+      syncKineticCaptions();
+      syncBrollOverlay();
+    }, 100);
+
   } else {
-    video.pause();
     if (btn) btn.innerHTML = '▶ Play preview';
+    soundbars.forEach(b => b.classList.remove('active'));
+    if (video) video.pause();
+    if (playbackTimer) {
+      clearInterval(playbackTimer);
+      playbackTimer = null;
+    }
   }
 }
 
 function stepFrame(seconds) {
   const video = document.getElementById('mainVideoPlayer');
-  if (!video) return;
-  video.currentTime = Math.max(0, Math.min(video.duration || 60, video.currentTime + seconds));
+  const dur = (video && video.duration && !isNaN(video.duration)) ? video.duration : (state.currentProject.duration || 42);
+  let newTime = Math.max(0, Math.min(dur, state.currentProject.currentTime + seconds));
+  state.currentProject.currentTime = newTime;
+  if (video) video.currentTime = newTime;
+  updatePlayheadUI();
+  syncKineticCaptions();
+  syncBrollOverlay();
 }
 
 function seekTimeline(event) {
   const scrubber = document.getElementById('timelineScrubber');
   const video = document.getElementById('mainVideoPlayer');
-  if (!scrubber || !video) return;
+  if (!scrubber) return;
 
   const rect = scrubber.getBoundingClientRect();
   const clickX = event.clientX - rect.left;
   const ratio = Math.max(0, Math.min(1, clickX / rect.width));
-  const newTime = ratio * (video.duration || state.currentProject.duration || 42);
+  const dur = (video && video.duration && !isNaN(video.duration)) ? video.duration : (state.currentProject.duration || 42);
+  const newTime = ratio * dur;
+
+  state.currentProject.currentTime = newTime;
+  if (video) video.currentTime = newTime;
+  updatePlayheadUI();
+  syncKineticCaptions();
+  syncBrollOverlay();
+}
   video.currentTime = newTime;
 }
 
@@ -623,42 +686,54 @@ function closeUploadModal() {
   if (modal) modal.style.display = 'none';
 }
 
+function applyNewVideoSource(file, title) {
+  if (!file) return;
+  const url = URL.createObjectURL(file);
+  state.currentProject.videoUrl = url;
+  if (title) state.currentProject.title = title;
+
+  const video = document.getElementById('mainVideoPlayer');
+  const backdrop = document.getElementById('previewBackdrop');
+  if (video) {
+    video.src = url;
+    video.muted = false;
+    if (backdrop) backdrop.classList.add('has-video');
+    video.play().catch(() => {});
+  }
+  const subtitle = document.getElementById('editorSubtitle');
+  if (subtitle && title) subtitle.textContent = title;
+}
+
 function submitNewProject() {
   const title = document.getElementById('modalProjectTitle')?.value.trim() || 'Untitled Video';
   const fileInput = document.getElementById('modalFileInput');
 
   if (fileInput && fileInput.files && fileInput.files[0]) {
-    const file = fileInput.files[0];
-    state.currentProject.videoUrl = URL.createObjectURL(file);
-    state.currentProject.title = title;
-  }
-
-  const video = document.getElementById('mainVideoPlayer');
-  if (video) {
-    video.src = state.currentProject.videoUrl;
-    video.play();
+    applyNewVideoSource(fileInput.files[0], title);
   }
 
   closeUploadModal();
-  switchTab('tab-create-clips');
-  runClipAnalysis();
+  switchTab('tab-editor');
+  if (!isPlaying) togglePlayPause();
 }
 
 function handleFileSelected(event) {
   if (event.target.files && event.target.files[0]) {
     const file = event.target.files[0];
-    state.currentProject.videoUrl = URL.createObjectURL(file);
-    state.currentProject.title = file.name.replace(/\.[^/.]+$/, '');
+    const name = file.name.replace(/\.[^/.]+$/, '');
+    applyNewVideoSource(file, name);
     const status = document.getElementById('dropzoneStatus');
     if (status) status.textContent = `Selected: ${file.name}`;
     switchTab('tab-editor');
+    if (!isPlaying) togglePlayPause();
   }
 }
 
 function handleClipFileSelected(event) {
   if (event.target.files && event.target.files[0]) {
     const file = event.target.files[0];
-    state.currentProject.videoUrl = URL.createObjectURL(file);
+    const name = file.name.replace(/\.[^/.]+$/, '');
+    applyNewVideoSource(file, name);
     const status = document.getElementById('clipDropzoneStatus');
     if (status) status.textContent = `Selected: ${file.name}`;
     runClipAnalysis();
