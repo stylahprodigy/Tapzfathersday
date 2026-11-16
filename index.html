@@ -3,430 +3,415 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VORTEX AI STUDIO — Short-Form Video Engine</title>
+  <title>VORTEX AI — Short-Form Studio</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Poppins:wght@700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
 </head>
 <body>
 
   <!-- ========================================================================
-       TOP HEADER
+       TOP HEADER BAR
        ======================================================================== -->
-  <header class="vortex-header">
-    <div class="brand-wrapper">
-      <div class="brand-icon">⚡</div>
-      <div class="brand-title">
-        VORTEX <span style="color:var(--cyan);">STUDIO</span>
-        <span class="brand-badge">9:16 ENGINE v2.0</span>
+  <header class="vx-header">
+    <div class="vx-header-left">
+      <div class="vx-brand-icon">V</div>
+      <div class="vx-brand-text">
+        <span class="vx-brand-name">VORTEX <span class="vx-brand-accent">AI</span></span>
+        <span class="vx-brand-sub">SHORT-FORM STUDIO</span>
       </div>
     </div>
-
-    <div class="header-actions">
-      <span id="currentProjectBadge" style="font-size:12px; color:var(--text-muted); background:var(--bg-card); padding:4px 10px; border-radius:var(--radius-pill); border:1px solid var(--border);">
-        📁 Project: <strong id="currentProjectTitle" style="color:#fff;">Demo Master Tape</strong>
-      </span>
-      <button class="btn btn-primary btn-sm" onclick="triggerQuickExport()">
-        ⚡ Fast 9:16 Render
-      </button>
-      <button class="btn btn-secondary btn-sm" onclick="handleLogout()" title="Lock Studio">
-        🔒 Lock
-      </button>
+    <div class="vx-header-center">
+      <span class="vx-header-breadcrumb">Workspace /</span>
+      <div class="vx-engine-badge">✦ AI ENGINE <span class="vx-engine-dot">●</span> ONLINE</div>
+      <button class="vx-header-icon-btn" title="Settings" onclick="switchTab('tab-settings')">⚙</button>
+    </div>
+    <div class="vx-header-right">
+      <button class="vx-btn vx-btn-primary" onclick="openUploadModal()">+ New project</button>
     </div>
   </header>
 
   <!-- ========================================================================
-       APP CONTAINER: SIDEBAR + WORKBENCH
+       APP LAYOUT: SIDEBAR + MAIN
        ======================================================================== -->
-  <div class="app-container">
+  <div class="vx-app">
     
-    <!-- LEFT NAVIGATION SIDEBAR -->
-    <aside class="vortex-sidebar">
-      <div class="nav-section-title">Core Studio</div>
-      <button class="nav-tab-btn active" data-tab="tab-dashboard" onclick="switchTab('tab-dashboard')">
-        <span class="nav-icon">📊</span>
-        <span class="nav-text">Dashboard</span>
+    <!-- LEFT SIDEBAR -->
+    <aside class="vx-sidebar">
+      <div class="vx-nav-section-label">WORKSPACE</div>
+      <button class="vx-nav-btn active" data-tab="tab-dashboard" onclick="switchTab('tab-dashboard')">
+        <span class="vx-nav-icon">◎</span><span class="vx-nav-label">Dashboard</span>
       </button>
-      <button class="nav-tab-btn" data-tab="tab-create-clips" onclick="switchTab('tab-create-clips')">
-        <span class="nav-icon">✂️</span>
-        <span class="nav-text">Create Clips</span>
-        <span class="nav-badge-pill">AI</span>
+      <button class="vx-nav-btn" data-tab="tab-create-clips" onclick="switchTab('tab-create-clips')">
+        <span class="vx-nav-icon">✂</span><span class="vx-nav-label">Create Clips</span>
       </button>
-      <button class="nav-tab-btn" data-tab="tab-editor" onclick="switchTab('tab-editor')">
-        <span class="nav-icon">🎬</span>
-        <span class="nav-text">9:16 Editor</span>
+      <button class="vx-nav-btn" data-tab="tab-editor" onclick="switchTab('tab-editor')">
+        <span class="vx-nav-icon">▶</span><span class="vx-nav-label">Video Editor</span>
       </button>
-
-      <div class="nav-section-title">Enhancements</div>
-      <button class="nav-tab-btn" data-tab="tab-captions" onclick="switchTab('tab-captions')">
-        <span class="nav-icon">💬</span>
-        <span class="nav-text">Captions Studio</span>
-        <span class="nav-badge-pill" style="background:var(--pink); color:#fff;">POP</span>
+      <button class="vx-nav-btn" data-tab="tab-captions" onclick="switchTab('tab-captions')">
+        <span class="vx-nav-icon">▤</span><span class="vx-nav-label">Caption Studio</span>
       </button>
-      <button class="nav-tab-btn" data-tab="tab-broll" onclick="switchTab('tab-broll')">
-        <span class="nav-icon">🎞️</span>
-        <span class="nav-text">AI B-Roll</span>
-        <span class="nav-badge-pill" style="background:var(--cyan); color:#040912;">HD</span>
+      <button class="vx-nav-btn" data-tab="tab-broll" onclick="switchTab('tab-broll')">
+        <span class="vx-nav-icon">❖</span><span class="vx-nav-label">AI B-Roll</span>
       </button>
-      <button class="nav-tab-btn" data-tab="tab-thumbnails" onclick="switchTab('tab-thumbnails')">
-        <span class="nav-icon">🖼️</span>
-        <span class="nav-text">Thumbnails</span>
+      <button class="vx-nav-btn" data-tab="tab-thumbnails" onclick="switchTab('tab-thumbnails')">
+        <span class="vx-nav-icon">▣</span><span class="vx-nav-label">Thumbnails</span>
       </button>
 
-      <div class="nav-section-title">Workspace</div>
-      <button class="nav-tab-btn" data-tab="tab-brandkit" onclick="switchTab('tab-brandkit')">
-        <span class="nav-icon">🎨</span>
-        <span class="nav-text">Brand Kit</span>
+      <div class="vx-nav-section-label">MANAGE</div>
+      <button class="vx-nav-btn" data-tab="tab-brandkit" onclick="switchTab('tab-brandkit')">
+        <span class="vx-nav-icon">◆</span><span class="vx-nav-label">Brand Kit</span>
       </button>
-      <button class="nav-tab-btn" data-tab="tab-library" onclick="switchTab('tab-library')">
-        <span class="nav-icon">📂</span>
-        <span class="nav-text">Projects</span>
+      <button class="vx-nav-btn" data-tab="tab-exports" onclick="switchTab('tab-exports')">
+        <span class="vx-nav-icon">↗</span><span class="vx-nav-label">Exports</span>
       </button>
-      <button class="nav-tab-btn" data-tab="tab-exports" onclick="switchTab('tab-exports')">
-        <span class="nav-icon">🚀</span>
-        <span class="nav-text">Exports</span>
-      </button>
-      <button class="nav-tab-btn" data-tab="tab-settings" onclick="switchTab('tab-settings')">
-        <span class="nav-icon">⚙️</span>
-        <span class="nav-text">Settings</span>
+      <button class="vx-nav-btn" data-tab="tab-library" onclick="switchTab('tab-library')">
+        <span class="vx-nav-icon">▦</span><span class="vx-nav-label">Project Library</span>
       </button>
 
-      <div class="sidebar-footer">
-        <div style="color:var(--text-dim); margin-bottom:4px; font-weight:700;">CLOUD STORAGE</div>
-        <div style="display:flex; justify-content:space-between; color:var(--text-muted);">
-          <span>KV Session Gate</span>
-          <span style="color:var(--emerald);">● Connected</span>
+      <!-- Sidebar Footer -->
+      <div class="vx-sidebar-footer">
+        <div class="vx-credits-block">
+          <div class="vx-credits-row">
+            <span>AI credits</span>
+            <span>72%</span>
+          </div>
+          <div class="vx-credits-bar"><div class="vx-credits-fill" style="width:72%"></div></div>
+          <div class="vx-credits-detail">720 / 1,000 credits</div>
+        </div>
+        <button class="vx-nav-btn vx-nav-btn-small" onclick="switchTab('tab-settings')">
+          <span class="vx-nav-icon">⚙</span><span class="vx-nav-label">Settings</span>
+        </button>
+        <div class="vx-sidebar-branding">
+          <div class="vx-sidebar-brand-icon">V</div>
+          <div>
+            <div class="vx-sidebar-brand-name">Creator Studio</div>
+            <div class="vx-sidebar-brand-tier">Free workspace</div>
+          </div>
         </div>
       </div>
     </aside>
 
-    <!-- RIGHT WORKBENCH CONTENT -->
-    <main class="workbench-main">
+    <!-- MAIN CONTENT -->
+    <main class="vx-main">
 
       <!-- ====================================================================
-           TAB 1: DASHBOARD & VIDEO INGESTION (Feature 1)
+           TAB: DASHBOARD
            ==================================================================== -->
-      <section id="tab-dashboard" class="tab-view active">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+      <section id="tab-dashboard" class="vx-tab active">
+        <div class="vx-page-header">
           <div>
-            <h1 style="font-size:24px; font-weight:800; letter-spacing:0.3px;">Studio Dashboard</h1>
-            <p style="color:var(--text-muted); font-size:13.5px;">Ingest long-form footage and transform it into viral 9:16 Shorts & TikToks.</p>
+            <h1 class="vx-page-title">Studio Dashboard</h1>
+            <p class="vx-page-desc">Ingest long-form footage and transform it into viral 9:16 Shorts & TikToks.</p>
           </div>
-          <button class="btn btn-primary" onclick="openUploadModal()">
-            + Ingest New Video
-          </button>
+          <button class="vx-btn vx-btn-primary" onclick="openUploadModal()">+ Ingest New Video</button>
         </div>
 
-        <!-- Metric KPI Cards -->
-        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:16px; margin-bottom:28px;">
-          <div class="vortex-card">
-            <div style="font-size:11px; font-weight:700; color:var(--text-dim); text-transform:uppercase;">Projects Active</div>
-            <div id="statProjectsCount" style="font-size:28px; font-weight:900; color:#fff; margin-top:4px;">1</div>
-            <div style="font-size:11.5px; color:var(--emerald); margin-top:4px;">↑ Autosaved locally & cloud</div>
+        <!-- KPI Cards -->
+        <div class="vx-kpi-grid">
+          <div class="vx-card vx-kpi-card">
+            <div class="vx-kpi-label">Projects Active</div>
+            <div class="vx-kpi-value" id="statProjectsCount">1</div>
+            <div class="vx-kpi-note vx-text-emerald">↑ Autosaved locally & cloud</div>
           </div>
-          <div class="vortex-card">
-            <div style="font-size:11px; font-weight:700; color:var(--text-dim); text-transform:uppercase;">Viral Clips Found</div>
-            <div id="statClipsCount" style="font-size:28px; font-weight:900; color:var(--cyan); margin-top:4px;">3</div>
-            <div style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">Average viral score: 92%</div>
+          <div class="vx-card vx-kpi-card">
+            <div class="vx-kpi-label">Viral Clips Found</div>
+            <div class="vx-kpi-value vx-text-cyan" id="statClipsCount">3</div>
+            <div class="vx-kpi-note">Average viral score: 92%</div>
           </div>
-          <div class="vortex-card">
-            <div style="font-size:11px; font-weight:700; color:var(--text-dim); text-transform:uppercase;">Captions Synced</div>
-            <div style="font-size:28px; font-weight:900; color:var(--pink); margin-top:4px;">100%</div>
-            <div style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">Word-level precision</div>
+          <div class="vx-card vx-kpi-card">
+            <div class="vx-kpi-label">Captions Synced</div>
+            <div class="vx-kpi-value vx-text-pink">100%</div>
+            <div class="vx-kpi-note">Word-level precision</div>
           </div>
-          <div class="vortex-card">
-            <div style="font-size:11px; font-weight:700; color:var(--text-dim); text-transform:uppercase;">Export Preset</div>
-            <div style="font-size:28px; font-weight:900; color:var(--amber); margin-top:4px;">9:16</div>
-            <div style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">1080 × 1920 MP4/WebM</div>
+          <div class="vx-card vx-kpi-card">
+            <div class="vx-kpi-label">Export Preset</div>
+            <div class="vx-kpi-value vx-text-amber">9:16</div>
+            <div class="vx-kpi-note">1080 × 1920 MP4/WebM</div>
           </div>
         </div>
 
-        <!-- Ingestion / Upload Dropzone Container -->
-        <div class="vortex-card" style="border:2px dashed var(--border); padding:36px; text-align:center; cursor:pointer;" onclick="openUploadModal()">
-          <div style="font-size:42px; margin-bottom:12px;">⚡</div>
-          <h2 style="font-size:18px; font-weight:800; margin-bottom:8px;">Drag & Drop Video or Click to Browse</h2>
-          <p style="color:var(--text-muted); font-size:13.5px; max-width:480px; margin:0 auto 16px auto;">
-            Supports MP4, MOV, WebM up to 500MB. Auto-reframed for 9:16 vertical viewports with instant speech transcription.
-          </p>
-          <button class="btn btn-secondary">Select Local File</button>
+        <!-- Upload Dropzone -->
+        <div class="vx-card vx-dropzone" onclick="openUploadModal()">
+          <div class="vx-dropzone-icon">☁</div>
+          <h2 class="vx-dropzone-title">Drop your video here</h2>
+          <p class="vx-dropzone-sub">or click to browse your files</p>
+          <p class="vx-dropzone-formats">MP4 · MOV · WEBM</p>
+          <p class="vx-dropzone-status" id="dropzoneStatus">No video selected</p>
           <input type="file" id="dashboardFileInput" accept="video/mp4,video/quicktime,video/webm" style="display:none;" onchange="handleFileSelected(event)" />
         </div>
       </section>
 
       <!-- ====================================================================
-           TAB 2: AI AUTO-CLIPPING & VIRAL MOMENTS (Features 2 & 3)
+           TAB: CREATE CLIPS (AI Clip Finder)
            ==================================================================== -->
-      <section id="tab-create-clips" class="tab-view">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-          <div>
-            <h1 style="font-size:22px; font-weight:800;">AI Auto-Clipping & Viral Hook Analysis</h1>
-            <p style="color:var(--text-muted); font-size:13px;">Extracted high-energy, scroll-stopping moments scored by algorithmic retention potential.</p>
+      <section id="tab-create-clips" class="vx-tab">
+        <h1 class="vx-page-title">AI Clip Finder <span class="vx-smart-badge">✦ SMART DETECTION</span></h1>
+        <p class="vx-page-desc">Find the strongest hooks, moments and stories in your video.</p>
+
+        <!-- Upload Source Card -->
+        <div class="vx-card vx-clip-upload-card">
+          <div class="vx-clip-upload-header">
+            <span>01 — Upload source video</span>
+            <span class="vx-text-dim">MP4 · MOV · WEBM</span>
           </div>
-          <button class="btn btn-cyan btn-sm" onclick="runClipAnalysis()">
-            🔄 Re-scan Video Moments
+          <div class="vx-dropzone vx-dropzone-compact" onclick="document.getElementById('clipFileInput').click()">
+            <div class="vx-dropzone-icon">☁</div>
+            <p class="vx-dropzone-title" style="font-size:16px;">Drop your video here</p>
+            <p class="vx-dropzone-sub">or click to browse your files</p>
+            <p class="vx-dropzone-status" id="clipDropzoneStatus">No video selected</p>
+            <input type="file" id="clipFileInput" accept="video/mp4,video/quicktime,video/webm" style="display:none;" onchange="handleClipFileSelected(event)" />
+          </div>
+        </div>
+
+        <!-- Content Style & Duration Row -->
+        <div class="vx-clip-controls-row">
+          <div class="vx-field-group">
+            <label class="vx-field-label">Content style</label>
+            <select class="vx-select" id="clipContentStyle">
+              <option>Podcast / Interview</option>
+              <option selected>Gaming</option>
+              <option>Educational</option>
+              <option>Commentary</option>
+              <option>Storytelling</option>
+              <option>Reaction</option>
+            </select>
+          </div>
+          <div class="vx-field-group">
+            <label class="vx-field-label">Target clip duration</label>
+            <select class="vx-select" id="clipDuration">
+              <option selected>15–30 seconds</option>
+              <option>30–45 seconds</option>
+              <option>45–60 seconds</option>
+              <option>60–90 seconds</option>
+            </select>
+          </div>
+          <button class="vx-btn vx-btn-gradient vx-btn-lg" onclick="runClipAnalysis()">
+            ✦ find viral moments
           </button>
         </div>
 
-        <div id="clipsGridContainer" class="card-grid">
-          <!-- Dynamically populated clip cards -->
+        <!-- Sample Suggestions (shown below) -->
+        <p class="vx-text-dim" style="margin:20px 0 8px 0; font-size:12px;">3 sample suggestions are shown below.</p>
+        <div class="vx-clip-suggestions" id="clipsGridContainer">
+          <!-- Populated by JS -->
+        </div>
+        <p class="vx-disclaimer">Scores are illustrative estimates, not guaranteed virality predictions.</p>
+      </section>
+
+      <!-- ====================================================================
+           TAB: VIDEO EDITOR (Short-form editor)
+           ==================================================================== -->
+      <section id="tab-editor" class="vx-tab">
+        <div class="vx-editor-header">
+          <div>
+            <h1 class="vx-page-title" style="margin-bottom:2px;">Short-form editor</h1>
+            <p class="vx-page-desc" id="editorSubtitle">Podcast — Episode 12 / Clip 01</p>
+          </div>
+          <div class="vx-editor-header-actions">
+            <button class="vx-btn vx-btn-outline" onclick="switchTab('tab-captions')">Captions</button>
+            <button class="vx-btn vx-btn-primary" onclick="triggerQuickExport()">Export short ↗</button>
+          </div>
+        </div>
+
+        <div class="vx-editor-layout">
+          <!-- Center: 9:16 Preview -->
+          <div class="vx-editor-center">
+            <div class="vx-canvas-info">
+              <span>9:16 CANVAS · LIVE</span>
+              <span class="vx-res-badge">1080 ×<br>1920</span>
+            </div>
+            <div class="vx-viewport" id="canvasWrapper">
+              <video id="mainVideoPlayer" playsinline loop></video>
+              <!-- B-Roll Layer -->
+              <div class="vx-broll-layer" id="brollLayer">
+                <img id="brollOverlayImg" class="vx-broll-img" src="" alt="B-roll" />
+              </div>
+              <!-- Safe Zone Overlay -->
+              <div class="vx-safe-zone" id="safeZoneOverlay">
+                <div class="vx-safe-zone-tag">TIKTOK / SHORTS SAFE ZONE</div>
+              </div>
+              <!-- Kinetic Captions -->
+              <div class="vx-captions-overlay" id="captionsLiveOverlay">
+                <span id="captionDisplaySpan" class="vx-caption-line preset-vibrant-glow">
+                  THIS IS THE<br><span class="vx-caption-highlight">SECRET</span> 🔥
+                </span>
+              </div>
+              <div class="vx-canvas-brand">VORTEX AI</div>
+            </div>
+
+            <!-- Transport Controls -->
+            <div class="vx-transport">
+              <button class="vx-transport-btn" onclick="stepFrame(-5)">↺ 5s</button>
+              <button class="vx-transport-btn vx-transport-play" onclick="togglePlayPause()" id="btnPlayPause">▶ Play preview</button>
+              <button class="vx-transport-btn" onclick="stepFrame(5)">5s ↻</button>
+            </div>
+            <div class="vx-time-row">
+              <span id="playheadTimeDisplay" class="vx-time-display">00:12</span>
+              <div class="vx-scrubber" id="timelineScrubber" onclick="seekTimeline(event)">
+                <div class="vx-scrubber-fill" id="timelineProgress"></div>
+                <div class="vx-scrubber-thumb" id="scrubberThumb"></div>
+              </div>
+              <span class="vx-time-display" id="durationDisplay">00:42</span>
+            </div>
+          </div>
+
+          <!-- Right: Edit Panel -->
+          <div class="vx-editor-right">
+            <h3 class="vx-panel-title">EDIT YOUR SHORT</h3>
+            <p class="vx-panel-subtitle">Quick actions</p>
+            
+            <button class="vx-action-card" onclick="switchTab('tab-captions')">
+              <span class="vx-action-icon">▤</span> Edit animated captions
+            </button>
+            <button class="vx-action-card" onclick="switchTab('tab-broll')">
+              <span class="vx-action-icon">✦</span> Add AI B-roll
+            </button>
+            <button class="vx-action-card" onclick="switchTab('tab-thumbnails')">
+              <span class="vx-action-icon">▣</span> Create thumbnail
+            </button>
+
+            <div class="vx-field-group" style="margin-top:20px;">
+              <label class="vx-field-label">Video format</label>
+              <select class="vx-select" id="selectFraming" onchange="updateFraming(this.value)">
+                <option value="center" selected>9:16 — Vertical</option>
+                <option value="fit">Fit with blur</option>
+                <option value="left">Left speaker</option>
+                <option value="right">Right speaker</option>
+              </select>
+            </div>
+            <div class="vx-field-group">
+              <label class="vx-field-label">Caption style</label>
+              <select class="vx-select" id="selectCaptionPreset" onchange="applyCaptionPreset(this.value)">
+                <option value="preset-vibrant-glow">Bold Viral</option>
+                <option value="preset-karaoke-active">Karaoke</option>
+                <option value="preset-bold-outline">Bold Outline</option>
+                <option value="preset-minimal-clean">Minimal Clean</option>
+              </select>
+            </div>
+            <div class="vx-field-group">
+              <label class="vx-field-label">Zoom</label>
+              <input type="range" class="vx-range" min="50" max="150" value="100" id="zoomSlider" oninput="updateZoom(this.value)" />
+            </div>
+
+            <div class="vx-save-status">
+              Project saved<br><span class="vx-text-emerald">● All changes saved</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="vx-timeline-panel">
+          <div class="vx-timeline-header">
+            <span class="vx-timeline-title">TIMELINE</span>
+            <span class="vx-text-dim" id="timelineInfo">00:42 · 3 tracks</span>
+          </div>
+          <div class="vx-timeline-tracks">
+            <div class="vx-track-row">
+              <span class="vx-track-label">VIDEO</span>
+              <div class="vx-track-block vx-track-video">▶ Main video clip</div>
+            </div>
+            <div class="vx-track-row">
+              <span class="vx-track-label">B-ROLL</span>
+              <div class="vx-track-block vx-track-broll">✦ Supporting visuals</div>
+            </div>
+            <div class="vx-track-row">
+              <span class="vx-track-label">CAPTIONS</span>
+              <div class="vx-track-block vx-track-captions">▤ Word-synced captions</div>
+            </div>
+            <div class="vx-track-row">
+              <span class="vx-track-label">AUDIO</span>
+              <div class="vx-track-block vx-track-audio">♪ Original audio</div>
+            </div>
+          </div>
         </div>
       </section>
 
       <!-- ====================================================================
-           TAB 3: VERTICAL 9:16 EDITOR (Feature 7)
+           TAB: CAPTION STUDIO
            ==================================================================== -->
-      <section id="tab-editor" class="tab-view">
-        <div class="editor-layout">
-          
-          <!-- Left: Transcript & Cut Controls -->
-          <div class="vortex-card" style="display:flex; flex-direction:column;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-              <h3 style="font-size:14px; font-weight:800;">Interactive Transcript Cut</h3>
-              <button class="btn btn-secondary btn-sm" onclick="resyncTranscript()">Re-sync</button>
+      <section id="tab-captions" class="vx-tab">
+        <h1 class="vx-page-title">Dynamic Caption Studio ✦</h1>
+        <p class="vx-page-desc">Make every word pop. Your captions are the star of the short.</p>
+
+        <div class="vx-caption-layout">
+          <!-- Left: Live Preview -->
+          <div class="vx-card vx-caption-preview-card">
+            <div class="vx-caption-preview-header">
+              <span class="vx-caption-preview-label">LIVE CAPTION<br>PREVIEW</span>
+              <span class="vx-word-sync-badge">WORD<br>SYNC</span>
             </div>
-            <p style="font-size:11.5px; color:var(--text-muted); margin-bottom:12px;">
-              Click any word to jump playhead. Double-click to edit transcript text.
-            </p>
-            <div id="editorTranscriptList" style="flex:1; overflow-y:auto; font-size:13px; line-height:1.7; background:rgba(0,0,0,0.3); padding:12px; border-radius:var(--radius-md); border:1px solid var(--border);">
-              <!-- Synced words rendered here -->
-            </div>
-          </div>
-
-          <!-- Center: 9:16 Player & Canvas -->
-          <div class="player-container">
-            <div class="viewport-916-wrapper" id="canvasWrapper">
-              <!-- Video Player -->
-              <video id="mainVideoPlayer" playsinline loop></video>
-              
-              <!-- B-Roll Layer -->
-              <div class="broll-overlay-container" id="brollLayer">
-                <img id="brollOverlayImg" class="broll-overlay-img" src="" alt="B-roll" />
-              </div>
-
-              <!-- Safe Zone Guides Overlay -->
-              <div class="safe-zone-overlay" id="safeZoneOverlay">
-                <div class="safe-zone-header-tag">TIKTOK / SHORTS SAFE ZONE</div>
-              </div>
-
-              <!-- Kinetic Captions Layer -->
-              <div class="captions-live-overlay" id="captionsLiveOverlay">
-                <span id="captionDisplaySpan" class="caption-line preset-vibrant-glow">
-                  VORTEX AI STUDIO
+            <div class="vx-caption-phone">
+              <div class="vx-caption-phone-content" id="captionPhonePreview">
+                <span class="vx-caption-demo-text">
+                  YOU HAVE TO<br><span class="vx-caption-highlight">UNDERSTAND</span><br><span class="vx-caption-highlight">THIS</span> 🔥
                 </span>
               </div>
             </div>
-
-            <!-- Transport & Playhead Controls -->
-            <div class="player-controls">
-              <div class="transport-buttons">
-                <button class="btn btn-secondary btn-sm" onclick="togglePlayPause()" id="btnPlayPause">▶ Play</button>
-                <button class="btn btn-secondary btn-sm" onclick="stepFrame(-1)">⏮ -1s</button>
-                <button class="btn btn-secondary btn-sm" onclick="stepFrame(1)">+1s ⏭</button>
-                <button class="btn btn-secondary btn-sm" onclick="toggleSafeZones()" id="btnSafeZone">Toggle Safe Zones</button>
-              </div>
-              <div id="playheadTimeDisplay" style="font-family:var(--font-mono); font-size:13px; color:var(--cyan); font-weight:700;">
-                00:00.0 / 00:32.4
-              </div>
-            </div>
-
-            <!-- Scrubber Timeline Bar -->
-            <div class="timeline-panel">
-              <div class="timeline-scrubber" id="timelineScrubber" onclick="seekTimeline(event)">
-                <div class="timeline-progress" id="timelineProgress"></div>
-              </div>
-              <div class="timeline-tracks">
-                <div class="timeline-track-row">
-                  <span class="track-label">VIDEO</span>
-                  <div class="track-block" style="width:75%;">Main 9:16 Clip</div>
-                </div>
-                <div class="timeline-track-row">
-                  <span class="track-label">B-ROLL</span>
-                  <div class="track-block track-block-broll" style="left:120px; width:35%;">Cutaway: Workspace</div>
-                </div>
-                <div class="timeline-track-row">
-                  <span class="track-label">CAPTIONS</span>
-                  <div class="track-block track-block-caption" style="width:75%;">Kinetic Word Sync</div>
-                </div>
-              </div>
+            <div class="vx-caption-preview-actions">
+              <button class="vx-btn vx-btn-dark" onclick="previewCaptionAnimation()">▶ Preview animation</button>
+              <button class="vx-btn vx-btn-dark" onclick="toggleEmojisState()">Toggle emojis</button>
             </div>
           </div>
 
-          <!-- Right: Inspector & Style Controls -->
-          <div class="vortex-card" style="overflow-y:auto;">
-            <h3 style="font-size:14px; font-weight:800; margin-bottom:14px;">Clip Inspector</h3>
-            
-            <div style="margin-bottom:16px;">
-              <label class="form-label">Crop & Framing</label>
-              <select class="form-input" id="selectFraming" onchange="updateFraming(this.value)">
-                <option value="center">Center Focus (Speaker)</option>
-                <option value="fit">Fit 9:16 with Blurred Background</option>
-                <option value="left">Left Speaker Pan</option>
-                <option value="right">Right Speaker Pan</option>
-              </select>
-            </div>
+          <!-- Right: Controls -->
+          <div class="vx-card vx-caption-controls-card">
+            <h3 class="vx-panel-title">CAPTION CONTROLS</h3>
+            <p class="vx-panel-subtitle">Choose a style</p>
 
-            <div style="margin-bottom:16px;">
-              <label class="form-label">Caption Preset</label>
-              <select class="form-input" id="selectCaptionPreset" onchange="applyCaptionPreset(this.value)">
-                <option value="preset-vibrant-glow">Vibrant Glow (Neon Purple & Pink)</option>
-                <option value="preset-karaoke-active">Karaoke Pop (Amber Highlight)</option>
-                <option value="preset-bold-outline">Bold Outline (High Contrast)</option>
-                <option value="preset-minimal-clean">Minimal Clean (Dark Bar)</option>
-              </select>
-            </div>
-
-            <div style="margin-bottom:16px;">
-              <label class="form-label">Smart Emojis</label>
-              <div style="display:flex; align-items:center; justify-content:space-between; background:var(--bg-input); padding:10px; border-radius:var(--radius-md); border:1px solid var(--border);">
-                <span style="font-size:12.5px;">Auto-Context Emojis</span>
-                <input type="checkbox" id="toggleSmartEmojis" checked onchange="toggleEmojisState(this.checked)" style="accent-color:var(--violet);" />
-              </div>
-            </div>
-
-            <div style="margin-top:24px;">
-              <button class="btn btn-primary" style="width:100%;" onclick="triggerQuickExport()">
-                Render Finished Clip
+            <div class="vx-style-grid">
+              <button class="vx-style-card active" onclick="selectCaptionStyle('preset-vibrant-glow', this)">
+                <span class="vx-style-card-icon">🔥</span>
+                <span class="vx-style-card-label">Bold Viral</span>
               </button>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      <!-- ====================================================================
-           TAB 4: KINETIC CAPTIONS STUDIO (Feature 5)
-           ==================================================================== -->
-      <section id="tab-captions" class="tab-view">
-        <div style="margin-bottom:20px;">
-          <h1 style="font-size:22px; font-weight:800;">Kinetic Caption & Emoji Studio</h1>
-          <p style="color:var(--text-muted); font-size:13px;">Fine-tune word-by-word animation styles, keyword emphasis colors, and safe zone positioning.</p>
-        </div>
-
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
-          <!-- Left: Caption Presets & Controls -->
-          <div class="vortex-card">
-            <h3 style="font-size:15px; font-weight:800; margin-bottom:16px;">Typography & Style Presets</h3>
-            
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:18px;">
-              <div class="vortex-card" style="border:1px solid var(--border); padding:12px; text-align:center; cursor:pointer;" onclick="applyCaptionPreset('preset-vibrant-glow')">
-                <div style="font-size:15px; font-weight:800; color:#fff; text-shadow:0 0 10px #ec4899;">VIBRANT GLOW</div>
-                <div style="font-size:11px; color:var(--text-dim); margin-top:4px;">Trending TikTok Style</div>
-              </div>
-              <div class="vortex-card" style="border:1px solid var(--border); padding:12px; text-align:center; cursor:pointer;" onclick="applyCaptionPreset('preset-karaoke-active')">
-                <div style="font-size:15px; font-weight:800; color:#FACC15;">KARAOKE POP</div>
-                <div style="font-size:11px; color:var(--text-dim); margin-top:4px;">Word-by-word jump</div>
-              </div>
-              <div class="vortex-card" style="border:1px solid var(--border); padding:12px; text-align:center; cursor:pointer;" onclick="applyCaptionPreset('preset-bold-outline')">
-                <div style="font-size:15px; font-weight:800; -webkit-text-stroke:1px #000; color:#fff;">BOLD OUTLINE</div>
-                <div style="font-size:11px; color:var(--text-dim); margin-top:4px;">High Readability</div>
-              </div>
-              <div class="vortex-card" style="border:1px solid var(--border); padding:12px; text-align:center; cursor:pointer;" onclick="applyCaptionPreset('preset-minimal-clean')">
-                <div style="font-size:15px; font-weight:700; color:#fff; background:rgba(0,0,0,0.6); padding:2px 8px; border-radius:4px;">MINIMAL CLEAN</div>
-                <div style="font-size:11px; color:var(--text-dim); margin-top:4px;">Podcast & Editorial</div>
-              </div>
-            </div>
-
-            <div style="margin-bottom:16px;">
-              <label class="form-label">Font Family</label>
-              <select class="form-input" id="captionFontFamily" onchange="updateCaptionFont(this.value)">
-                <option value="Inter">Inter (Ultra Clean)</option>
-                <option value="Poppins" selected>Poppins Bold (Social Native)</option>
-                <option value="Montserrat">Montserrat Black</option>
-              </select>
-            </div>
-
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
-              <div>
-                <label class="form-label">Primary Color</label>
-                <input type="color" class="form-input" id="captionPrimaryColor" value="#FFFFFF" onchange="updateCaptionColor(this.value)" />
-              </div>
-              <div>
-                <label class="form-label">Keyword Highlight</label>
-                <input type="color" class="form-input" id="captionHighlightColor" value="#FFB6E6" onchange="updateHighlightColor(this.value)" />
-              </div>
-            </div>
-          </div>
-
-          <!-- Right: Live Subtitle Preview Simulator -->
-          <div class="vortex-card" style="display:flex; flex-direction:column; align-items:center; justify-content:center; background:#000; min-height:360px;">
-            <div style="font-size:11px; color:var(--text-dim); margin-bottom:16px; letter-spacing:1px; text-transform:uppercase;">9:16 In-App Visual Simulation</div>
-            <div id="captionSimulatedBox" style="font-size:24px; font-weight:900; text-align:center; padding:16px 24px;">
-              <span id="simWord1">STOP</span> <span id="simWord2" style="color:var(--pink-light);">SCROLLING</span> <span id="simWord3">NOW!</span> 🚀
-            </div>
-            <button class="btn btn-secondary btn-sm" style="margin-top:24px;" onclick="previewCaptionAnimation()">
-              ▶ Replay Word-by-Word Motion
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <!-- ====================================================================
-           TAB 5: AI B-ROLL STUDIO (Feature 6)
-           ==================================================================== -->
-      <section id="tab-broll" class="tab-view">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-          <div>
-            <h1 style="font-size:22px; font-weight:800;">Context-Aware AI B-Roll</h1>
-            <p style="color:var(--text-muted); font-size:13px;">Automatically detect abstract concepts in speech and overlay high-resolution B-roll cutaways.</p>
-          </div>
-          <button class="btn btn-cyan btn-sm" onclick="generateCustomBroll()">
-            ✨ Prompt New AI Visual
-          </button>
-        </div>
-
-        <div id="brollListContainer" class="card-grid">
-          <!-- Populated dynamically -->
-        </div>
-      </section>
-
-      <!-- ====================================================================
-           TAB 6: THUMBNAILS & COVERS (Feature 9)
-           ==================================================================== -->
-      <section id="tab-thumbnails" class="tab-view">
-        <div style="margin-bottom:20px;">
-          <h1 style="font-size:22px; font-weight:800;">Thumbnail & Platform Cover Studio</h1>
-          <p style="color:var(--text-muted); font-size:13px;">Craft high-CTR vertical covers specifically formatted for YouTube Shorts and TikTok feeds.</p>
-        </div>
-
-        <div style="display:grid; grid-template-columns: 290px 1fr; gap:24px;">
-          <!-- 9:16 Canvas -->
-          <div>
-            <div class="thumbnail-canvas-container" id="thumbCanvasWrapper">
-              <img id="thumbBgImage" src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&auto=format&fit=crop&q=80" style="width:100%; height:100%; object-fit:cover;" alt="Thumb Canvas" />
-              <div class="thumb-headline-overlay" id="thumbHeadlineText">
-                THE 3-SEC HOOK!
-              </div>
-            </div>
-            <div style="display:flex; gap:10px; margin-top:14px;">
-              <button class="btn btn-primary btn-sm" style="flex:1;" onclick="downloadThumbnail('tiktok')">Export TikTok Cover</button>
-              <button class="btn btn-cyan btn-sm" style="flex:1;" onclick="downloadThumbnail('shorts')">Export Shorts Cover</button>
-            </div>
-          </div>
-
-          <!-- Controls -->
-          <div class="vortex-card">
-            <h3 style="font-size:15px; font-weight:800; margin-bottom:14px;">Cover Customization</h3>
-            
-            <div style="margin-bottom:16px;">
-              <label class="form-label">Headline Text</label>
-              <input type="text" class="form-input" id="inputThumbHeadline" value="THE 3-SEC HOOK!" oninput="updateThumbHeadline(this.value)" />
-            </div>
-
-            <div style="margin-bottom:16px;">
-              <label class="form-label">Select Frame from Video</label>
-              <button class="btn btn-secondary btn-sm" onclick="captureCurrentVideoFrame()">
-                📸 Grab Current Player Frame
+              <button class="vx-style-card" onclick="selectCaptionStyle('preset-minimal-clean', this)">
+                <span class="vx-style-card-icon">✦</span>
+                <span class="vx-style-card-label">Clean</span>
+              </button>
+              <button class="vx-style-card" onclick="selectCaptionStyle('preset-karaoke-active', this)">
+                <span class="vx-style-card-icon">🎤</span>
+                <span class="vx-style-card-label">Karaoke</span>
+              </button>
+              <button class="vx-style-card" onclick="selectCaptionStyle('preset-bold-outline', this)">
+                <span class="vx-style-card-icon">⚡</span>
+                <span class="vx-style-card-label">Gaming</span>
               </button>
             </div>
 
-            <div style="margin-bottom:16px;">
-              <label class="form-label">Curiosity Templates</label>
-              <div style="display:flex; gap:8px;">
-                <button class="btn btn-secondary btn-sm" onclick="setThumbHeadline('STOP SCROLLING!')">Stop Scrolling</button>
-                <button class="btn btn-secondary btn-sm" onclick="setThumbHeadline('THE BRUTAL TRUTH')">Brutal Truth</button>
-                <button class="btn btn-secondary btn-sm" onclick="setThumbHeadline('99% DO THIS WRONG')">99% Wrong</button>
+            <p class="vx-panel-subtitle" style="margin-top:18px;">Highlight colour</p>
+            <div class="vx-color-dots">
+              <button class="vx-color-dot" style="background:#22C55E;" onclick="updateHighlightColor('#22C55E')"></button>
+              <button class="vx-color-dot" style="background:#EC4899;" onclick="updateHighlightColor('#EC4899')"></button>
+              <button class="vx-color-dot" style="background:#A855F7;" onclick="updateHighlightColor('#A855F7')"></button>
+              <button class="vx-color-dot" style="background:#06B6D4;" onclick="updateHighlightColor('#06B6D4')"></button>
+              <button class="vx-color-dot" style="background:#F97316;" onclick="updateHighlightColor('#F97316')"></button>
+              <button class="vx-color-dot" style="background:#EF4444;" onclick="updateHighlightColor('#EF4444')"></button>
+            </div>
+
+            <div class="vx-field-group" style="margin-top:16px;">
+              <label class="vx-field-label">Words per line</label>
+              <input type="range" class="vx-range" min="2" max="8" value="4" id="wordsPerLineSlider" />
+            </div>
+
+            <div class="vx-field-group">
+              <label class="vx-field-label">Animation</label>
+              <select class="vx-select" id="captionAnimation">
+                <option selected>Pop & Bounce</option>
+                <option>Typewriter</option>
+                <option>Fade In</option>
+                <option>Slide Up</option>
+                <option>Scale</option>
+              </select>
+            </div>
+
+            <button class="vx-btn vx-btn-gradient" style="width:100%; margin-top:16px;" onclick="applyCaptionStyleFromStudio()">Apply caption style</button>
+
+            <div class="vx-transcript-section">
+              <h4 class="vx-panel-subtitle" style="margin-top:20px;">TRANSCRIPT</h4>
+              <div class="vx-transcript-tokens" id="captionTranscriptTokens">
+                <!-- Populated by JS -->
               </div>
             </div>
           </div>
@@ -434,117 +419,214 @@
       </section>
 
       <!-- ====================================================================
-           TAB 7: BRAND KIT (Feature 11)
+           TAB: AI B-ROLL
            ==================================================================== -->
-      <section id="tab-brandkit" class="tab-view">
-        <div style="margin-bottom:20px;">
-          <h1 style="font-size:22px; font-weight:800;">Brand Kit & Consistency Presets</h1>
-          <p style="color:var(--text-muted); font-size:13px;">Save reusable color palettes, typography, and watermarks applied across all projects.</p>
-        </div>
+      <section id="tab-broll" class="vx-tab">
+        <h1 class="vx-page-title">AI B-Roll Studio ✦</h1>
+        <p class="vx-page-desc">Turn what you're saying into visuals that bring the story to life.</p>
 
-        <div class="vortex-card" style="max-width:640px;">
-          <div style="margin-bottom:16px;">
-            <label class="form-label">Brand Name</label>
-            <input type="text" class="form-input" id="bkBrandName" value="STYLXH PRODUCTIONS" />
-          </div>
+        <div class="vx-card vx-broll-input-card">
+          <label class="vx-field-label">TRANSCRIPT OR VISUAL CONCEPT</label>
+          <input type="text" class="vx-input" id="brollPromptInput" placeholder="A cinematic visual showing someone chasing their dreams through a city at night" />
 
-          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:16px;">
-            <div>
-              <label class="form-label">Primary Color</label>
-              <input type="color" class="form-input" id="bkColorPrimary" value="#6366F1" />
+          <div class="vx-broll-selectors">
+            <div class="vx-field-group" style="flex:1;">
+              <label class="vx-field-label">Generation type</label>
+              <select class="vx-select" id="brollGenType">
+                <option selected>AI video clip</option>
+                <option>AI image</option>
+                <option>Stock footage</option>
+              </select>
             </div>
-            <div>
-              <label class="form-label">Accent Color</label>
-              <input type="color" class="form-input" id="bkColorAccent" value="#06B6D4" />
-            </div>
-            <div>
-              <label class="form-label">Highlight Color</label>
-              <input type="color" class="form-input" id="bkColorHighlight" value="#FFB6E6" />
-            </div>
-          </div>
-
-          <div style="margin-bottom:20px;">
-            <label class="form-label">Watermark Status</label>
-            <div style="display:flex; align-items:center; justify-content:space-between; background:var(--bg-input); padding:10px; border-radius:var(--radius-md); border:1px solid var(--border);">
-              <span style="font-size:13px;">Apply subtle bottom watermark overlay</span>
-              <input type="checkbox" id="bkWatermarkToggle" style="accent-color:var(--violet);" />
+            <div class="vx-field-group" style="flex:1;">
+              <label class="vx-field-label">Visual style</label>
+              <select class="vx-select" id="brollVisualStyle">
+                <option selected>Cinematic realistic</option>
+                <option>Anime / Illustration</option>
+                <option>Abstract motion</option>
+                <option>Documentary</option>
+              </select>
             </div>
           </div>
 
-          <button class="btn btn-primary" onclick="saveBrandKit()">
-            💾 Save Brand Kit to Cloud KV
+          <button class="vx-btn vx-btn-gradient vx-btn-lg" style="width:100%;" onclick="generateBrollConcepts()">
+            ✦ Generate visual concepts
           </button>
+          <p class="vx-text-dim" style="margin-top:8px; font-size:11px;">Preview mode — generation is simulated.</p>
         </div>
-      </section>
 
-      <!-- ====================================================================
-           TAB 8: PROJECT LIBRARY (Feature 12)
-           ==================================================================== -->
-      <section id="tab-library" class="tab-view">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-          <div>
-            <h1 style="font-size:22px; font-weight:800;">Project Catalog</h1>
-            <p style="color:var(--text-muted); font-size:13px;">Manage, reopen, and organize your short-form video projects.</p>
+        <h2 class="vx-section-title">Suggested visual concepts</h2>
+        <div class="vx-broll-concepts" id="brollConceptsGrid">
+          <!-- Populated by JS -->
+        </div>
+
+        <div class="vx-card vx-broll-timeline-card">
+          <div class="vx-broll-timeline-header">
+            <span class="vx-timeline-title">B-ROLL TIMELINE</span>
+            <span class="vx-text-dim">Seamless integration</span>
           </div>
-          <button class="btn btn-primary btn-sm" onclick="openUploadModal()">+ New Project</button>
-        </div>
-
-        <div id="libraryListContainer" class="card-grid">
-          <!-- Populated dynamically -->
-        </div>
-      </section>
-
-      <!-- ====================================================================
-           TAB 9: EXPORTS & RENDER QUEUE (Feature 10)
-           ==================================================================== -->
-      <section id="tab-exports" class="tab-view">
-        <div style="margin-bottom:20px;">
-          <h1 style="font-size:22px; font-weight:800;">Exports & Completed Shorts</h1>
-          <p style="color:var(--text-muted); font-size:13px;">Download rendered 1080×1920 MP4 video files ready for TikTok and YouTube Shorts.</p>
-        </div>
-
-        <div id="exportsListContainer" class="card-grid">
-          <!-- Populated dynamically -->
+          <div class="vx-broll-timeline-content">
+            <div class="vx-broll-timeline-item">
+              <span>✦ Select a visual to add it to the timeline</span>
+            </div>
+            <p class="vx-text-dim" style="margin-top:8px; font-size:11px;">Original speaker audio stays intact by default. Captions remain aligned over supporting visuals.</p>
+          </div>
         </div>
       </section>
 
       <!-- ====================================================================
-           TAB 10: SETTINGS & PROVIDER CONFIG (Feature 13)
+           TAB: THUMBNAILS
            ==================================================================== -->
-      <section id="tab-settings" class="tab-view">
-        <div style="margin-bottom:20px;">
-          <h1 style="font-size:22px; font-weight:800;">Studio & AI Provider Settings</h1>
-          <p style="color:var(--text-muted); font-size:13px;">Configure edge processing models, storage adapters, and local/cloud fallback flags.</p>
+      <section id="tab-thumbnails" class="vx-tab">
+        <h1 class="vx-page-title">Thumbnail & Cover Studio</h1>
+        <p class="vx-page-desc">Create attention-grabbing covers for both platforms.</p>
+
+        <div class="vx-thumb-platform-toggle">
+          <button class="vx-btn vx-btn-dark active" id="btnYTShorts" onclick="togglePlatform('youtube')">▶ YouTube Shorts</button>
+          <button class="vx-btn vx-btn-dark" id="btnTikTok" onclick="togglePlatform('tiktok')">♪ TikTok</button>
         </div>
 
-        <div class="vortex-card" style="max-width:640px;">
-          <div style="margin-bottom:16px;">
-            <label class="form-label">Processing Engine Mode</label>
-            <select class="form-input" id="settingEngineMode">
-              <option value="client-fast">Client-Side High Performance (WebCodecs + MediaRecorder)</option>
-              <option value="cloud-edge">Cloudflare Worker Edge Relay</option>
+        <div class="vx-thumb-layout">
+          <!-- Left: Cover Previews -->
+          <div class="vx-thumb-previews">
+            <div class="vx-thumb-preview-header">
+              <span>COVER<br>PREVIEW</span>
+              <span id="thumbPlatformLabel">YOUTUBE<br>SHORTS</span>
+            </div>
+            <div class="vx-thumb-cards-row">
+              <div class="vx-thumb-card vx-thumb-card-1" onclick="setThumbStyle('bold')">
+                <div class="vx-thumb-card-text" id="thumbPreview1">THE SECRET<br>TO SUCCESS</div>
+                <div class="vx-thumb-card-label">Bold &<br>punchy</div>
+              </div>
+              <div class="vx-thumb-card vx-thumb-card-2" onclick="setThumbStyle('curiosity')">
+                <div class="vx-thumb-card-text" id="thumbPreview2">NOBODY<br>TALKS<br>ABOUT<br>THIS</div>
+                <div class="vx-thumb-card-label">Curiosity</div>
+              </div>
+              <div class="vx-thumb-card vx-thumb-card-3" onclick="setThumbStyle('impact')">
+                <div class="vx-thumb-card-text" id="thumbPreview3">THIS<br>CHANGES<br>EVERY-<br>THING</div>
+                <div class="vx-thumb-card-label">High<br>impact</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Customization -->
+          <div class="vx-card vx-thumb-customize">
+            <h3 class="vx-panel-title">CUSTOMISE COVER</h3>
+            <div class="vx-field-group">
+              <label class="vx-field-label">Headline</label>
+              <input type="text" class="vx-input" id="inputThumbHeadline" value="THE SECRET TO SUCCESS" oninput="updateThumbPreviews(this.value)" />
+            </div>
+            <div class="vx-field-group">
+              <label class="vx-field-label">Subheading</label>
+              <input type="text" class="vx-input" id="inputThumbSubheading" value="Nobody tells you this" />
+            </div>
+            <div class="vx-field-group">
+              <label class="vx-field-label">Style</label>
+              <select class="vx-select" id="thumbStyleSelect">
+                <option selected>Bold creator</option>
+                <option>Minimalist</option>
+                <option>High energy</option>
+                <option>Cinematic</option>
+              </select>
+            </div>
+            <button class="vx-btn vx-btn-gradient" style="width:100%;" onclick="updateThumbPreviews()">Update preview</button>
+            <button class="vx-btn vx-btn-outline" style="width:100%; margin-top:8px;" onclick="exportCoverImage()">Export cover image</button>
+            <p class="vx-disclaimer" style="margin-top:12px;">Preview asset only — exports a demo.<br>Platform cover selection can vary. This studio creates a separate image for your upload workflow.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           TAB: BRAND KIT
+           ==================================================================== -->
+      <section id="tab-brandkit" class="vx-tab">
+        <h1 class="vx-page-title">Brand Kit & Consistency Presets</h1>
+        <p class="vx-page-desc">Save reusable color palettes, typography, and style templates applied across all projects.</p>
+
+        <div class="vx-card" style="max-width:640px;">
+          <div class="vx-field-group">
+            <label class="vx-field-label">Brand Name</label>
+            <input type="text" class="vx-input" id="bkBrandName" value="STYLXH PRODUCTIONS" />
+          </div>
+
+          <div class="vx-color-row">
+            <div class="vx-field-group">
+              <label class="vx-field-label">Primary Color</label>
+              <input type="color" class="vx-input vx-input-color" id="bkColorPrimary" value="#6366F1" />
+            </div>
+            <div class="vx-field-group">
+              <label class="vx-field-label">Accent Color</label>
+              <input type="color" class="vx-input vx-input-color" id="bkColorAccent" value="#06B6D4" />
+            </div>
+            <div class="vx-field-group">
+              <label class="vx-field-label">Highlight Color</label>
+              <input type="color" class="vx-input vx-input-color" id="bkColorHighlight" value="#FFB6E6" />
+            </div>
+          </div>
+
+          <button class="vx-btn vx-btn-primary" onclick="saveBrandKit()" style="margin-top:16px;">Save Brand Kit</button>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           TAB: EXPORTS
+           ==================================================================== -->
+      <section id="tab-exports" class="vx-tab">
+        <h1 class="vx-page-title">Exports & Completed Shorts</h1>
+        <p class="vx-page-desc">Download rendered 1080×1920 MP4 video files ready for TikTok and YouTube Shorts.</p>
+        <div class="vx-card-grid" id="exportsListContainer">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           TAB: PROJECT LIBRARY
+           ==================================================================== -->
+      <section id="tab-library" class="vx-tab">
+        <div class="vx-page-header">
+          <div>
+            <h1 class="vx-page-title">Project Library</h1>
+            <p class="vx-page-desc">Manage, reopen, and organize your short-form video projects.</p>
+          </div>
+          <button class="vx-btn vx-btn-primary" onclick="openUploadModal()">+ New Project</button>
+        </div>
+        <div class="vx-card-grid" id="libraryListContainer">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           TAB: SETTINGS
+           ==================================================================== -->
+      <section id="tab-settings" class="vx-tab">
+        <h1 class="vx-page-title">Studio & AI Provider Settings</h1>
+        <p class="vx-page-desc">Configure edge processing models, storage adapters, and local/cloud fallback flags.</p>
+
+        <div class="vx-card" style="max-width:640px;">
+          <div class="vx-field-group">
+            <label class="vx-field-label">Processing Engine Mode</label>
+            <select class="vx-select">
+              <option>Client-Side High Performance (WebCodecs + MediaRecorder)</option>
+              <option>Cloudflare Worker Edge Relay</option>
             </select>
           </div>
-
-          <div style="margin-bottom:16px;">
-            <label class="form-label">Speech-to-Text Model Adapter</label>
-            <select class="form-input">
+          <div class="vx-field-group">
+            <label class="vx-field-label">Speech-to-Text Model</label>
+            <select class="vx-select">
               <option>Whisper Precision Sync (Built-in)</option>
               <option>Gemini Multimodal Speech-to-Text</option>
             </select>
           </div>
-
-          <div style="margin-bottom:16px;">
-            <label class="form-label">Generative B-Roll Adapter</label>
-            <select class="form-input">
+          <div class="vx-field-group">
+            <label class="vx-field-label">Generative B-Roll Adapter</label>
+            <select class="vx-select">
               <option>FLUX.1-Cinematic / Storyblocks Stock</option>
               <option>Veo / Sora Video Relay Adapter</option>
             </select>
           </div>
-
-          <div style="margin-top:24px; padding-top:16px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-size:12px; color:var(--text-muted);">Operator Session: STYLXH (Authenticated)</span>
-            <button class="btn btn-danger btn-sm" onclick="handleLogout()">Logout & Lock</button>
+          <div class="vx-settings-footer">
+            <span class="vx-text-dim">Operator Session: STYLXH (Authenticated)</span>
+            <button class="vx-btn vx-btn-danger" onclick="handleLogout()">Logout & Lock</button>
           </div>
         </div>
       </section>
@@ -553,37 +635,37 @@
   </div>
 
   <!-- ========================================================================
-       MODAL: VIDEO INGESTION (Upload / YouTube Link)
+       MODAL: INGEST VIDEO SOURCE
        ======================================================================== -->
-  <div id="uploadModal" class="modal-backdrop" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(8px); z-index:9999; align-items:center; justify-content:center;">
-    <div class="vortex-card" style="width:480px; max-width:92%;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-        <h3 style="font-size:16px; font-weight:800;">Ingest Video Source</h3>
-        <button class="btn btn-secondary btn-sm" onclick="closeUploadModal()">✕</button>
+  <div id="uploadModal" class="vx-modal-backdrop" style="display:none;">
+    <div class="vx-modal-card">
+      <div class="vx-modal-header">
+        <h3 class="vx-modal-title">Ingest Video Source</h3>
+        <button class="vx-modal-close" onclick="closeUploadModal()">✕</button>
       </div>
 
-      <div style="margin-bottom:16px;">
-        <label class="form-label">Project Title</label>
-        <input type="text" id="modalProjectTitle" class="form-input" placeholder="e.g. Creator Mindset Episode #4" />
+      <div class="vx-field-group">
+        <label class="vx-field-label">PROJECT TITLE</label>
+        <input type="text" id="modalProjectTitle" class="vx-input" placeholder="e.g. Creator Mindset Episode #4" />
       </div>
-
-      <div style="margin-bottom:16px;">
-        <label class="form-label">Video File (MP4, MOV, WebM)</label>
-        <input type="file" id="modalFileInput" class="form-input" accept="video/mp4,video/quicktime,video/webm" />
+      <div class="vx-field-group">
+        <label class="vx-field-label">VIDEO FILE (MP4, MOV, WEBM)</label>
+        <input type="file" id="modalFileInput" class="vx-input vx-input-file" accept="video/mp4,video/quicktime,video/webm" />
       </div>
-
-      <div style="margin-bottom:18px;">
-        <label class="form-label">Language</label>
-        <select class="form-input" id="modalLanguage">
+      <div class="vx-field-group">
+        <label class="vx-field-label">LANGUAGE</label>
+        <select class="vx-select" id="modalLanguage">
           <option>English</option>
           <option>Spanish</option>
           <option>Japanese</option>
+          <option>French</option>
+          <option>Portuguese</option>
         </select>
       </div>
 
-      <div style="display:flex; gap:10px;">
-        <button class="btn btn-secondary" style="flex:1;" onclick="closeUploadModal()">Cancel</button>
-        <button class="btn btn-primary" style="flex:1;" onclick="submitNewProject()">Start Analysis</button>
+      <div class="vx-modal-actions">
+        <button class="vx-btn vx-btn-dark" onclick="closeUploadModal()">Cancel</button>
+        <button class="vx-btn vx-btn-primary" onclick="submitNewProject()">Start Analysis</button>
       </div>
     </div>
   </div>

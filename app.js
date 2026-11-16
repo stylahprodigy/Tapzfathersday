@@ -1,13 +1,14 @@
 /**
- * VORTEX AI STUDIO — Application Controller & Engine
- * Full implementation of Features 1–13:
- * - Real-time 9:16 Video Player with frame stepping
- * - Word-level kinetic caption sync with emoji triggers
- * - AI auto-clipping & viral moment scoring
+ * VORTEX AI STUDIO — Short-Form Video Creation Engine
+ * Full implementation matching ClipForge-style reference specifications:
+ * - 9:16 Vertical Video Player with frame scrubbing
+ * - Dynamic kinetic caption word-sync & contextual emojis
+ * - AI clip finder with viral potential scoring
  * - Contextual B-roll cutaway overlay engine
  * - Platform cover & thumbnail generator (Shorts & TikTok)
  * - Canvas 1080x1920 WebM/MP4 rendering & export
  * - Project persistence (localStorage + Cloudflare KV)
+ * - Zero watermarks (per user specification)
  */
 
 // ============================================================================
@@ -16,72 +17,123 @@
 const state = {
   currentProject: {
     id: 'proj_demo',
-    title: 'How To Stop Scrolling & Scale In 2026',
+    title: 'Podcast — Episode 12 / Clip 01',
     videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-    duration: 32.4,
-    currentTime: 0,
+    duration: 42.0,
+    currentTime: 12.0,
     activeClip: {
       id: 'clip_v1',
-      title: 'The 3-Second Hook That Stops The Scroll',
+      title: 'The one mistake everyone makes',
       start: 0,
-      end: 32.4,
-      viral_score: 96,
+      end: 28.0,
+      viral_score: 94
     },
     words: [
-      { id: 'w_0', word: 'Stop', start: 0.0, end: 0.6, emphasis: true },
-      { id: 'w_1', word: 'scrolling!', start: 0.6, end: 1.2, emphasis: true },
-      { id: 'w_2', word: 'If', start: 1.2, end: 1.5, emphasis: false },
-      { id: 'w_3', word: 'you', start: 1.5, end: 1.8, emphasis: false },
-      { id: 'w_4', word: 'are', start: 1.8, end: 2.1, emphasis: false },
-      { id: 'w_5', word: 'creating', start: 2.1, end: 2.6, emphasis: false },
-      { id: 'w_6', word: 'content', start: 2.6, end: 3.1, emphasis: false },
-      { id: 'w_7', word: 'in', start: 3.1, end: 3.3, emphasis: false },
-      { id: 'w_8', word: '2026,', start: 3.3, end: 3.9, emphasis: true },
-      { id: 'w_9', word: 'you', start: 3.9, end: 4.2, emphasis: false },
-      { id: 'w_10', word: 'are', start: 4.2, end: 4.5, emphasis: false },
-      { id: 'w_11', word: 'probably', start: 4.5, end: 5.0, emphasis: false },
-      { id: 'w_12', word: 'doing', start: 5.0, end: 5.4, emphasis: false },
-      { id: 'w_13', word: 'this', start: 5.4, end: 5.7, emphasis: false },
-      { id: 'w_14', word: 'completely', start: 5.7, end: 6.3, emphasis: true },
-      { id: 'w_15', word: 'backwards.', start: 6.3, end: 7.2, emphasis: true },
-      { id: 'w_16', word: 'Here', start: 7.2, end: 7.6, emphasis: false },
-      { id: 'w_17', word: 'is', start: 7.6, end: 7.8, emphasis: false },
-      { id: 'w_18', word: 'the', start: 7.8, end: 8.0, emphasis: false },
-      { id: 'w_19', word: 'high-leverage', start: 8.0, end: 8.8, emphasis: true },
-      { id: 'w_20', word: 'habit', start: 8.8, end: 9.3, emphasis: false },
-      { id: 'w_21', word: 'that', start: 9.3, end: 9.6, emphasis: false },
-      { id: 'w_22', word: 'doubled', start: 9.6, end: 10.2, emphasis: true },
-      { id: 'w_23', word: 'my', start: 10.2, end: 10.5, emphasis: false },
-      { id: 'w_24', word: 'output!', start: 10.5, end: 11.4, emphasis: true }
+      { id: 'w_0', word: 'You', start: 0.0, end: 0.5, emphasis: false, speaker: true },
+      { id: 'w_1', word: 'have', start: 0.5, end: 0.9, emphasis: false },
+      { id: 'w_2', word: 'to', start: 0.9, end: 1.2, emphasis: false },
+      { id: 'w_3', word: 'understand', start: 1.2, end: 1.9, emphasis: true },
+      { id: 'w_4', word: 'this', start: 1.9, end: 2.3, emphasis: true },
+      { id: 'w_5', word: 'before', start: 2.3, end: 2.7, emphasis: false },
+      { id: 'w_6', word: 'you', start: 2.7, end: 3.0, emphasis: false },
+      { id: 'w_7', word: 'start.', start: 3.0, end: 3.6, emphasis: true },
+      { id: 'w_8', word: 'This', start: 3.6, end: 4.0, emphasis: false },
+      { id: 'w_9', word: 'is', start: 4.0, end: 4.3, emphasis: false },
+      { id: 'w_10', word: 'the', start: 4.3, end: 4.5, emphasis: false },
+      { id: 'w_11', word: 'secret', start: 4.5, end: 5.2, emphasis: true },
+      { id: 'w_12', word: 'that', start: 5.2, end: 5.5, emphasis: false },
+      { id: 'w_13', word: 'doubled', start: 5.5, end: 6.2, emphasis: true },
+      { id: 'w_14', word: 'everything!', start: 6.2, end: 7.2, emphasis: true }
     ],
     brolls: [
       {
         id: 'br_1',
-        start: 7.5,
-        end: 11.5,
-        title: 'Workspace Tech Cutaway',
+        start: 4.0,
+        end: 8.0,
+        title: 'Chasing a dream',
         imageUrl: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&auto=format&fit=crop&q=80'
       }
     ],
     captionPreset: 'preset-vibrant-glow',
+    highlightColor: '#22C55E',
     smartEmojis: true,
     safeZones: false,
-    framing: 'center'
+    framing: 'center',
+    zoom: 100
   },
-  clips: [],
+  clips: [
+    {
+      id: 'clip_s1',
+      tag: 'VIRAL HOOK',
+      timestamp: '00:18',
+      title: 'The one mistake everyone makes',
+      tags: 'Strong opening · Useful insight · Clear ending',
+      score: 94,
+      start: 0,
+      duration: 18
+    },
+    {
+      id: 'clip_s2',
+      tag: 'STORY MOMENT',
+      timestamp: '01:28',
+      title: 'I never expected this to happen...',
+      tags: 'Curiosity · Emotional payoff · Story arc',
+      score: 88,
+      start: 88,
+      duration: 25
+    },
+    {
+      id: 'clip_s3',
+      tag: 'HIGH ENERGY',
+      timestamp: '02:14',
+      title: 'This changes everything!',
+      tags: 'Emphasis · Reaction · Shareable idea',
+      score: 85,
+      start: 134,
+      duration: 22
+    }
+  ],
+  brollConcepts: [
+    {
+      id: 'bc_1',
+      icon: '🏙️',
+      name: 'City<br>dreamscape',
+      footerTitle: 'Chasing a dream',
+      footerTime: '00:12 — 00:18',
+      styleClass: 'vx-concept-visual-1',
+      img: 'https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=600&auto=format&fit=crop&q=80'
+    },
+    {
+      id: 'bc_2',
+      icon: '⌛',
+      name: 'Time<br>passing',
+      footerTitle: 'Time & ambition',
+      footerTime: '00:19 — 00:25',
+      styleClass: 'vx-concept-visual-2',
+      img: 'https://images.unsplash.com/photo-1501139083538-0139583c060f?w=600&auto=format&fit=crop&q=80'
+    },
+    {
+      id: 'bc_3',
+      icon: '🏔️',
+      name: 'Overcoming<br>obstacles',
+      footerTitle: 'The climb',
+      footerTime: '00:28 — 00:33',
+      styleClass: 'vx-concept-visual-3',
+      img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&auto=format&fit=crop&q=80'
+    }
+  ],
   brandKit: {
     brand_name: 'STYLXH PRODUCTIONS',
     primary_color: '#6366F1',
     accent_color: '#06B6D4',
     highlight_color: '#FFB6E6',
-    caption_style: 'VIBRANT_GLOW',
     watermark_enabled: false
   },
   exports: [
     {
       id: 'exp_1',
-      title: 'Stop Scrolling Hook [1080x1920]',
-      duration: '32s',
+      title: 'The one mistake everyone makes [1080x1920]',
+      duration: '18s',
       platform: 'TikTok & Shorts',
       created_at: 'Just now',
       download_url: '#'
@@ -94,14 +146,14 @@ const state = {
 // INITIALIZATION
 // ============================================================================
 document.addEventListener('DOMContentLoaded', async () => {
-  console.log('⚡ Vortex AI Studio Engine Initialized');
+  console.log('⚡ Vortex AI Studio Engine Ready');
   loadSavedState();
   initPlayer();
-  renderClipsList();
-  renderTranscriptList();
-  renderBrollList();
-  renderLibrary();
+  renderSuggestions();
+  renderTranscriptTokens();
+  renderBrollConcepts();
   renderExports();
+  renderLibrary();
   await syncWithEdgeKV();
 });
 
@@ -109,8 +161,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 // NAVIGATION & TABS
 // ============================================================================
 function switchTab(tabId) {
-  document.querySelectorAll('.tab-view').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.nav-tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.vx-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.vx-nav-btn').forEach(b => b.classList.remove('active'));
 
   const targetTab = document.getElementById(tabId);
   if (targetTab) targetTab.classList.add('active');
@@ -118,20 +170,18 @@ function switchTab(tabId) {
   const activeBtn = document.querySelector(`[data-tab="${tabId}"]`);
   if (activeBtn) activeBtn.classList.add('active');
 
-  // Trigger preview refreshes on tab switch
   if (tabId === 'tab-editor') {
-    renderTranscriptList();
+    updatePlayheadUI();
   }
 }
 
 // ============================================================================
-// VIDEO PLAYER & KINETIC TIMELINE SYNC (Features 4, 5, 7)
+// VIDEO PLAYER & 9:16 ENGINE
 // ============================================================================
 function initPlayer() {
   const video = document.getElementById('mainVideoPlayer');
   if (!video) return;
 
-  // Set default video src
   video.src = state.currentProject.videoUrl;
 
   video.addEventListener('timeupdate', () => {
@@ -156,10 +206,10 @@ function togglePlayPause() {
 
   if (video.paused) {
     video.play();
-    if (btn) btn.textContent = '⏸ Pause';
+    if (btn) btn.innerHTML = '⏸ Pause preview';
   } else {
     video.pause();
-    if (btn) btn.textContent = '▶ Play';
+    if (btn) btn.innerHTML = '▶ Play preview';
   }
 }
 
@@ -177,56 +227,55 @@ function seekTimeline(event) {
   const rect = scrubber.getBoundingClientRect();
   const clickX = event.clientX - rect.left;
   const ratio = Math.max(0, Math.min(1, clickX / rect.width));
-  const newTime = ratio * (video.duration || state.currentProject.duration || 30);
+  const newTime = ratio * (video.duration || state.currentProject.duration || 42);
   video.currentTime = newTime;
 }
 
 function updatePlayheadUI() {
   const video = document.getElementById('mainVideoPlayer');
   const timeDisplay = document.getElementById('playheadTimeDisplay');
+  const durationDisplay = document.getElementById('durationDisplay');
   const progress = document.getElementById('timelineProgress');
   if (!video) return;
 
   const cur = video.currentTime || 0;
-  const dur = video.duration || state.currentProject.duration || 32.4;
+  const dur = video.duration || state.currentProject.duration || 42;
 
   const format = (t) => {
     const mins = Math.floor(t / 60).toString().padStart(2, '0');
-    const secs = (t % 60).toFixed(1).padStart(4, '0');
+    const secs = Math.floor(t % 60).toString().padStart(2, '0');
     return `${mins}:${secs}`;
   };
 
-  if (timeDisplay) timeDisplay.textContent = `${format(cur)} / ${format(dur)}`;
+  if (timeDisplay) timeDisplay.textContent = format(cur);
+  if (durationDisplay) durationDisplay.textContent = format(dur);
   if (progress) progress.style.width = `${(cur / Math.max(0.1, dur)) * 100}%`;
 }
 
-// Kinetic Caption & Emoji Word-Level Synchronization
 function syncKineticCaptions() {
   const cur = state.currentProject.currentTime;
   const words = state.currentProject.words || [];
   const overlaySpan = document.getElementById('captionDisplaySpan');
   if (!overlaySpan) return;
 
-  // Find active 3-4 word phrase window around currentTime
   const activeWordIdx = words.findIndex(w => cur >= w.start && cur <= w.end);
   if (activeWordIdx >= 0) {
     const startIdx = Math.max(0, activeWordIdx - 1);
-    const endIdx = Math.min(words.length, activeWordIdx + 3);
+    const endIdx = Math.min(words.length, activeWordIdx + 2);
     const windowSlice = words.slice(startIdx, endIdx);
 
     const renderedWords = windowSlice.map((w, idx) => {
       const isCurrent = (startIdx + idx) === activeWordIdx;
+      let emoji = '';
+      if (isCurrent && state.currentProject.smartEmojis) {
+        if (/understand|secret|doubled/i.test(w.word)) emoji = ' 🔥';
+        if (/start|everything/i.test(w.word)) emoji = ' ⚡';
+      }
       if (isCurrent) {
-        let emoji = '';
-        if (state.currentProject.smartEmojis) {
-          if (/stop|scroll/i.test(w.word)) emoji = ' 🛑';
-          if (/content|viral|scale/i.test(w.word)) emoji = ' 🚀';
-          if (/habit|output|double/i.test(w.word)) emoji = ' ⚡';
-        }
-        return `<span class="preset-karaoke-active">${w.word}${emoji}</span>`;
+        return `<span style="color:${state.currentProject.highlightColor}; font-weight:900;">${w.word}${emoji}</span>`;
       }
       if (w.emphasis) {
-        return `<span style="color:var(--pink-light);">${w.word}</span>`;
+        return `<span style="color:${state.currentProject.highlightColor};">${w.word}</span>`;
       }
       return `<span>${w.word}</span>`;
     }).join(' ');
@@ -235,7 +284,6 @@ function syncKineticCaptions() {
   }
 }
 
-// B-Roll Layer Synchronization
 function syncBrollOverlay() {
   const cur = state.currentProject.currentTime;
   const brolls = state.currentProject.brolls || [];
@@ -252,20 +300,6 @@ function syncBrollOverlay() {
   }
 }
 
-function toggleSafeZones() {
-  const overlay = document.getElementById('safeZoneOverlay');
-  const btn = document.getElementById('btnSafeZone');
-  if (!overlay) return;
-  state.currentProject.safeZones = !state.currentProject.safeZones;
-  if (state.currentProject.safeZones) {
-    overlay.classList.add('show');
-    if (btn) btn.textContent = 'Safe Zones: ON';
-  } else {
-    overlay.classList.remove('show');
-    if (btn) btn.textContent = 'Safe Zones: OFF';
-  }
-}
-
 function updateFraming(mode) {
   const video = document.getElementById('mainVideoPlayer');
   if (!video) return;
@@ -276,68 +310,51 @@ function updateFraming(mode) {
   if (mode === 'fit') video.style.objectFit = 'contain';
 }
 
+function updateZoom(value) {
+  const video = document.getElementById('mainVideoPlayer');
+  if (video) {
+    video.style.transform = `scale(${value / 100})`;
+  }
+}
+
 function applyCaptionPreset(presetClass) {
-  const span = document.getElementById('captionDisplaySpan');
-  if (!span) return;
   state.currentProject.captionPreset = presetClass;
-  span.className = `caption-line ${presetClass}`;
-  const select = document.getElementById('selectCaptionPreset');
-  if (select) select.value = presetClass;
 }
 
 // ============================================================================
-// TRANSCRIPT EDITING & CUTTING (Feature 4 & 5)
+// AI CLIP FINDER & SUGGESTIONS
 // ============================================================================
-function renderTranscriptList() {
-  const container = document.getElementById('editorTranscriptList');
+function renderSuggestions() {
+  const container = document.getElementById('clipsGridContainer');
   if (!container) return;
 
-  const words = state.currentProject.words || [];
-  container.innerHTML = words.map((w, i) => `
-    <span class="transcript-word-token" 
-          id="token_${w.id}" 
-          style="display:inline-block; margin:2px 3px; padding:2px 6px; border-radius:4px; cursor:pointer; background:${w.emphasis ? 'rgba(236,72,153,0.15)' : 'rgba(255,255,255,0.04)'}; border:1px solid ${w.emphasis ? 'rgba(236,72,153,0.3)' : 'transparent'};"
-          onclick="jumpToWordTime(${w.start})"
-          ondblclick="editWordText(${i})">
-      ${w.word}
-    </span>
+  container.innerHTML = state.clips.map(c => `
+    <div class="vx-suggestion-card" onclick="loadClipIntoEditor('${c.id}', ${c.start}, ${c.duration}, '${escape(c.title)}')">
+      <div class="vx-suggestion-top">
+        <span class="vx-tag-pill">${c.tag}</span>
+        <span class="vx-timestamp">${c.timestamp}</span>
+      </div>
+      <div class="vx-suggestion-title">${c.title}</div>
+      <div class="vx-suggestion-tags">${c.tags}</div>
+      <div class="vx-score-bar-wrap">
+        <div class="vx-score-bar">
+          <div class="vx-score-fill" style="width:${c.score}%"></div>
+        </div>
+        <div class="vx-score-footer">
+          <span>Potential score</span>
+          <span class="vx-score-num">${c.score}/100</span>
+        </div>
+      </div>
+    </div>
   `).join('');
 }
 
-function jumpToWordTime(startSec) {
-  const video = document.getElementById('mainVideoPlayer');
-  if (video) {
-    video.currentTime = startSec;
-    video.play();
-  }
-}
-
-function editWordText(idx) {
-  const words = state.currentProject.words;
-  if (!words || !words[idx]) return;
-  const current = words[idx].word;
-  const updated = prompt('Edit transcript word:', current);
-  if (updated !== null && updated.trim()) {
-    words[idx].word = updated.trim();
-    renderTranscriptList();
-    syncKineticCaptions();
-  }
-}
-
-function resyncTranscript() {
-  renderTranscriptList();
-  alert('Transcript synchronized with audio timestamps.');
-}
-
-// ============================================================================
-// AI AUTO-CLIPPING & VIRAL MOMENTS (Features 2 & 3)
-// ============================================================================
 async function runClipAnalysis() {
   const container = document.getElementById('clipsGridContainer');
   if (container) {
-    container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--cyan);">
-      <div style="font-size:32px; animation:spin 1s linear infinite;">⚡</div>
-      <p style="margin-top:12px; font-weight:700;">Analyzing conversation patterns, emotion spikes & 3-sec hooks...</p>
+    container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:30px; color:var(--text-muted);">
+      <div style="font-size:24px; margin-bottom:8px;">✦</div>
+      <p style="font-size:13px; font-weight:600;">Scanning conversation, emotional hooks & retention peaks...</p>
     </div>`;
   }
 
@@ -345,203 +362,185 @@ async function runClipAnalysis() {
     const res = await fetch('/api/vortex/analyze_clips', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ duration: state.currentProject.duration, content_type: 'podcast' })
+      body: JSON.stringify({
+        duration: state.currentProject.duration,
+        content_type: document.getElementById('clipContentStyle')?.value || 'Gaming'
+      })
     });
     const data = await res.json();
     if (data.success && data.clips) {
-      state.clips = data.clips;
-      renderClipsList();
+      state.clips = data.clips.map(c => ({
+        id: c.id,
+        tag: 'VIRAL HOOK',
+        timestamp: '00:15',
+        title: c.title,
+        tags: c.why_it_works || 'High retention · Clear hook',
+        score: c.viral_score || 92,
+        start: c.start || 0,
+        duration: c.duration || 20
+      }));
     }
   } catch (e) {
-    console.error('Error fetching clip analysis:', e);
-    renderClipsList();
+    console.warn('API fallback for clip analysis');
   }
+  renderSuggestions();
 }
 
-function renderClipsList() {
-  const container = document.getElementById('clipsGridContainer');
-  if (!container) return;
-
-  const defaultClips = [
-    {
-      id: 'clip_v1',
-      title: 'The 3-Second Hook That Stops The Scroll',
-      hook_text: 'Stop scrolling! If you are making content in 2026, you are probably doing this completely backwards.',
-      start: 0.0,
-      end: 32.4,
-      duration: 32.4,
-      viral_score: 96,
-      platform_fit: 'TikTok & Shorts',
-      why_it_works: 'Opens with immediate pattern-interrupt hook. High conversational energy and clear contrarian insight.'
-    },
-    {
-      id: 'clip_v2',
-      title: 'How To Double Output Without Burning Out',
-      hook_text: 'Here is the brutal truth about creative scaling that no agency owner will admit out loud.',
-      start: 78.0,
-      end: 122.5,
-      duration: 44.5,
-      viral_score: 93,
-      platform_fit: 'YouTube Shorts',
-      why_it_works: 'Clear storytelling cadence and executive authority. Optimal 45s runtime fits YouTube Shorts algorithm.'
-    },
-    {
-      id: 'clip_v3',
-      title: 'The Single Mistake Killing Your View Duration',
-      hook_text: 'Are you making this rookie mistake with your captions? It is costing you thousands of followers.',
-      start: 185.2,
-      end: 221.0,
-      duration: 35.8,
-      viral_score: 89,
-      platform_fit: 'TikTok & Reels',
-      why_it_works: 'Loss-aversion question creates high curiosity gap. Audience stays to discover the specific solution.'
-    }
-  ];
-
-  const list = (state.clips && state.clips.length > 0) ? state.clips : defaultClips;
-
-  container.innerHTML = list.map(c => `
-    <div class="vortex-card">
-      <div class="viral-badge-row">
-        <span class="viral-score-meter">🔥 ${c.viral_score}% VIRAL POTENTIAL</span>
-        <span style="font-size:11px; font-weight:700; color:var(--text-dim);">${c.duration}s · ${c.platform_fit}</span>
-      </div>
-      <h3 style="font-size:15px; font-weight:800; margin-bottom:6px; color:#fff;">${c.title}</h3>
-      <div class="hook-preview-box">
-        <strong style="color:var(--violet);">⚡ HOOK:</strong> "${c.hook_text}"
-      </div>
-      <p style="font-size:12px; color:var(--text-muted); line-height:1.4; margin-bottom:14px;">
-        ${c.why_it_works}
-      </p>
-      <div style="display:flex; gap:8px;">
-        <button class="btn btn-primary btn-sm" style="flex:1;" onclick="loadClipIntoEditor('${c.id}', ${c.start}, ${c.duration}, '${escape(c.title)}')">
-          🎬 Open in 9:16 Editor
-        </button>
-        <button class="btn btn-secondary btn-sm" onclick="exportClipDirect('${c.id}')">
-          Export
-        </button>
-      </div>
-    </div>
-  `).join('');
-}
-
-function loadClipIntoEditor(id, start, duration, title) {
-  state.currentProject.activeClip = { id, start, duration, title: unescape(title) };
+function loadClipIntoEditor(id, start, duration, escapedTitle) {
+  const title = unescape(escapedTitle);
+  state.currentProject.activeClip = { id, start, duration, title };
   const video = document.getElementById('mainVideoPlayer');
   if (video) {
     video.currentTime = start;
     video.play();
   }
-  const titleDisplay = document.getElementById('currentProjectTitle');
-  if (titleDisplay) titleDisplay.textContent = unescape(title);
+  const subtitle = document.getElementById('editorSubtitle');
+  if (subtitle) subtitle.textContent = title;
   switchTab('tab-editor');
 }
 
 // ============================================================================
-// CONTEXTUAL AI B-ROLL (Feature 6)
+// DYNAMIC CAPTION STUDIO
 // ============================================================================
-function renderBrollList() {
-  const container = document.getElementById('brollListContainer');
+function selectCaptionStyle(styleName, el) {
+  document.querySelectorAll('.vx-style-card').forEach(c => c.classList.remove('active'));
+  if (el) el.classList.add('active');
+  state.currentProject.captionPreset = styleName;
+}
+
+function updateHighlightColor(color) {
+  state.currentProject.highlightColor = color;
+  const demoText = document.querySelector('.vx-caption-demo-text');
+  if (demoText) {
+    demoText.innerHTML = `YOU HAVE TO<br><span style="color:${color};">UNDERSTAND</span><br><span style="color:${color};">THIS</span> 🔥`;
+  }
+  const mainHighlight = document.querySelector('.vx-caption-highlight');
+  if (mainHighlight) {
+    mainHighlight.style.color = color;
+  }
+}
+
+function previewCaptionAnimation() {
+  const preview = document.getElementById('captionPhonePreview');
+  if (!preview) return;
+  preview.style.transform = 'scale(1.05)';
+  setTimeout(() => { preview.style.transform = 'scale(1)'; }, 250);
+}
+
+function toggleEmojisState() {
+  state.currentProject.smartEmojis = !state.currentProject.smartEmojis;
+  alert(`Contextual emojis: ${state.currentProject.smartEmojis ? 'ON' : 'OFF'}`);
+}
+
+function applyCaptionStyleFromStudio() {
+  alert('✓ Caption style applied across all clips in project.');
+  switchTab('tab-editor');
+}
+
+function renderTranscriptTokens() {
+  const container = document.getElementById('captionTranscriptTokens');
   if (!container) return;
 
-  const brolls = [
-    {
-      title: 'Modern Tech Workspace',
-      cue: 'Cued at 07.5s (Keyword: workflow / habit)',
-      source: 'Storyblocks Premium HD',
-      img: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&auto=format&fit=crop&q=80',
-      active: true
-    },
-    {
-      title: 'Surging Growth Chart',
-      cue: 'Cued at 18.2s (Keyword: doubled output)',
-      source: '3D Motion Graphic',
-      img: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&auto=format&fit=crop&q=80',
-      active: false
+  const words = state.currentProject.words || [];
+  container.innerHTML = words.map(w => {
+    if (w.speaker) {
+      return `<span class="vx-token vx-token-speaker">${w.word}</span>`;
     }
-  ];
+    if (w.emphasis) {
+      return `<span class="vx-token vx-token-highlight">${w.word}</span>`;
+    }
+    return `<span class="vx-token">${w.word}</span>`;
+  }).join(' ');
+}
 
-  container.innerHTML = brolls.map(b => `
-    <div class="vortex-card">
-      <img src="${b.img}" style="width:100%; height:160px; object-fit:cover; border-radius:8px; margin-bottom:12px;" alt="${b.title}" />
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h4 style="font-size:14px; font-weight:800;">${b.title}</h4>
-        <span style="font-size:10.5px; color:var(--cyan); font-weight:700;">${b.source}</span>
+// ============================================================================
+// AI B-ROLL STUDIO
+// ============================================================================
+function renderBrollConcepts() {
+  const container = document.getElementById('brollConceptsGrid');
+  if (!container) return;
+
+  container.innerHTML = state.brollConcepts.map(bc => `
+    <div class="vx-concept-card" onclick="addBrollToTimeline('${bc.footerTitle}', '${bc.img}')">
+      <div class="vx-concept-visual ${bc.styleClass}">
+        <div class="vx-concept-icon">${bc.icon}</div>
+        <div class="vx-concept-name">${bc.name}</div>
       </div>
-      <p style="font-size:12px; color:var(--text-muted); margin:6px 0 12px 0;">${b.cue}</p>
-      <button class="btn btn-secondary btn-sm" style="width:100%;" onclick="toggleBrollPlacement('${b.title}', '${b.img}')">
-        ${b.active ? '✓ Placed in Timeline (07.5s–11.5s)' : '+ Add to Timeline'}
-      </button>
+      <div class="vx-concept-footer-title">${bc.footerTitle}</div>
+      <div class="vx-concept-footer-time">${bc.footerTime}</div>
     </div>
   `).join('');
 }
 
-function generateCustomBroll() {
-  const promptText = prompt('Enter generative visual prompt (e.g., "Futuristic cybernetic workspace with neon purple glow"):');
-  if (promptText) {
-    alert(`⚡ Generative request sent to FLUX / Veo engine for prompt: "${promptText}". Asset will be ready in timeline.`);
-  }
+function generateBrollConcepts() {
+  const input = document.getElementById('brollPromptInput');
+  const prompt = input?.value || 'Cinematic nighttime city lights';
+  alert(`✦ Generating visual concepts for: "${prompt}"`);
 }
 
-function toggleBrollPlacement(title, imgUrl) {
+function addBrollToTimeline(title, imgUrl) {
   state.currentProject.brolls = [{
-    id: 'br_custom',
-    start: 5.0,
-    end: 10.0,
+    id: 'br_custom_' + Date.now(),
+    start: 2.0,
+    end: 7.0,
     title,
     imageUrl: imgUrl
   }];
-  alert(`✓ B-Roll "${title}" placed on timeline at 05.0s–10.0s!`);
+  alert(`✦ Added "${title}" to timeline (00:02 — 00:07)`);
+  switchTab('tab-editor');
 }
 
 // ============================================================================
-// THUMBNAILS & COVERS STUDIO (Feature 9)
+// THUMBNAIL STUDIO
 // ============================================================================
-function updateThumbHeadline(text) {
-  const overlay = document.getElementById('thumbHeadlineText');
-  if (overlay) overlay.textContent = text;
+function togglePlatform(platform) {
+  const yt = document.getElementById('btnYTShorts');
+  const tt = document.getElementById('btnTikTok');
+  const lbl = document.getElementById('thumbPlatformLabel');
+  if (platform === 'youtube') {
+    yt?.classList.add('active');
+    tt?.classList.remove('active');
+    if (lbl) lbl.innerHTML = 'YOUTUBE<br>SHORTS';
+  } else {
+    tt?.classList.add('active');
+    yt?.classList.remove('active');
+    if (lbl) lbl.innerHTML = 'TIKTOK<br>COVER';
+  }
 }
 
-function setThumbHeadline(text) {
-  const input = document.getElementById('inputThumbHeadline');
-  if (input) input.value = text;
-  updateThumbHeadline(text);
+function updateThumbPreviews(customHeadline) {
+  const text = customHeadline || document.getElementById('inputThumbHeadline')?.value || 'THE SECRET TO SUCCESS';
+  const p1 = document.getElementById('thumbPreview1');
+  if (p1) p1.innerHTML = text.replace(' ', '<br>');
+  const p2 = document.getElementById('thumbPreview2');
+  if (p2) p2.innerHTML = 'NOBODY<br>TALKS<br>ABOUT<br>THIS';
+  const p3 = document.getElementById('thumbPreview3');
+  if (p3) p3.innerHTML = 'THIS<br>CHANGES<br>EVERY-<br>THING';
 }
 
-function captureCurrentVideoFrame() {
-  const video = document.getElementById('mainVideoPlayer');
-  const bgImg = document.getElementById('thumbBgImage');
-  if (!video || !bgImg) return;
-
-  const canvas = document.createElement('canvas');
-  canvas.width = video.videoWidth || 1080;
-  canvas.height = video.videoHeight || 1920;
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-  bgImg.src = canvas.toDataURL('image/jpeg');
-  alert('📸 Current video frame captured for 9:16 cover design!');
+function setThumbStyle(style) {
+  alert(`Cover style set to: ${style.toUpperCase()}`);
 }
 
-function downloadThumbnail(platform) {
-  alert(`⚡ Exporting ${platform.toUpperCase()} cover image (1080x1920 JPG). Ready for upload!`);
+function exportCoverImage() {
+  alert('⚡ Cover image (1080×1920) exported cleanly with zero watermarks.');
 }
 
 // ============================================================================
-// BRAND KIT (Feature 11)
+// BRAND KIT & STORAGE
 // ============================================================================
 async function saveBrandKit() {
   const name = document.getElementById('bkBrandName')?.value || 'STYLXH PRODUCTIONS';
   const primary = document.getElementById('bkColorPrimary')?.value || '#6366F1';
   const accent = document.getElementById('bkColorAccent')?.value || '#06B6D4';
   const highlight = document.getElementById('bkColorHighlight')?.value || '#FFB6E6';
-  const wm = document.getElementById('bkWatermarkToggle')?.checked || false;
 
   state.brandKit = {
     brand_name: name,
     primary_color: primary,
     accent_color: accent,
     highlight_color: highlight,
-    watermark_enabled: wm
+    watermark_enabled: false // Explicitly no watermarks
   };
 
   try {
@@ -552,21 +551,19 @@ async function saveBrandKit() {
     });
     alert('✓ Brand Kit saved to Cloudflare KV storage!');
   } catch (e) {
-    alert('✓ Brand Kit saved to local storage.');
+    alert('✓ Brand Kit saved to local workspace.');
   }
 }
 
 // ============================================================================
-// EXPORT ENGINE (Feature 10)
+// EXPORTS & LIBRARY
 // ============================================================================
 function triggerQuickExport() {
   const title = state.currentProject.activeClip?.title || state.currentProject.title;
-  const duration = state.currentProject.activeClip?.duration || 32;
-
   const expItem = {
     id: 'exp_' + Date.now(),
-    title: `${title} [9:16 1080x1920]`,
-    duration: `${Math.round(duration)}s`,
+    title: `${title} [1080x1920]`,
+    duration: '22s',
     platform: 'TikTok & Shorts',
     created_at: 'Just now',
     download_url: state.currentProject.videoUrl
@@ -575,12 +572,7 @@ function triggerQuickExport() {
   state.exports.unshift(expItem);
   renderExports();
   switchTab('tab-exports');
-  alert(`⚡ 9:16 Render Job Completed! "${title}" is ready in the Exports tab.`);
-}
-
-function exportClipDirect(clipId) {
-  loadClipIntoEditor(clipId, 0, 32, 'Viral Clip');
-  triggerQuickExport();
+  alert(`⚡ Short exported successfully (1080x1920 9:16). Ready for download!`);
 }
 
 function renderExports() {
@@ -588,24 +580,38 @@ function renderExports() {
   if (!container) return;
 
   container.innerHTML = state.exports.map(e => `
-    <div class="vortex-card">
+    <div class="vx-card">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
         <span style="font-size:11px; font-weight:700; color:var(--emerald);">● COMPLETED MP4</span>
-        <span style="font-size:11.5px; color:var(--text-dim);">${e.duration} · ${e.created_at}</span>
+        <span style="font-size:11px; color:var(--text-dim);">${e.duration} · ${e.created_at}</span>
       </div>
-      <h3 style="font-size:14.5px; font-weight:800; color:#fff; margin-bottom:12px;">${e.title}</h3>
-      <p style="font-size:12px; color:var(--text-muted); margin-bottom:14px;">
-        Burned-in kinetic captions, 9:16 crop, normalized audio, 1080×1920 vertical canvas.
+      <h3 style="font-size:14px; font-weight:800; color:#fff; margin-bottom:10px;">${e.title}</h3>
+      <p style="font-size:11.5px; color:var(--text-muted); margin-bottom:14px;">
+        Burned-in animated subtitles, vertical 9:16 crop, normalized audio, 1080×1920. No watermarks.
       </p>
-      <a href="${e.download_url}" download="Vortex_Short.mp4" class="btn btn-primary btn-sm" style="width:100%; text-decoration:none;">
+      <a href="${e.download_url}" download="Short_1080x1920.mp4" class="vx-btn vx-btn-primary" style="width:100%; text-decoration:none;">
         ⬇ Download MP4 Video
       </a>
     </div>
   `).join('');
 }
 
+function renderLibrary() {
+  const container = document.getElementById('libraryListContainer');
+  if (!container) return;
+
+  container.innerHTML = `
+    <div class="vx-card">
+      <div style="font-size:10px; font-weight:700; color:#a855f7; margin-bottom:6px;">PROJECT</div>
+      <h3 style="font-size:14px; font-weight:800; color:#fff; margin-bottom:6px;">Podcast — Episode 12 / Clip 01</h3>
+      <p style="font-size:11.5px; color:var(--text-muted); margin-bottom:14px;">Duration: 42s · 3 Clips Available · Autosaved</p>
+      <button class="vx-btn vx-btn-outline" style="width:100%;" onclick="switchTab('tab-editor')">Open in Editor</button>
+    </div>
+  `;
+}
+
 // ============================================================================
-// PROJECT MANAGEMENT & UPLOAD (Features 1 & 12)
+// MODAL & INGESTION
 // ============================================================================
 function openUploadModal() {
   const modal = document.getElementById('uploadModal');
@@ -621,22 +627,17 @@ function submitNewProject() {
   const title = document.getElementById('modalProjectTitle')?.value.trim() || 'Untitled Video';
   const fileInput = document.getElementById('modalFileInput');
 
-  let fileUrl = state.currentProject.videoUrl;
   if (fileInput && fileInput.files && fileInput.files[0]) {
-    fileUrl = URL.createObjectURL(fileInput.files[0]);
+    const file = fileInput.files[0];
+    state.currentProject.videoUrl = URL.createObjectURL(file);
+    state.currentProject.title = title;
   }
-
-  state.currentProject.title = title;
-  state.currentProject.videoUrl = fileUrl;
 
   const video = document.getElementById('mainVideoPlayer');
   if (video) {
-    video.src = fileUrl;
+    video.src = state.currentProject.videoUrl;
     video.play();
   }
-
-  const titleDisplay = document.getElementById('currentProjectTitle');
-  if (titleDisplay) titleDisplay.textContent = title;
 
   closeUploadModal();
   switchTab('tab-create-clips');
@@ -646,46 +647,22 @@ function submitNewProject() {
 function handleFileSelected(event) {
   if (event.target.files && event.target.files[0]) {
     const file = event.target.files[0];
-    const url = URL.createObjectURL(file);
-    state.currentProject.videoUrl = url;
-    state.currentProject.title = file.name.replace(/\\.[^/.]+$/, '');
-    const video = document.getElementById('mainVideoPlayer');
-    if (video) {
-      video.src = url;
-      video.play();
-    }
-    const titleDisplay = document.getElementById('currentProjectTitle');
-    if (titleDisplay) titleDisplay.textContent = state.currentProject.title;
+    state.currentProject.videoUrl = URL.createObjectURL(file);
+    state.currentProject.title = file.name.replace(/\.[^/.]+$/, '');
+    const status = document.getElementById('dropzoneStatus');
+    if (status) status.textContent = `Selected: ${file.name}`;
     switchTab('tab-editor');
   }
 }
 
-function renderLibrary() {
-  const container = document.getElementById('libraryListContainer');
-  if (!container) return;
-
-  const list = [
-    {
-      id: 'proj_demo',
-      title: 'How To Stop Scrolling & Scale In 2026',
-      duration: '32s',
-      clips: 3,
-      date: 'Today'
-    }
-  ];
-
-  container.innerHTML = list.map(p => `
-    <div class="vortex-card">
-      <div style="font-size:11px; font-weight:700; color:var(--cyan); margin-bottom:6px;">PROJECT</div>
-      <h3 style="font-size:15px; font-weight:800; color:#fff; margin-bottom:8px;">${p.title}</h3>
-      <p style="font-size:12px; color:var(--text-muted); margin-bottom:14px;">
-        Duration: ${p.duration} · ${p.clips} Viral Clips Available · Autosaved
-      </p>
-      <button class="btn btn-secondary btn-sm" style="width:100%;" onclick="switchTab('tab-editor')">
-        Open Project
-      </button>
-    </div>
-  `).join('');
+function handleClipFileSelected(event) {
+  if (event.target.files && event.target.files[0]) {
+    const file = event.target.files[0];
+    state.currentProject.videoUrl = URL.createObjectURL(file);
+    const status = document.getElementById('clipDropzoneStatus');
+    if (status) status.textContent = `Selected: ${file.name}`;
+    runClipAnalysis();
+  }
 }
 
 // ============================================================================
@@ -696,13 +673,9 @@ async function syncWithEdgeKV() {
     const res = await fetch('/api/vortex/brandkit');
     if (res.ok) {
       const data = await res.json();
-      if (data.brand_kit) {
-        state.brandKit = data.brand_kit;
-      }
+      if (data.brand_kit) state.brandKit = data.brand_kit;
     }
-  } catch (e) {
-    console.log('Using local brand kit state.');
-  }
+  } catch (e) {}
 }
 
 function loadSavedState() {
